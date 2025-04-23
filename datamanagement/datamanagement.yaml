@@ -7287,15 +7287,13 @@ components:
         id: go4472ydw5y6e
       type: object
       description: Information on links to this resource.
+      required:
+        - self
       properties:
         self:
           $ref: '#/components/schemas/json_api_link'
-          x-stoplight:
-            id: hbrwiksrhot15
-        webview:
+        webView:
           $ref: '#/components/schemas/web_view_link'
-      required:
-        - self
     json_api_relationships_links_refs:
       type: object
       required:
