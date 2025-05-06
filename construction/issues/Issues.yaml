@@ -69,7 +69,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/issue_type'
+                $ref: '#/components/schemas/types_page'
         '400':
           description: Bad Request
         '403':
@@ -128,7 +128,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/attr_definition'
+                $ref: '#/components/schemas/attr_definition_page'
         '400':
           description: Bad Request
         '403':
@@ -184,7 +184,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/attr_mapping'
+                $ref: '#/components/schemas/attr_mapping_page'
       operationId: getAttributeMappings
       security:
         - 2-legged: []
@@ -246,7 +246,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/issue_root_cause'
+                $ref: '#/components/schemas/root_cause_categories_page'
         '400':
           description: Bad Request
         '401':
@@ -348,6 +348,11 @@ paths:
           in: query
           name: 'filter[startDate]'
           description: 'Filter issues by start date, in one of the following URL-encoded format: YYYY-MM-DD. Separate multiple values with commas.'
+        - schema:
+            type: boolean
+          in: query
+          name: 'filter[deleted]'
+          description: 'Filter deleted issues. For example, filter[deleted]=true. If set to true it only returns deleted issues. If set to false it only returns undeleted issues. Note that we do not currently support returning both deleted and undeleted issues. Default value: false.'
         - schema:
             type: string
           in: query
@@ -572,7 +577,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Comments'
+                $ref: '#/components/schemas/comments'
         '400':
           description: Bad Request
         '403':
@@ -628,7 +633,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/CreatedComment'
+                $ref: '#/components/schemas/comments'
         '400':
           description: Bad Request
         '403':
@@ -650,7 +655,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/CommentsPayload'
+              $ref: '#/components/schemas/commentsPayload'
       tags:
         - Issue Comments
 components:
@@ -723,25 +728,14 @@ components:
           description: 'The permission level of the user. Each permission level corresponds to a combination of values in the response. For example, a combination of read and create in the response, corresponds to a Create for other companies permission level.'
           items:
             $ref: '#/components/schemas/permission_level'
-    issue_type:
-      title: issue-type
+    types_page:
+      title: types_page
       type: object
       x-stoplight:
         id: wbv2e5j32hmqt
       properties:
         pagination:
-          type: object
-          description: The pagination object.
-          properties:
-            limit:
-              type: integer
-              description: The number of items per page.
-            offset:
-              type: integer
-              description: The page number that the results begin from.
-            totalResults:
-              type: integer
-              description: The number of items in the response.
+          $ref: '#/components/schemas/Pagination'
         results:
           type: array
           description: A list of issue type categories.
@@ -849,26 +843,15 @@ components:
               deletedAt:
                 type: string
                 description: 'The date and time the issue type was deleted, in ISO8601 format.'
-    issue_root_cause:
-      title: issue-root-cause-categories
+    root_cause_categories_page:
+      title: root-cause-categories-page
       type: object
       description: The pagination object.
       x-stoplight:
         id: ltnxakw21gumz
       properties:
         pagination:
-          type: object
-          description: The pagination object.
-          properties:
-            limit:
-              type: integer
-              description: The number of items per page.
-            offset:
-              type: integer
-              description: The page number that the results begin from.
-            totalResults:
-              type: integer
-              description: The number of items in the response.
+          $ref: '#/components/schemas/Pagination'
         results:
           type: array
           description: A list of issue root cause categories.
@@ -954,7 +937,7 @@ components:
               deletedBy:
                 type: string
                 description: The Autodesk ID of the user who deleted the custom attribute.
-    attr_definition:
+    attr_definition_page:
       title: attr_definition
       type: object
       description: The pagination object.
@@ -962,18 +945,7 @@ components:
         id: bvhkdkasjb7j1
       properties:
         pagination:
-          type: object
-          description: The pagination object.
-          properties:
-            limit:
-              type: integer
-              description: The number of items per page.
-            offset:
-              type: integer
-              description: The page number that the results begin from.
-            totalResults:
-              type: integer
-              description: The number of items in the response.
+          $ref: '#/components/schemas/Pagination'
         results:
           type: array
           description: A list of issue attribute mappings.
@@ -1069,7 +1041,7 @@ components:
                 x-stoplight:
                   id: jcsrljuzc5ltj
                 description: The description of the custom attribute.
-    attr_mapping:
+    attr_mapping_page:
       title: attr_mapping
       x-stoplight:
         id: kw028glvwty0y
@@ -1077,18 +1049,7 @@ components:
       description: The pagination object.
       properties:
         pagination:
-          type: object
-          description: The pagination object.
-          properties:
-            limit:
-              type: integer
-              description: The number of items per page.
-            offset:
-              type: integer
-              description: The page number that the results begin from.
-            totalResults:
-              type: integer
-              description: The number of items in the response.
+          $ref: '#/components/schemas/Pagination'
         results:
           type: array
           description: A list of issue attribute mappings.
@@ -1153,7 +1114,7 @@ components:
                 x-stoplight:
                   id: jcsrljuzc5ltj
                 description: The description of the custom attribute.
-    CreatedComment:
+    comments:
       title: created_comment
       type: object
       x-stoplight:
@@ -1210,6 +1171,12 @@ components:
         deleted:
           type: boolean
           description: 'States whether the issue was deleted. Default value: false.'
+        deletedAt:
+          type: string
+          description: 'The date and time the issue was deleted, in ISO8601 format. This is only relevant for deleted issues.'
+        deletedBy:
+          type: string
+          description: The Autodesk ID of the user who deleted the issue. This is only relevant for deleted issues.
         displayId:
           type: integer
           description: The chronological user-friendly identifier of the issue.
@@ -1435,6 +1402,11 @@ components:
               type: number
             longitude:
               type: number
+        snapshotHasMarkups:
+          type: boolean
+          x-stoplight:
+            id: n16cah32tk3r8
+          description: "Not relevant\r\n"
     IssuesPage:
       title: issues
       x-stoplight:
@@ -1442,23 +1414,12 @@ components:
       type: object
       properties:
         pagination:
-          type: object
-          description: 'The pagination object defining the limit, offset, total number of issues, next and previous URL'
-          properties:
-            limit:
-              type: integer
-              description: The maximum number of issues to be returned in each page.
-            offset:
-              type: integer
-              description: The offset defining the start position from where the issues are returned
-            totalResults:
-              type: integer
-              description: The total number of issues including the ones of the current page
+          $ref: '#/components/schemas/Pagination'
         results:
           type: array
           description: The list of issues in the current page
           items:
-            $ref: '#/components/schemas/Results'
+            $ref: '#/components/schemas/Issue'
     IssuePayload:
       title: issue_payload
       x-stoplight:
@@ -1785,6 +1746,7 @@ components:
         id: szgoga8vkzknv
       type: string
       enum:
+        - list
         - text
         - paragraph
         - numeric
@@ -1796,228 +1758,6 @@ components:
       type: array
       items:
         $ref: '#/components/schemas/dataType'
-    Results:
-      title: results
-      x-stoplight:
-        id: tb5mdxz11q7p6
-      type: object
-      properties:
-        id:
-          type: string
-          description: The unique identifier of the issue.
-        containerId:
-          type: string
-          description: Not relevant
-        deleted:
-          type: boolean
-          description: 'States whether the issue was deleted. Default value: false.'
-        displayId:
-          type: integer
-          description: The chronological user-friendly identifier of the issue.
-        title:
-          type: string
-          description: |-
-            The description and purpose of the issue.
-            Max length: 10000
-        description:
-          type: string
-          description: |-
-            The description and purpose of the issue.
-            Max length: 10000
-        snapshotUrn:
-          type: string
-          description: Not relevant
-        issueTypeId:
-          type: string
-          description: The unique identifier of the type of the issue.
-        issueSubtypeId:
-          type: string
-          description: The unique identifier of the subtype of the issue.
-        status:
-          type: string
-          description: 'The current status of the issue. To check the available statuses for the project, call GET users/me and check the permitted statuses list (issue.new.permittedStatuses). For more information about statuses, see the Help documentation.'
-        assignedTo:
-          type: string
-          description: 'The Autodesk ID of the member, role, or company you want to assign to the issue. Note that if you select an assignee ID, you also need to select a type (assignedToType).'
-        assignedToType:
-          type: string
-        dueDate:
-          type: string
-          description: 'The due date of the issue, in ISO8601 format.'
-        startDate:
-          type: string
-          description: 'The start date of the issue, in ISO8601 format.'
-        locationId:
-          type: string
-          description: The unique LBS (Location Breakdown Structure) identifier that relates to the issue.
-        locationDetails:
-          type: string
-          description: |-
-            The location as plain text that relates to the issue.
-            Max length: 8300
-        linkedDocuments:
-          type: array
-          description: Information about the files associated with issues (pushpins).
-          items:
-            type: object
-            properties:
-              type:
-                type: string
-                description: |-
-                  The type of file. Possible values:
-                  TwoDVectorPushpin (3D models) TwoDRasterPushpin (2D sheets and views)
-              urn:
-                type: string
-                description: The ID of the file associated with the issue (pushpin). Note the we do not currently support data associated with the ACC Build Sheet tool.
-              createdBy:
-                type: string
-                description: The Autodesk ID of the user who created the pushpin issue.
-              createdAt:
-                type: string
-                description: 'The date and time the pushpin was created, in ISO8601 format.'
-              createdAtVersion:
-                type: integer
-                description: 'The version of the file the pushin issue was added to. For information about file versions, see the Data Management API.'
-              closedBy:
-                type: string
-                description: The Autodesk ID of the user who closed the pushpin issue.
-              closedAt:
-                type: string
-                description: 'The date and time the pushpin issue was closed, in ISO8601 format.'
-              closedAtVersion:
-                type: integer
-                description: The version of the file when the pushpin issue was closed.
-              details:
-                type: object
-                description: Information about the individual viewable.
-                properties:
-                  viewable:
-                    type: object
-                    description: 'The individual viewable associated with the issue (pushpin). This is relevant for both individual 2D sheets and views within a 3D model, and individual PDF sheets within a multi-sheet PDF file. It is only relevant if the issue is associated with a file.'
-                  position:
-                    type: object
-                    description: The position of the pushpin in the viewable.
-                    properties:
-                      x:
-                        type: number
-                        description: The x-value of the position in the viewable.
-                      'y':
-                        type: number
-                        description: The y-value of the position in the viewable.
-                      z:
-                        type: number
-                        description: The z-value of the position in the viewable.
-                  objectId:
-                    type: integer
-                    description: The ID of the element the pushpin is associated with in the viewable.
-                  externalId:
-                    type: string
-                    description: An external identifier of the element the pushpin is associated with in the viewable.
-                  viewerState:
-                    type: object
-                    description: 'The viewer state at the time the pushpin was created. Maximum length: 2,500,000 characters. You can get the viewer state object by calling ViewerState.getState(). To restore the viewer instance use ViewerState.restoreState(). See the `Viewer API documentation https://developer.autodesk.com/en/docs/viewer/v2/reference/javascript/viewerstate/`_ for more details.'
-        links:
-          type: array
-          description: Not relevant
-          items:
-            type: object
-        ownerId:
-          type: string
-          description: Not relevant
-        rootCauseId:
-          type: string
-          description: The unique identifier of the type of root cause for the issue.
-        officialResponse:
-          type: object
-          description: Not relevant
-        issueTemplateId:
-          type: string
-          description: Not relevant
-        permittedStatuses:
-          type: array
-          description: |-
-            A list of statuses accessible to the current user, this is based on the current status of the issue and the user permissions.
-            Possible Values: open, pending, in_review, closed.
-          items:
-            type: string
-        permittedAttributes:
-          type: array
-          description: 'A list of attributes the current user can manipulate in the current context. issueTypeId, linkedDocument, links, ownerId, officialResponse, rootCauseId, snapshotUrn are not applicable.'
-          items:
-            type: string
-        published:
-          type: boolean
-          description: 'States whether the issue is published. Default value: false (e.g. unpublished).'
-        permittedActions:
-          type: object
-          description: |-
-            The list of actions permitted for the user for this issue in its current state.
-            Note that if a user with Create for my company permissions attempts to assign a user from a another company to the issue, it will return an error.
-
-            Possible Values: assign_all (can assign another user from another company to the issue), assign_same_company (can only assign another user from the same company to the issue), clear_assignee, delete, add_comment, add_attachment, remove_attachment.
-
-            The following values are not relevant: add_attachment, remove_attachment.
-        commentCount:
-          type: integer
-          description: The number of comments in this issue.
-        attachmentCount:
-          type: integer
-          description: Not relevant
-        openedBy:
-          type: string
-          description: Not relevant
-        openedAt:
-          type: string
-          description: Not relevant
-        closedBy:
-          type: string
-          description: The unique identifier of the user who closed the issue.
-        closedAt:
-          type: string
-          description: 'The date and time the issue was closed, in ISO8601 format.'
-        createdBy:
-          type: string
-          description: The unique identifier of the user who created the issue
-        createdAt:
-          type: string
-          description: 'The date and time the issue was created, in ISO8601 format.'
-        updatedBy:
-          type: string
-          description: The unique identifier of the user who updated the issue.
-        updatedAt:
-          type: string
-          description: 'The date and time the issue was updated, in ISO8601 format.'
-        watchers:
-          type: array
-          description: The Autodesk ID of the member you want to assign as a watcher for the issue.
-          items:
-            type: string
-        customAttributes:
-          type: array
-          description: A list of custom attributes of the specific issue.
-          items:
-            type: object
-            properties:
-              attributeDefinitionId:
-                type: string
-                description: The unique identifier of the custom attribute.
-              value:
-                type: object
-                description: 'Custom attribute value. Possible value types: string, number, null.'
-              type:
-                type: string
-                description: 'The type of attribute. Possible values: numeric, paragraph, list (this corresponds to dropdown in the UI), text.'
-              title:
-                type: string
-                description: Free text description of the attribute.
-        gpsCoordinates:
-          type: object
-          description: A GPS Coordinate which represents the geo location of the issue.
-          properties:
-            latitude:
-              type: number
-            longitude:
-              type: number
     status:
       type: string
       x-stoplight:
@@ -2042,8 +1782,8 @@ components:
         - user
         - company
         - role
-    CommentsPayload:
-      title: CommentsPayload
+    commentsPayload:
+      title: commentsPayload
       x-stoplight:
         id: g2sp2gwd04hxi
       type: object
@@ -2054,7 +1794,7 @@ components:
             id: mqohbh0gr85g9
       required:
         - body
-    Comments:
+    commentsPage:
       title: issue-comments
       type: object
       description: The pagination object.
@@ -2062,60 +1802,11 @@ components:
         id: 4nxzq972zdl5h
       properties:
         pagination:
-          type: object
-          description: The pagination object.
-          properties:
-            limit:
-              type: integer
-              description: The number of items per page.
-            offset:
-              type: integer
-              description: The page number that the results begin from.
-            totalResults:
-              type: integer
-              description: The number of items in the response.
+          $ref: '#/components/schemas/Pagination'
         results:
           type: array
-          description: The ID of the custom attribute.
           items:
-            type: object
-            properties:
-              id:
-                type: string
-                description: The comment ID.
-              body:
-                type: string
-                description: |-
-                  The comment content. A \n indicates a new line, e.g.: Hey\nAharon will be a 2 lines comment.
-                  Max length: 10000
-              createdAt:
-                type: string
-                description: 'The date and time the custom attribute was created, in the following format: YYYY-MM-DDThh:mm:ss.sz.'
-              createdBy:
-                type: string
-                description: The Autodesk ID of the user who created the comment.
-              updatedAt:
-                type: string
-                description: Not relevant
-              deletedAt:
-                type: string
-                description: Not relevant
-              clientCreatedAt:
-                type: string
-                description: Not relevant
-              clientUpdatedAt:
-                type: string
-                description: Not relevant
-              permittedActions:
-                type: array
-                description: Not relevant
-                items:
-                  type: string
-              permittedAttributes:
-                type: array
-                description: Not relevant
-                items:
-                  type: string
+            $ref: '#/components/schemas/comments'
     region:
       title: region
       x-stoplight:
@@ -2140,6 +1831,19 @@ components:
         - create
         - read
         - write
+    Pagination:
+      type: object
+      description: The pagination object.
+      properties:
+        limit:
+          type: integer
+          description: The number of items per page.
+        offset:
+          type: integer
+          description: The page number that the results begin from.
+        totalResults:
+          type: integer
+          description: The number of items in the response.
   securitySchemes:
     2-legged:
       type: oauth2
