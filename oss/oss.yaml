@@ -1154,7 +1154,7 @@ components:
         size:
           type: integer
           description: 'The total amount of storage space occupied by the object, in bytes.'
-          format: int32
+          format: int64
         contentType:
           type: string
           description: 'The format of the data stored within the object, expressed as a MIME type.'
@@ -1183,7 +1183,7 @@ components:
         size:
           type: integer
           description: 'The total amount of storage space occupied by the object, in bytes.'
-          format: int32
+          format: int64
         contentType:
           type: string
           description: 'The format of the data stored within the object, expressed as a MIME type.'
@@ -1524,6 +1524,7 @@ components:
               size:
                 type: integer
                 description: 'The expected size of the object. If provided, OSS will check this against the object in S3 and return an error if the size does not match.'
+                format: int64
               eTags:
                 type: array
                 description: 'An array of eTags. S3 returns an eTag to each upload request, be it for a chunk or an entire file. For a single-part upload, this array contains the expected eTag of the entire object. For a multipart upload, this array contains the expected eTag of each part of the upload; the index of an eTag in the array corresponds to its part number in the upload. If provided, OSS will validate these eTags against the content in S3, and return an error if the eTags do not match.'
@@ -1576,6 +1577,7 @@ components:
         size:
           type: integer
           description: 'The total amount of storage space occupied by the object, in bytes.'
+          format: int64
         contentType:
           type: string
           description: 'The format of the data stored within the object, expressed as a MIME type. This attribute is returned only if it was specified when the object was uploaded.'
@@ -1602,6 +1604,7 @@ components:
               size:
                 type: integer
                 description: The size of the corresponding part detected in S3.
+                format: int64
               eTag:
                 type: string
                 description: The eTag of the detected part in S3.
@@ -1645,6 +1648,7 @@ components:
         size:
           type: integer
           description: 'The expected size of the object. If provided, OSS will check this against the object in S3 and return an error if the size does not match.'
+          format: int64
         eTags:
           type: array
           description: 'An array of eTags. S3 returns an eTag to each upload request, be it for a chunk or an entire file. For a single-part upload, this array contains the expected eTag of the entire object. For a multipart upload, this array contains the expected eTag of each part of the upload; the index of an eTag in the array corresponds to its part number in the upload. If provided, OSS will validate these eTags against the content in S3, and return an error if the eTags do not match.'
