@@ -114,10 +114,10 @@ components:
         - ``EMEA`` - Data center for the European Union, Middle East, and Africa. 
         - ``AUS`` - Data center for the Australia region.
         - ``CAN`` - Data center for the Canada region.
-        - ``DEU`` - Data centre for the Germany region.
-        - ``IND`` - Data centre for the India region.
-        - ``JPN`` - Data centre for the Japan region.
-        - ``GBR``  - Data centre for the United Kingdom region.
+        - ``DEU`` - Data center for the Germany region.
+        - ``IND`` - Data center for the India region.
+        - ``JPN`` - Data center for the Japan region.
+        - ``GBR``  - Data center for the United Kingdom region.
     source-design-urn:
       name: urn
       in: path
@@ -484,11 +484,11 @@ components:
         - ``US`` - Data center for the US region.
         - ``EMEA`` - Data center for the European Union, Middle East, and Africa. 
         - ``AUS`` - (Beta) Data center for the Australia region.
-        - ``CAN`` - Data centre for the Canada region.
-        - ``DEU`` - Data centre for the Germany region.
-        - ``IND`` - Data centre for the India region.
-        - ``JPN`` - Data centre for the Japan region.
-        - ``GBR``  - Data centre for the United Kingdom region.
+        - ``CAN`` - Data center for the Canada region.
+        - ``DEU`` - Data center for the Germany region.
+        - ``IND`` - Data center for the India region.
+        - ``JPN`` - Data center for the Japan region.
+        - ``GBR``  - Data center for the United Kingdom region.
       enum:
         - US
         - EMEA
@@ -1277,11 +1277,11 @@ components:
             - ``US`` - Data center for the US region.
             - ``EMEA`` - Data center for European Union, Middle East, and Africa. 
             - ``AUS`` - Data center for the Australia region.
-            - ``CAN`` - Data centre for the Canada region.
-            - ``DEU`` - Data centre for the Germany region.
-            - ``IND`` - Data centre for the India region.
-            - ``JPN`` - Data centre for the Japan region.
-            - ``GBR``  - Data centre for the United Kingdom region.
+            - ``CAN`` - Data center for the Canada region.
+            - ``DEU`` - Data center for the Germany region.
+            - ``IND`` - Data center for the India region.
+            - ``JPN`` - Data center for the Japan region.
+            - ``GBR``  - Data center for the United Kingdom region.
         version:
           type: string
           minLength: 1
@@ -1475,11 +1475,11 @@ components:
                     - ``US`` - (Default) Store derivatives at a data center for the United States of America.
                     - ``EMEA`` - Store derivatives at a data center for the European Union. 
                     - ``AUS`` - (Beta) Store derivatives at a data center for the Australia region.
-                    - ``CAN`` - Data centre for the Canada region.
-                    - ``DEU`` - Data centre for the Germany region.
-                    - ``IND`` - Data centre for the India region.
-                    - ``JPN`` - Data centre for the Japan region.
-                    - ``GBR``  - Data centre for the United Kingdom region.
+                    - ``CAN`` - Data center for the Canada region.
+                    - ``DEU`` - Data center for the Germany region.
+                    - ``IND`` - Data center for the India region.
+                    - ``JPN`` - Data center for the Japan region.
+                    - ``GBR``  - Data center for the United Kingdom region.
 
                     **Note**: 
 
