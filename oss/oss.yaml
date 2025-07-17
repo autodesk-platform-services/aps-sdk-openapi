@@ -65,7 +65,7 @@ paths:
         **Note:** Do not use this operation to create buckets for BIM360 Document Management. Use [POST projects/{project_id}/storage](/en/docs/data/v2/reference/http/projects-project_id-storage-POST>) instead. For details, see [Upload Files to BIM 360 Document Management](/en/docs/bim360/v1/tutorials/document-management/upload-document).
       operationId: create_bucket
       parameters:
-        - $ref: '#/components/parameters/x-ads-region'
+        - $ref: '#/components/parameters/region_header'
       requestBody:
         content:
           application/json:
@@ -460,7 +460,7 @@ paths:
           description: The suggested file name to use when this object is downloaded as a file.
           schema:
             type: string
-        - $ref: '#/components/parameters/x-ads-region-4-object'
+        - $ref: '#/components/parameters/x-ads-region'
         - name: If-Match
           in: header
           description: |
@@ -522,7 +522,7 @@ paths:
         Only applications that own the bucket containing the object can call this operation. 
       operationId: delete_signed_resource
       parameters:
-        - $ref: '#/components/parameters/x-ads-region-4-object'
+        - $ref: '#/components/parameters/x-ads-region'
       responses:
         '200':
           description: The object was deleted successfully.
@@ -578,7 +578,7 @@ paths:
           description: The suggested file name to use when this object is downloaded as a file.
           schema:
             type: string
-        - $ref: '#/components/parameters/x-ads-region-4-object'
+        - $ref: '#/components/parameters/x-ads-region'
         - name: Session-Id
           in: header
           description: An ID to uniquely identify the file upload session.
@@ -1679,14 +1679,25 @@ components:
         - US
         - EMEA
         - AUS
+        - APAC
+        - CAN
+        - DEU
+        - IND
+        - JPN
+        - GBR
       description: |-
         Specifies where the bucket containing the object is stored. Possible values are:
 
-                - ``US`` - (Default) Data center for the US region.
-                - ``EMEA`` - Data center for the European Union, Middle East, and Africa.
-                - ``AUS`` -  (Beta) Data center for Australia.
+        - ``US`` : (Default) Data center for the US region.
+        - ``EMEA`` : Data center for the European Union, Middle East, and Africa.
+        - ``AUS`` : (Beta) Data center for Australia.
+        - ``CAN`` : Data center for the Canada region.
+        - ``DEU`` : Data center for the Germany region.
+        - ``IND`` : Data center for the India region.
+        - ``JPN`` : Data center for the Japan region.
+        - ``GBR`` : Data center for the United Kingdom region.
 
-                **Note:** Beta features are subject to change. Please do not use in production environments.
+        **Note:** Beta features are subject to change. Please do not use in production environments.     
     access:
       title: access
       x-stoplight:
@@ -1809,23 +1820,36 @@ components:
     x-ads-region:
       name: x-ads-region
       in: header
-      description: |
-        Specifies where the bucket must be stored. Possible values are:
-        - ``US`` - (Default) Data center for the US region.
-        - ``EMEA`` - Data center for the European Union, Middle East, and Africa.
-        - ``APAC`` -  (Beta) Data center for Australia.
+      description: |-
+        Specifies where the bucket containing the object is stored. Possible values are:
+
+        - ``US`` : (Default) Data center for the US region.
+        - ``EMEA`` : Data center for the European Union, Middle East, and Africa.
+        - ``AUS`` : (Beta) Data center for Australia.
+        - ``CAN`` : Data center for the Canada region.
+        - ``DEU`` : Data center for the Germany region.
+        - ``IND`` : Data center for the India region.
+        - ``JPN`` : Data center for the Japan region.
+        - ``GBR`` : Data center for the United Kingdom region.
+
         **Note:** Beta features are subject to change. Please do not use in production environments.
       schema:
         $ref: '#/components/schemas/region'
-    x-ads-region-4-object:
-      name: x-ads-region
+    region_header:
+      name: region
       in: header
-      description: |
-        Specifies where the bucket containing the object stored. Possible values are:
+      required: true
+      description: |-
+        Specifies where the bucket containing the object is stored. Possible values are:
 
-        - ``US`` - (Default) Data center for the US region.
-        - ``EMEA`` - Data center for the European Union, Middle East, and Africa.
-        - ``APAC`` -  (Beta) Data center for Australia.
+        - ``US`` : (Default) Data center for the US region.
+        - ``EMEA`` : Data center for the European Union, Middle East, and Africa.
+        - ``AUS`` : (Beta) Data center for Australia.
+        - ``CAN`` : Data center for the Canada region.
+        - ``DEU`` : Data center for the Germany region.
+        - ``IND`` : Data center for the India region.
+        - ``JPN`` : Data center for the Japan region.
+        - ``GBR`` : Data center for the United Kingdom region.
 
         **Note:** Beta features are subject to change. Please do not use in production environments.
       schema:
@@ -1833,12 +1857,17 @@ components:
     region:
       name: region
       in: query
-      description: |
-        Specifies where the bucket containing the object stored. Possible values are:
+      description: |-
+        Specifies where the bucket containing the object is stored. Possible values are:
 
-        - ``US`` - (Default) Data center for the US region.
-        - ``EMEA`` - Data center for the European Union, Middle East, and Africa.
-        - ``APAC`` -  (Beta) Data center for Australia.
+        - ``US`` : (Default) Data center for the US region.
+        - ``EMEA`` : Data center for the European Union, Middle East, and Africa.
+        - ``AUS`` : (Beta) Data center for Australia.
+        - ``CAN`` : Data center for the Canada region.
+        - ``DEU`` : Data center for the Germany region.
+        - ``IND`` : Data center for the India region.
+        - ``JPN`` : Data center for the Japan region.
+        - ``GBR`` : Data center for the United Kingdom region.
 
         **Note:** Beta features are subject to change. Please do not use in production environments.
       schema:
