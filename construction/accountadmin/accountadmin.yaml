@@ -31,7 +31,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Projects'
+                $ref: '#/components/schemas/ProjectsPage'
         '400':
           description: The request could not be understood by the server due to malformed syntax.
         '401':
@@ -62,7 +62,7 @@ paths:
             $ref: '#/components/schemas/Region'
           in: header
           name: Region
-          description: 'The region where the bucket resides. Acceptable values: US, EMEA, AUS.'
+          description: 'The region where the bucket resides. Acceptable values: US, EMEA, AUS, CAN, DEU, IND, JPN, GBR.'
         - schema:
             type: string
           in: header
@@ -185,7 +185,7 @@ paths:
             $ref: '#/components/schemas/Region'
           in: header
           name: Region
-          description: 'The region where the bucket resides. Acceptable values: US, EMEA, AUS.'
+          description: 'The region where the bucket resides. Acceptable values: US, EMEA, AUS, CAN, DEU, IND, JPN, GBR.'
         - schema:
             type: string
           in: header
@@ -250,7 +250,7 @@ paths:
             $ref: '#/components/schemas/Region'
           in: header
           name: Region
-          description: 'The region where the bucket resides. Acceptable values: US, EMEA, AUS.'
+          description: 'The region where the bucket resides. Acceptable values: US, EMEA, AUS, CAN, DEU, IND, JPN, GBR.'
         - schema:
             type: string
           in: header
@@ -277,7 +277,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ProjectPatchResponse'
+                $ref: '#/components/schemas/ProjectPatch'
         '400':
           description: The request could not be understood by the server due to malformed syntax.
         '403':
@@ -313,7 +313,7 @@ paths:
             $ref: '#/components/schemas/Region'
           in: header
           name: Region
-          description: 'The geographic area where the data is stored. Acceptable values: US, EMEA, AUS. By default, it is set to US.'
+          description: 'The geographic area where the data is stored. Acceptable values: US, EMEA, AUS, CAN, DEU, IND, JPN, GBR. By default, it is set to US.'
     parameters:
       - schema:
           type: string
@@ -375,7 +375,7 @@ paths:
             $ref: '#/components/schemas/Region'
           in: header
           name: Region
-          description: 'The geographic area where the data is stored. Acceptable values: US, EMEA, AUS. By default, it is set to US.'
+          description: 'The geographic area where the data is stored. Acceptable values: US, EMEA, AUS, CAN, DEU, IND, JPN, GBR. By default, it is set to US.'
         - schema:
             type: integer
           in: query
@@ -405,7 +405,7 @@ paths:
             $ref: '#/components/schemas/Region'
           in: header
           name: Region
-          description: 'The geographic area where the data is stored. Acceptable values: US, EMEA, AUS. By default, it is set to US.'
+          description: 'The geographic area where the data is stored. Acceptable values: US, EMEA, AUS, CAN, DEU, IND, JPN, GBR. By default, it is set to US.'
       responses:
         '201':
           description: A new resource has been successfully created.
@@ -455,14 +455,14 @@ paths:
             $ref: '#/components/schemas/Region'
           in: header
           name: Region
-          description: 'The geographic area where the data is stored. Acceptable values: US, EMEA, AUS. By default, it is set to US.'
+          description: 'The geographic area where the data is stored. Acceptable values: US, EMEA, AUS, CAN, DEU, IND, JPN, GBR. By default, it is set to US.'
       responses:
         '201':
           description: A new resource has been successfully created.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/CompanyImportResponse'
+                $ref: '#/components/schemas/CompanyImport'
         '400':
           description: The request could not be understood by the server due to malformed syntax.
         '403':
@@ -515,7 +515,7 @@ paths:
             $ref: '#/components/schemas/Region'
           in: header
           name: Region
-          description: 'The geographic area where the data is stored. Acceptable values: US, EMEA, AUS. By default, it is set to US.'
+          description: 'The geographic area where the data is stored. Acceptable values: US, EMEA, AUS, CAN, DEU, IND, JPN, GBR. By default, it is set to US.'
       responses:
         '200':
           description: The request has succeeded
@@ -551,7 +551,7 @@ paths:
             $ref: '#/components/schemas/Region'
           in: header
           name: Region
-          description: 'The geographic area where the data is stored. Acceptable values: US, EMEA, AUS. By default, it is set to US.'
+          description: 'The geographic area where the data is stored. Acceptable values: US, EMEA, AUS, CAN, DEU, IND, JPN, GBR. By default, it is set to US.'
       responses:
         '200':
           description: The request has succeeded
@@ -603,7 +603,7 @@ paths:
             $ref: '#/components/schemas/Region'
           in: header
           name: Region
-          description: 'The geographic area where the data is stored. Acceptable values: US, EMEA, AUS. By default, it is set to US.'
+          description: 'The geographic area where the data is stored. Acceptable values: US, EMEA, AUS, CAN, DEU, IND, JPN, GBR. By default, it is set to US.'
       tags:
         - Companies
       responses:
@@ -689,7 +689,7 @@ paths:
             $ref: '#/components/schemas/Region'
           in: header
           name: Region
-          description: 'The geographic area where the data is stored. Acceptable values: US, EMEA, AUS. By default, it is set to US.'
+          description: 'The geographic area where the data is stored. Acceptable values: US, EMEA, AUS, CAN, DEU, IND, JPN, GBR. By default, it is set to US.'
         - schema:
             type: string
           in: query
@@ -756,7 +756,7 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/CompanyResponse'
+                  $ref: '#/components/schemas/ProjectCompanies'
                   x-stoplight:
                     id: lcdrvybcvuy9t
         '400':
@@ -784,7 +784,7 @@ paths:
             $ref: '#/components/schemas/Region'
           in: header
           name: Region
-          description: 'The geographic area where the data is stored. Acceptable values: US, EMEA, AUS. By default, it is set to US.'
+          description: 'The geographic area where the data is stored. Acceptable values: US, EMEA, AUS, CAN, DEU, IND, JPN, GBR. By default, it is set to US.'
         - schema:
             type: integer
           in: query
@@ -849,7 +849,7 @@ paths:
             $ref: '#/components/schemas/Region'
           in: header
           name: Region
-          description: 'The geographic area where the data is stored. Acceptable values: US, EMEA, AUS. By default, it is set to US.'
+          description: 'The geographic area where the data is stored. Acceptable values: US, EMEA, AUS, CAN, DEU, IND, JPN, GBR. By default, it is set to US.'
         - schema:
             type: integer
           in: query
@@ -880,7 +880,7 @@ paths:
             $ref: '#/components/schemas/Region'
           in: header
           name: Region
-          description: 'The geographic area where the data is stored. Acceptable values: US, EMEA, AUS. By default, it is set to US.'
+          description: 'The geographic area where the data is stored. Acceptable values: US, EMEA, AUS, CAN, DEU, IND, JPN, GBR. By default, it is set to US.'
       responses:
         '201':
           description: A new resource has been successfully created.
@@ -927,14 +927,14 @@ paths:
             $ref: '#/components/schemas/Region'
           in: header
           name: Region
-          description: 'The geographic area where the data is stored. Acceptable values: US, EMEA, AUS. By default, it is set to US.'
+          description: 'The geographic area where the data is stored. Acceptable values: US, EMEA, AUS, CAN, DEU, IND, JPN, GBR. By default, it is set to US.'
       responses:
         '201':
           description: A new resource has been successfully created.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/UserImportResponse'
+                $ref: '#/components/schemas/UserImport'
         '400':
           description: The request could not be understood by the server due to malformed syntax.
         '403':
@@ -1005,7 +1005,7 @@ paths:
             $ref: '#/components/schemas/Region'
           in: header
           name: Region
-          description: 'The geographic area where the data is stored. Acceptable values: US, EMEA, AUS. By default, it is set to US.'
+          description: 'The geographic area where the data is stored. Acceptable values: US, EMEA, AUS, CAN, DEU, IND, JPN, GBR. By default, it is set to US.'
       description: Query the details of a specific user.
       security:
         - 2-legged: []
@@ -1021,7 +1021,7 @@ paths:
             $ref: '#/components/schemas/Region'
           in: header
           name: Region
-          description: 'The geographic area where the data is stored. Acceptable values: US, EMEA, AUS. By default, it is set to US.'
+          description: 'The geographic area where the data is stored. Acceptable values: US, EMEA, AUS, CAN, DEU, IND, JPN, GBR. By default, it is set to US.'
       responses:
         '200':
           description: The request has succeeded
@@ -1097,7 +1097,7 @@ paths:
             $ref: '#/components/schemas/Region'
           in: header
           name: Region
-          description: 'The geographic area where the data is stored. Acceptable values: US, EMEA, AUS. By default, it is set to US.'
+          description: 'The geographic area where the data is stored. Acceptable values: US, EMEA, AUS, CAN, DEU, IND, JPN, GBR. By default, it is set to US.'
         - schema:
             type: string
           in: query
@@ -1161,7 +1161,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ProjectUsers'
+                $ref: '#/components/schemas/ProjectUsersPage'
         '400':
           description: The request could not be understood by the server due to malformed syntax.
         '401':
@@ -1199,7 +1199,7 @@ paths:
             $ref: '#/components/schemas/Region'
           in: header
           name: Region
-          description: 'The region where the bucket resides. Acceptable values: US, EMEA, AUS.'
+          description: 'The region where the bucket resides. Acceptable values: US, EMEA, AUS, CAN, DEU, IND, JPN, GBR.'
         - schema:
             type: string
           in: header
@@ -1304,7 +1304,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ProjectUserResponse'
+                $ref: '#/components/schemas/ProjectUserDetails'
         '400':
           description: The request could not be understood by the server due to malformed syntax.
         '401':
@@ -1339,7 +1339,7 @@ paths:
             $ref: '#/components/schemas/Region'
           in: header
           name: Region
-          description: 'The region where the bucket resides. Acceptable values: US, EMEA, AUS.'
+          description: 'The region where the bucket resides. Acceptable values: US, EMEA, AUS, CAN, DEU, IND, JPN, GBR.'
         - schema:
             type: string
           in: header
@@ -1372,7 +1372,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ProjectUsersImportResponse'
+                $ref: '#/components/schemas/ProjectUsersImport'
         '400':
           description: The request could not be understood by the server due to malformed syntax.
         '401':
@@ -1407,7 +1407,7 @@ paths:
             $ref: '#/components/schemas/Region'
           in: header
           name: Region
-          description: 'The region where the bucket resides. Acceptable values: US, EMEA, AUS.'
+          description: 'The region where the bucket resides. Acceptable values: US, EMEA, AUS, CAN, DEU, IND, JPN, GBR.'
         - schema:
             type: string
           in: header
@@ -1483,7 +1483,7 @@ paths:
             $ref: '#/components/schemas/Region'
           in: header
           name: Region
-          description: 'The region where the bucket resides. Acceptable values: US, EMEA, AUS.'
+          description: 'The region where the bucket resides. Acceptable values: US, EMEA, AUS, CAN, DEU, IND, JPN, GBR.'
         - schema:
             type: string
           in: header
@@ -1508,7 +1508,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ProjectUserResponse'
+                $ref: '#/components/schemas/ProjectUserDetails'
         '400':
           description: The request could not be understood by the server due to malformed syntax.
         '401':
@@ -1546,7 +1546,7 @@ paths:
             $ref: '#/components/schemas/Region'
           in: header
           name: Region
-          description: 'The region where the bucket resides. Acceptable values: US, EMEA, AUS.'
+          description: 'The region where the bucket resides. Acceptable values: US, EMEA, AUS, CAN, DEU, IND, JPN, GBR.'
         - schema:
             type: string
           in: header
@@ -1602,7 +1602,7 @@ paths:
             $ref: '#/components/schemas/Region'
           in: header
           name: Region
-          description: 'The region where the bucket resides. Acceptable values: US, EMEA, AUS.'
+          description: 'The region where the bucket resides. Acceptable values: US, EMEA, AUS, CAN, DEU, IND, JPN, GBR.'
         - schema:
             type: string
           in: header
@@ -1623,7 +1623,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/BusinessUnitsResponse'
+                $ref: '#/components/schemas/BusinessUnits'
         '400':
           description: The request could not be understood by the server due to malformed syntax.
         '403':
@@ -1649,7 +1649,7 @@ paths:
             $ref: '#/components/schemas/Region'
           in: header
           name: Region
-          description: 'The geographic area where the data is stored. Acceptable values: US, EMEA, AUS. By default, it is set to US.'
+          description: 'The geographic area where the data is stored. Acceptable values: US, EMEA, AUS, CAN, DEU, IND, JPN, GBR. By default, it is set to US.'
     parameters:
       - schema:
           type: string
@@ -1665,7 +1665,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/BusinessUnitsResponse'
+                $ref: '#/components/schemas/BusinessUnits'
         '400':
           description: The request could not be understood by the server due to malformed syntax.
         '403':
@@ -1684,7 +1684,7 @@ paths:
             $ref: '#/components/schemas/Region'
           in: header
           name: Region
-          description: 'The geographic area where the data is stored. Acceptable values: US, EMEA, AUS. By default, it is set to US.'
+          description: 'The geographic area where the data is stored. Acceptable values: US, EMEA, AUS, CAN, DEU, IND, JPN, GBR. By default, it is set to US.'
       description: Query all the business units in a specific BIM 360 account.
       security:
         - 2-legged: []
@@ -1696,42 +1696,257 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/BusinessUnitsRequestPyload'
+              $ref: '#/components/schemas/BusinessUnitsPayload'
+  '/construction/admin/v1/accounts/{accountId}/users/{userId}/projects':
+    get:
+      summary: Get user projects
+      tags:
+        - User Projects
+      responses:
+        '200':
+          description: A list of requested user projects.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserProjectsPage'
+        '400':
+          description: The request could not be understood by the server due to malformed syntax.
+        '401':
+          description: Request has not been applied because it lacks valid authentication credentials for the target resource.
+        '403':
+          description: The server understood the request but refuses to authorize it.
+        '404':
+          description: The resource cannot be found.
+        '406':
+          description: The server cannot produce a response matching the list of acceptable values defined in the request.
+        '410':
+          description: Access to the target resource is no longer available.
+        '429':
+          description: User has sent too many requests in a given amount of time.
+        '500':
+          description: An unexpected error occurred on the server.
+        '503':
+          description: Server is not ready to handle the request.
+      operationId: getUserProjects
+      x-stoplight:
+        id: f6km4vaercy9d
+      description: Returns a list of projects for a specified user within an Autodesk Construction Cloud (ACC) or BIM 360 account. Only projects the user participates in will be returned. The calling user must be an account administrator.
+      security: []
+      parameters:
+        - schema:
+            $ref: '#/components/schemas/Region'
+          in: header
+          name: Region
+          description: 'Specifies the region where your request should be routed. If not set, the request is routed automatically, which may result in a slight increase in latency. Possible values: US, EMEA, AUS, CAN, DEU, IND, JPN, GBR. For a complete list of supported regions, see the Regions page.'
+        - schema:
+            type: string
+          in: header
+          name: User-Id
+          description: 'The ID of a user on whose behalf your request is acting. Your app has access to all users specified by the administrator in the SaaS integrations UI. Provide this header value to identify the user to be affected by the request.  You can use either the user’s ACC ID (id), or their Autodesk ID (autodeskId).  Note that this header is required for Account Admin POST, PATCH, and DELETE endpoints if you want to use a 2-legged authentication context. This header is optional for Account Admin GET endpoints.'
+        - schema:
+            $ref: '#/components/schemas/filterID'
+          in: query
+          name: 'filter[id]'
+          description: A list of project IDs to filter by.
+        - schema:
+            $ref: '#/components/schemas/userProjectFields_internal'
+          in: query
+          name: fields
+          description: 'A comma-separated list of user project fields to include in the response. If not specified, all available fields are included by default. Possible values: accessLevels, accountId, addressLine1, addressLine2, city, constructionType, country, createdAt, classification, deliveryMethod, endDate, imageUrl, jobNumber, latitude, longitude, name, platform, postalCode, projectValue, sheetCount, startDate, stateOrProvince, status, thumbnailImageUrl, timezone, type, updatedAt, contractType and currentPhase.'
+        - schema:
+            $ref: '#/components/schemas/filterClassification_internal'
+          in: query
+          name: 'filter[classification]'
+          description: 'Filters projects by classification. Possible values: production – Standard production projects. template – Project templates that can be cloned to create production projects. component – Placeholder projects that contain standardized components (e.g., forms) for use across projects. Only one component project is permitted per account. Known as a library in the ACC unified products UI. sample – The single sample project automatically created upon ACC trial setup. Only one sample project is permitted per account.  Max length: 255'
+        - schema:
+            type: string
+          in: query
+          name: 'filter[name]'
+          description: 'Filters projects by name. Supports partial matches when used with filterTextMatch. For example filter[name]=ABCco&filterTextMatch=startsWith returns projects whose names start with “ABCco”. Max length: 255'
+        - schema:
+            $ref: '#/components/schemas/filterPlatform_internal'
+          in: query
+          name: 'filter[platform]'
+          description: 'Filters by platform. Possible values: acc (Autodesk Construction Cloud) and bim360 (BIM 360). Max length: 255'
+        - schema:
+            $ref: '#/components/schemas/status_internal'
+          in: query
+          name: 'filter[status]'
+          description: 'Filters projects by status. Possible values: active, pending, archived, suspended.'
+        - schema:
+            $ref: '#/components/schemas/filterType'
+          in: query
+          name: 'filter[type]'
+          description: 'Filters by project type. To exclude a type, prefix it with - (e.g., -Bridge excludes bridge projects). Possible values: Airport, Assisted Living / Nursing Home, Bridge, Canal / Waterway, Convention Center, Court House, Data Center, Dams / Flood Control / Reservoirs, Demonstration Project, Dormitory, Education Facility, Government Building, Harbor / River Development, Hospital, Hotel / Motel, Library, Manufacturing / Factory, Medical Laboratory, Medical Office, Military Facility, Mining Facility, Multi-Family Housing, Museum, Oil & Gas,``Plant``, Office, OutPatient Surgery Center, Parking Structure / Garage, Performing Arts, Power Plant, Prison / Correctional Facility, Rail, Recreation Building, Religious Building, Research Facility / Laboratory, Restaurant, Retail, Seaport, Single-Family Housing, Solar Farm, Stadium/Arena, Streets / Roads / Highways, Template Project, Theme Park, Training Project, Transportation Building, Tunnel, Utilities, Warehouse (non-manufacturing), Waste Water / Sewers, Water Supply, Wind Farm.'
+        - schema:
+            type: string
+          in: query
+          name: 'filter[jobNumber]'
+          description: 'Filters by a user-defined project identifier. Supports partial matches when used with filterTextMatch. For example, filter[jobNumber]=HP-0002&filterTextMatch=equals returns projects where the job number is exactly “HP-0002”. Max length: 255'
+        - schema:
+            type: string
+          in: query
+          name: 'filter[updatedAt]'
+          description: 'Filters projects updated within a specific date range in ISO 8601 format. For example: Date range: 2023-03-02T00:00:00.000Z..2023-03-03T23:59:59 .999Z Specific start date: 2023-03-02T00:00:00.000Z.. Specific end date: ..2023-03-02T23:59:59.999Z  For more details, see JSON API Filtering.  Max length: 100'
+        - schema:
+            $ref: '#/components/schemas/userProjectAccessLevels_internal'
+          in: query
+          name: 'filter[accessLevels]'
+          description: 'Filters projects by user access level. Possible values: projectAdmin, projectMember. Max length: 255'
+        - schema:
+            $ref: '#/components/schemas/filterTextMatch'
+          in: query
+          name: filterTextMatch
+          description: 'Defines how text-based filters should match results. Possible values: contains (default) – Returns results where the text appears anywhere in the field. startsWith – Matches only if the field starts with the given value. endsWith – Matches only if the field ends with the given value. equals – Matches only if the field is an exact match.'
+        - schema:
+            $ref: '#/components/schemas/userProjectSortBy_internal'
+          in: query
+          name: sort
+          description: 'A list of fields to sort the returned user projects by. Multiple sort fields are applied in sequence order — each sort field produces groupings of projects with the same values of that field; the next sort field applies within the groupings produced by the previous sort field. Each property can be followed by a direction modifier of either asc (ascending) or desc (descending). The default is asc.  Possible values: name (the default), startDate, endDate, type, status, jobNumber, constructionType, deliveryMethod, contractType, currentPhase, createdAt, updatedAt and platform.'
+        - schema:
+            type: integer
+          in: query
+          name: limit
+          description: 'The maximum number of records per request. Default: 20. Minimum: 1, Maximum: 200. If a value greater than 200 is provided, only 200 records are returned.'
+        - schema:
+            type: integer
+          in: query
+          name: offset
+          description: 'The record number to start returning results from, used for pagination. For example, if limit=20 and offset=20, the request retrieves the second page of results.'
+    parameters:
+      - schema:
+          type: string
+        name: accountId
+        in: path
+        required: true
+        description: 'The ID of the ACC account that contains the project being created or the projects being retrieved. This corresponds to the hub ID in the Data Management API. To convert a hub ID into an account ID, remove the “b." prefix. For example, a hub ID of b.c8b0c73d-3ae9 translates to an account ID of c8b0c73d-3ae9.'
+      - schema:
+          type: string
+        name: userId
+        in: path
+        required: true
+        description: The ID of the user. You can use either the ACC ID (id) or the Autodesk ID (autodeskId).
+  '/construction/admin/v1/accounts/{accountId}/companies':
+    parameters:
+      - schema:
+          type: string
+        name: accountId
+        in: path
+        required: true
+        description: 'The ID of the ACC account that contains the project being created or the projects being retrieved. This corresponds to the hub ID in the Data Management API. To convert a hub ID into an account ID, remove the “b." prefix. For example, a hub ID of b.c8b0c73d-3ae9 translates to an account ID of c8b0c73d-3ae9.'
+    get:
+      summary: Get account companies
+      tags:
+        - Companies
+      responses:
+        '200':
+          description: The list of requested companies.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CompaniesPage'
+        '400':
+          description: The request could not be understood by the server due to malformed syntax.
+        '401':
+          description: Request has not been applied because it lacks valid authentication credentials for the target resource.
+        '403':
+          description: The server understood the request but refuses to authorize it.
+        '404':
+          description: The resource cannot be found.
+        '406':
+          description: The server cannot produce a response matching the list of acceptable values defined in the request.
+        '410':
+          description: Access to the target resource is no longer available.
+        '429':
+          description: User has sent too many requests in a given amount of time.
+        '500':
+          description: An unexpected error occurred on the server.
+        '503':
+          description: Server is not ready to handle the request.
+      operationId: getCompaniesWithPagination
+      x-stoplight:
+        id: hted2oapldhx4
+      description: "Returns a list of companies in an account.\r\n\r\nYou can also use this endpoint to filter out the list of companies by setting the filter parameters.\r\n\r\nNote that this endpoint is compatible with both BIM 360 and Autodesk Construction Cloud (ACC) projects."
+      parameters:
+        - schema:
+            $ref: '#/components/schemas/Region'
+          in: header
+          name: Region
+          description: 'Specifies the region where your request should be routed. If not set, the request is routed automatically, which may result in a slight increase in latency. Possible values: US, EMEA, AUS, CAN, DEU, IND, JPN, GBR. For a complete list of supported regions, see the Regions page.'
+        - schema:
+            type: string
+          in: header
+          name: User-Id
+          description: 'The ID of a user on whose behalf your request is acting. Your app has access to all users specified by the administrator in the SaaS integrations UI. Provide this header value to identify the user to be affected by the request.  You can use either the user’s ACC ID (id), or their Autodesk ID (autodeskId).  Note that this header is required for Account Admin POST, PATCH, and DELETE endpoints if you want to use a 2-legged authentication context. This header is optional for Account Admin GET endpoints.'
+        - schema:
+            type: string
+          in: query
+          name: 'filter[name]'
+          description: 'Filter companies by name. Can be a partial match based on the value of filterTextMatch provided. Max length: 255'
+        - schema:
+            type: string
+          in: query
+          name: 'filter[trade]'
+          description: 'Filter companies by trade. Can be a partial match based on the value of filterTextMatch provided. Max length: 255'
+        - schema:
+            type: string
+          in: query
+          name: 'filter[erpId]'
+          description: 'Filter companies by ERP Id. Can be a partial match based on the value of filterTextMatch provided. Max length: 255'
+        - schema:
+            type: string
+          in: query
+          name: 'filter[taxId]'
+          description: 'Filter companies by tax Id. Can be a partial match based on the value of filterTextMatch provided. Max length: 255'
+        - schema:
+            type: string
+          in: query
+          name: 'filter[updatedAt]'
+          description: 'Filter companies by updated at date range. The range must be specified with dates in an ISO-8601 format with time required. The start and end dates of the range should be separated by .. One of the dates in the range may be omitted. For example, to get everything on or before June 1, 2019 the range would be ..2019-06-01T23:59:59.999Z. To get everything after June 1, 2019 the range would be 2019-06-01T00:00:00.000Z... Max length: 100'
+        - schema:
+            $ref: '#/components/schemas/companyOrFilters_internal'
+          in: query
+          name: orFilters
+          description: 'List of filtered fields to apply an “or” operator. Valid list of fields are erpId, name, taxId, trade, updatedAt.'
+        - schema:
+            $ref: '#/components/schemas/filterTextMatch'
+          in: query
+          name: filterTextMatch
+          description: 'Defines how text-based filters should match results. Possible values: contains (default) – Returns results where the text appears anywhere in the field. startsWith – Matches only if the field starts with the given value. endsWith – Matches only if the field ends with the given value. equals – Matches only if the field is an exact match.'
+        - schema:
+            $ref: '#/components/schemas/filterCompanySort_internal'
+          in: query
+          name: sort
+          description: 'The list of fields to sort by. When multiple fields are listed the later property is used to sort the resources where the previous fields have the same value. Each property can be followed by a direction modifier of either asc (ascending) or desc (descending). If no direction is specified then asc is assumed. Valid fields for sorting are name, trade, erpId, taxId, status, createdAt, updatedAt, projectSize and userSize. Default sort is name.'
+        - schema:
+            $ref: '#/components/schemas/filterCompanyFields_internal'
+          in: query
+          name: fields
+          description: 'List of fields to return in the response. Defaults to all fields. Valid list of fields are accountId, name, trade, addresses, websiteUrl, description, erpId, taxId, imageUrl, status, createdAt, updatedAt, projectSize, userSize and originalName.'
+        - schema:
+            type: integer
+          in: query
+          name: limit
+          description: 'The maximum number of records per request. Default: 20. Minimum: 1, Maximum: 200. If a value greater than 200 is provided, only 200 records are returned.'
+        - schema:
+            type: integer
+          in: query
+          name: offset
+          description: 'The record number to start returning results from, used for pagination. For example, if limit=20 and offset=20, the request retrieves the second page of results.'
+      security:
+        - 2-legged: []
+        - 3-legged-implicit: []
+        - 3-legged: []
 components:
   schemas:
-    Projects:
+    ProjectsPage:
       title: Projects
       x-stoplight:
         id: ikvjx87zn5n72
       type: object
       properties:
         pagination:
-          type: object
-          description: The pagination object.
-          properties:
-            limit:
-              type: integer
-              description: The number of items per page.
-            offset:
-              type: integer
-              description: The page number that the results begin from.
-            totalResults:
-              type: integer
-              description: The number of items in the response.
-            nextUrl:
-              type: string
-              x-stoplight:
-                id: jcbjfd1jjp2hd
-              description: |-
-                The URL for the next page of records.
-                Max length: 2000
-            previousUrl:
-              type: string
-              x-stoplight:
-                id: 34icscki56svs
-              description: |-
-                The URL for the previous page of records.
-                Max length: 2000
+          $ref: '#/components/schemas/Pagination'
         results:
           type: array
           description: The requested page of projects.
@@ -2131,8 +2346,8 @@ components:
       required:
         - name
         - type
-    ProjectPatchResponse:
-      title: ProjectPatchResponse
+    ProjectPatch:
+      title: ProjectPatch
       x-stoplight:
         id: g4k3if9lta3pg
       type: object
@@ -2328,7 +2543,7 @@ components:
           x-stoplight:
             id: k6ponb7ozqs5j
           description: Used to associate a company in BIM 360 with the company data from public and industry sources
-    CompanyImportResponse:
+    CompanyImport:
       title: CompanyImportResponse
       x-stoplight:
         id: w1u6pqi8dlrys
@@ -2362,6 +2577,7 @@ components:
             $ref: '#/components/schemas/Company'
             x-stoplight:
               id: h3qbrhrr4tpef
+      description: ''
     CompanyPayload:
       title: CompanyPayload
       x-stoplight:
@@ -2507,7 +2723,7 @@ components:
           x-stoplight:
             id: k6ponb7ozqs5j
           description: Used to associate a company in BIM 360 with the company data from public and industry sources
-    CompanyResponse:
+    ProjectCompanies:
       title: Companies
       x-stoplight:
         id: 1ltchlash196q
@@ -2825,7 +3041,7 @@ components:
           description: Short description about the user
       required:
         - email
-    UserImportResponse:
+    UserImport:
       title: UserImportResponse
       x-stoplight:
         id: t8o0t7wpee7l3
@@ -2883,37 +3099,14 @@ components:
       enum:
         - active
         - inactive
-    ProjectUsers:
+    ProjectUsersPage:
       title: ProjectUsers
+      x-stoplight:
+        id: f584b87ecf8ca
       type: object
       properties:
         pagination:
-          type: object
-          description: The pagination object.
-          properties:
-            limit:
-              type: integer
-              description: The number of items per page.
-            offset:
-              type: integer
-              description: The page number that the results begin from.
-            totalResults:
-              type: integer
-              description: The number of items in the response.
-            nextUrl:
-              type: string
-              x-stoplight:
-                id: jcbjfd1jjp2hd
-              description: |-
-                The URL for the next page of records.
-                Max length: 2000
-            previousUrl:
-              type: string
-              x-stoplight:
-                id: 34icscki56svs
-              description: |-
-                The URL for the previous page of records.
-                Max length: 2000
+          $ref: '#/components/schemas/Pagination'
         results:
           type: array
           description: The requested page of project users.
@@ -3147,7 +3340,7 @@ components:
       required:
         - email
         - products
-    ProjectUserResponse:
+    ProjectUserDetails:
       title: ProjectUserResponse
       x-stoplight:
         id: yiq5880t5rnsf
@@ -3398,7 +3591,7 @@ components:
             required:
               - email
               - products
-    ProjectUsersImportResponse:
+    ProjectUsersImport:
       title: ProjectUsersImportResponse
       x-stoplight:
         id: 4vlcsf9vutqs8
@@ -3503,7 +3696,7 @@ components:
           type: string
           x-stoplight:
             id: epd0mv6uik60l
-    BusinessUnitsResponse:
+    BusinessUnits:
       title: BusinessUnitsResponse
       x-stoplight:
         id: bje738qyuuz2v
@@ -3517,8 +3710,8 @@ components:
             $ref: '#/components/schemas/BusinessUnit'
             x-stoplight:
               id: 2sl170itvk70g
-    BusinessUnitsRequestPyload:
-      title: BusinessUnitsRequestPyload
+    BusinessUnitsPayload:
+      title: BusinessUnitsPayload
       x-stoplight:
         id: vg238uncrewqq
       type: object
@@ -3528,11 +3721,11 @@ components:
           x-stoplight:
             id: 9dce24721l40s
           items:
-            $ref: '#/components/schemas/BusinessUnitsRequest'
+            $ref: '#/components/schemas/BusinessUnitsObject'
             x-stoplight:
               id: xmd2c1g2ax76z
-    BusinessUnitsRequest:
-      title: BusinessUnitsRequest
+    BusinessUnitsObject:
+      title: BusinessUnitsObject
       x-stoplight:
         id: ofwz7wxle2i79
       type: object
@@ -3581,6 +3774,21 @@ components:
         - US
         - EMEA
         - AUS
+        - CAN
+        - DEU
+        - IND
+        - JPN
+        - GBR
+      description: |-
+        Specifies the region where your request should be routed. Possible values are:
+        - ``US`` - Data center for the US region.
+        - ``EMEA`` - Data center for the European Union, Middle East, and Africa regions.
+        - ``AUS`` - Data center for the Australia region.
+        - ``CAN`` - Data center for the Canada region.
+        - ``DEU`` - Data center for the Germany region.
+        - ``IND`` - Data center for the India region.
+        - ``JPN`` - Data center for the Japan region.
+        - ``GBR`` - Data center for the United Kingdom region.
     filterClassification_internal:
       title: filterClassification_internal
       type: array
@@ -4274,6 +4482,490 @@ components:
         - Wood & Plastics
         - Wood & Plastics | Millwork
         - Wood & Plastics | Rough Carpentry
+    UserProject:
+      title: UserProjects
+      x-stoplight:
+        id: plmcgnhp47xzj
+      type: object
+      properties:
+        id:
+          type: string
+          x-stoplight:
+            id: 1c5qx7gynn1xb
+        name:
+          type: string
+          x-stoplight:
+            id: ksf91csdi2bww
+        startDate:
+          type: string
+          x-stoplight:
+            id: fvtfj8lc1z9zo
+        endDate:
+          type: string
+          x-stoplight:
+            id: h43bjx5szmsqe
+        type:
+          type: string
+          x-stoplight:
+            id: 8yoy6veksnyha
+        classification:
+          type: string
+          x-stoplight:
+            id: wpyl2maqv1tfw
+        projectValue:
+          type: object
+          x-stoplight:
+            id: 4azod9lx00sdp
+          properties:
+            value:
+              type: number
+              x-stoplight:
+                id: 2u8hoxbsk0y3j
+            currency:
+              type: string
+              x-stoplight:
+                id: om037w3a0htka
+        status:
+          type: string
+          x-stoplight:
+            id: dcz1h6o6olnfv
+        jobNumber:
+          type: string
+          x-stoplight:
+            id: vo6fawen0jm7i
+        addressLine1:
+          type: string
+          x-stoplight:
+            id: i007upy8nhu2r
+        addressLine2:
+          type: string
+          x-stoplight:
+            id: co6e1yvqifdn2
+        city:
+          type: string
+          x-stoplight:
+            id: tyvtrji3sdnbq
+        stateOrProvince:
+          type: string
+          x-stoplight:
+            id: ne8i2oguwq7w1
+        postalCode:
+          type: string
+          x-stoplight:
+            id: us6vbwa65sgdt
+        country:
+          type: string
+          x-stoplight:
+            id: blhaa4hafsk7m
+        latitude:
+          type: string
+          x-stoplight:
+            id: hcnrvm61cvtir
+        longitude:
+          type: string
+          x-stoplight:
+            id: wavhek4j0ji86
+        timezone:
+          type: string
+          x-stoplight:
+            id: r652g4e5s8iiz
+        constructiontype:
+          type: string
+          x-stoplight:
+            id: 72ssr45v7vf7r
+        deliveryMethod:
+          type: string
+          x-stoplight:
+            id: r9347swo3kufg
+        contractType:
+          type: string
+          x-stoplight:
+            id: n57ef17waubcc
+        currentPhase:
+          type: string
+          x-stoplight:
+            id: swkada61qtkp5
+        imageUrl:
+          type: string
+          x-stoplight:
+            id: s13853c7sqfxj
+        thumbnailImageUrl:
+          type: string
+          x-stoplight:
+            id: pt070foltwzzm
+        createdAt:
+          type: string
+          x-stoplight:
+            id: eor56akwbojpr
+        updatedAt:
+          type: string
+          x-stoplight:
+            id: 7f2h4747y0g3d
+        accountId:
+          type: string
+          x-stoplight:
+            id: imb1079oceczz
+        sheetCount:
+          type: integer
+          x-stoplight:
+            id: k12b5jfgzcv3k
+        platform:
+          type: string
+          x-stoplight:
+            id: 34qz3ermzcqll
+        accessLevels:
+          x-stoplight:
+            id: g6dygis0tn93s
+          type: object
+          properties:
+            projectAdmin:
+              type: boolean
+              x-stoplight:
+                id: 5mk3sjbuzvwbr
+            projectMember:
+              type: boolean
+              x-stoplight:
+                id: mpbt2fkkr3l82
+    UserProjectsPage:
+      title: UserProjectsPage
+      x-stoplight:
+        id: 21k3qjv4voxsj
+      type: object
+      properties:
+        pagination:
+          $ref: '#/components/schemas/Pagination'
+        results:
+          type: array
+          x-stoplight:
+            id: gfyprxttv09sa
+          items:
+            $ref: '#/components/schemas/UserProject'
+    userProjectFields:
+      title: userProjectFields
+      x-stoplight:
+        id: fy1b5tna99hlx
+      enum:
+        - accessLevels
+        - accountId
+        - addressLine1
+        - addressLine2
+        - city
+        - constructionType
+        - country
+        - createdAt
+        - classification
+        - deliveryMethod
+        - endDate
+        - imageUrl
+        - jobNumber
+        - latitude
+        - longitude
+        - name
+        - platform
+        - postalCode
+        - projectValue
+        - sheetCount
+        - startDate
+        - stateOrProvince
+        - status
+        - thumbnailImageUrl
+        - timezone
+        - type
+        - updatedAt
+        - contractType
+        - currentPhase
+      description: 'Possible values: accessLevels, accountId, addressLine1, addressLine2, city, constructionType, country, createdAt, classification, deliveryMethod, endDate, imageUrl, jobNumber, latitude, longitude, name, platform, postalCode, projectValue, sheetCount, startDate, stateOrProvince, status, thumbnailImageUrl, timezone, type, updatedAt, contractType and currentPhase.'
+    userProjectFields_internal:
+      title: userProjectFields_Internal
+      x-stoplight:
+        id: 05hzynqgt6ohg
+      type: array
+      items:
+        $ref: '#/components/schemas/userProjectFields'
+    userProjectAccessLevels_internal:
+      title: userProjectAccessLevels_internal
+      x-stoplight:
+        id: 6k9hozeod0uw9
+      type: array
+      items:
+        $ref: '#/components/schemas/filterUserProjectsAccessLevels'
+    userProjectSortBy:
+      title: userProjectSortBy
+      x-stoplight:
+        id: daw62gto3pxxm
+      description: 'Possible values: name, email, firstName, lastName, addressLine1, addressLine2, city, companyName, stateOrProvince, status, phone, postalCode, country and addedOn. Default value: name.'
+      enum:
+        - name asc
+        - startDate asc
+        - endDate asc
+        - type asc
+        - status asc
+        - jobNumber asc
+        - constructionType asc
+        - deliveryMethod asc
+        - contractType asc
+        - currentPhase asc
+        - createdAt asc
+        - updatedAt asc
+        - platform asc
+        - name desc
+        - startDate desc
+        - endDate desc
+        - type desc
+        - status desc
+        - jobNumber desc
+        - constructionType desc
+        - deliveryMethod desc
+        - contractType desc
+        - currentPhase desc
+        - createdAt desc
+        - updatedAt desc
+        - platform desc
+    userProjectSortBy_internal:
+      title: userProjectSortBy_internal
+      x-stoplight:
+        id: lcab8shnq3bqn
+      type: array
+      items:
+        $ref: '#/components/schemas/userProjectSortBy'
+    Pagination:
+      title: Pagination
+      x-stoplight:
+        id: q1bi13503pl18
+      type: object
+      properties:
+        limit:
+          type: integer
+          x-stoplight:
+            id: 8izi1f176ek68
+        offset:
+          type: integer
+          x-stoplight:
+            id: v1vdhhbk5vhtj
+        totalResults:
+          type: integer
+          x-stoplight:
+            id: o7y9s28pvovds
+        nextUrl:
+          type: string
+          x-stoplight:
+            id: egebyg74p2y51
+        previousUrl:
+          type: string
+          x-stoplight:
+            id: rhoc949ms1w0p
+      description: "\tContains pagination details for the records returned by the endpoint."
+    filterUserProjectsAccessLevels:
+      title: filterUserProjectsAccessLevels
+      x-stoplight:
+        id: puy9b77q6msat
+      enum:
+        - projectMember
+        - projectAdmin
+      description: ' Possible values: projectAdmin, projectMember.'
+    CompaniesPage:
+      title: AccountCompaniesPage
+      x-stoplight:
+        id: wuh03fw48u7sk
+      type: object
+      properties:
+        pagination:
+          $ref: '#/components/schemas/Pagination'
+        results:
+          type: array
+          x-stoplight:
+            id: ivk9ommljka7z
+          items:
+            $ref: '#/components/schemas/AccountCompany'
+    AccountCompany:
+      title: AccountCompany
+      x-stoplight:
+        id: dakt3mogkiqky
+      type: object
+      properties:
+        id:
+          type: string
+          x-stoplight:
+            id: ugixz7bx82y2w
+        accountId:
+          type: string
+          x-stoplight:
+            id: 726lpvp41ydqw
+        name:
+          type: string
+          x-stoplight:
+            id: e0gc4yiblj4sv
+        trade:
+          type: string
+          x-stoplight:
+            id: zmuamaitunhm3
+        addresses:
+          type: array
+          x-stoplight:
+            id: 8kkwb15qm8yiu
+          items:
+            $ref: '#/components/schemas/AccountCompanyAddress'
+        websiteUrl:
+          type: string
+          x-stoplight:
+            id: fvtvf2kxtu9c2
+        description:
+          type: string
+          x-stoplight:
+            id: qmcsqg0cptopm
+        erpId:
+          type: string
+          x-stoplight:
+            id: u7ixxmf1zmzmy
+        taxId:
+          type: string
+          x-stoplight:
+            id: jefyyyzhm87wo
+        imageUrl:
+          type: string
+          x-stoplight:
+            id: c7pk6958k6a3t
+        status:
+          $ref: '#/components/schemas/CompanyStatus'
+        createdAt:
+          type: string
+          x-stoplight:
+            id: pzy21nq11aest
+        updatedAt:
+          type: string
+          x-stoplight:
+            id: orpi3lguftr9n
+        originalName:
+          type: string
+          x-stoplight:
+            id: fgsaidhu4mqvh
+        projectSize:
+          type: integer
+          x-stoplight:
+            id: n3d4f06fgayfp
+        userSize:
+          type: integer
+          x-stoplight:
+            id: z0yopb69ae5er
+    CompanyStatus:
+      title: CompanyStatus
+      x-stoplight:
+        id: gu3srhv8dhmu7
+      enum:
+        - deleted
+        - active
+    companyOrFilters:
+      title: companyOrFilters
+      x-stoplight:
+        id: f204luot495u0
+      enum:
+        - erpId
+        - name
+        - taxId
+        - trade
+        - updatedAt
+    companyOrFilters_internal:
+      title: companyOrFilters_internal
+      x-stoplight:
+        id: wopm3nw7uinr6
+      type: array
+      items:
+        $ref: '#/components/schemas/companyOrFilters'
+    filterCompanySort:
+      title: filterCompanySort
+      x-stoplight:
+        id: 5yrds3d69hbdb
+      enum:
+        - name asc
+        - trade asc
+        - erpId asc
+        - taxId asc
+        - status asc
+        - createdAt asc
+        - updatedAt asc
+        - projectSize asc
+        - userSize asc
+        - name desc
+        - trade desc
+        - erpId desc
+        - taxId desc
+        - status desc
+        - createdAt desc
+        - updatedAt desc
+        - projectSize desc
+        - userSize desc
+    filterCompanySort_internal:
+      title: filterCompanySort_internal
+      x-stoplight:
+        id: 6rvwix917rwby
+      type: array
+      items:
+        $ref: '#/components/schemas/filterCompanySort'
+    filterCompanyFields_internal:
+      title: filterCompanyFields_internal
+      x-stoplight:
+        id: n29a18k9ziwif
+      type: array
+      items:
+        $ref: '#/components/schemas/filterCompanyFields'
+    filterCompanyFields:
+      title: filterCompanyFields
+      x-stoplight:
+        id: hp5r12lpjjgfa
+      enum:
+        - accountId
+        - name
+        - trade
+        - addresses
+        - websiteUrl
+        - description
+        - erpId
+        - taxId
+        - imageUrl
+        - status
+        - createdAt
+        - updatedAt
+        - projectSize
+        - userSize
+        - originalName
+    AccountCompanyAddress:
+      title: AccountCompanyAddress
+      x-stoplight:
+        id: w83g4phsegjmc
+      type: object
+      properties:
+        type:
+          type: string
+          x-stoplight:
+            id: vta9ily9vtev0
+        addressLine1:
+          type: string
+          x-stoplight:
+            id: dibe53qdw3a5a
+        addressLine2:
+          type: string
+          x-stoplight:
+            id: 5cudpup7l7yoy
+        city:
+          type: string
+          x-stoplight:
+            id: awsdybgl6g2qh
+        stateOrProvince:
+          type: string
+          x-stoplight:
+            id: 98sc9ieedaak8
+        postalCode:
+          type: string
+          x-stoplight:
+            id: 1mz7lqqjcnvqo
+        country:
+          type: string
+          x-stoplight:
+            id: t9pw98u1logv2
+        phone:
+          type: string
+          x-stoplight:
+            id: m4r6utt1gzmnb
   securitySchemes:
     2-legged:
       type: oauth2
@@ -4306,3 +4998,4 @@ tags:
   - name: Companies
   - name: Project Users
   - name: Projects
+  - name: User Projects

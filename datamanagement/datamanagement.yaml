@@ -7501,6 +7501,11 @@ components:
         - US
         - EMEA
         - AUS
+        - CAN
+        - DEU
+        - IND
+        - JPN
+        - GBR
       x-stoplight:
         id: qy609yu6fbfsf
       description: |-
@@ -7509,6 +7514,11 @@ components:
         - ``US`` - Data center for the US region.
         - ``EMEA`` - Data center for the European Union, Middle East, and Africa regions.
         - ``AUS`` - Data center for the Australia region.
+        - ``CAN`` - Data center for the Canada region.
+        - ``DEU`` - Data center for the Germany region.
+        - ``IND`` - Data center for the India region.
+        - ``JPN`` - Data center for the Japan region.
+        - ``GBR`` - Data center for the United Kingdom region.
     reftypes_xref:
       type: string
       enum:

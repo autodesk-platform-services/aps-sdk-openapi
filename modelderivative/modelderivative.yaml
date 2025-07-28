@@ -68,9 +68,8 @@ components:
       schema:
         type: boolean
       description: |
-        ``true``: Forces the system to parse property data all over again. Use this option to retrieve an object tree when previous attempts have failed.
-
-        ``false``: (Default) Use previously parsed property data to extract the object tree.
+        - ``true``: Forces the system to parse property data all over again. Use this option to retrieve an object tree when previous attempts have failed.
+        - ``false``: (Default) Use previously parsed property data to extract the object tree.
     x-ads-derivative-format:
       name: x-ads-derivative-format
       in: header
@@ -113,9 +112,12 @@ components:
 
         - ``US`` - (Default) Data center for the US region.
         - ``EMEA`` - Data center for the European Union, Middle East, and Africa. 
-        - ``APAC`` - (Beta) Data center for the Australia region.
-
-        **Note**: Beta features are subject to change. Please avoid using them in production environments.
+        - ``AUS`` - Data center for the Australia region.
+        - ``CAN`` - Data center for the Canada region.
+        - ``DEU`` - Data center for the Germany region.
+        - ``IND`` - Data center for the India region.
+        - ``JPN`` - Data center for the Japan region.
+        - ``GBR``  - Data center for the United Kingdom region.
     source-design-urn:
       name: urn
       in: path
@@ -482,14 +484,22 @@ components:
         - ``US`` - Data center for the US region.
         - ``EMEA`` - Data center for the European Union, Middle East, and Africa. 
         - ``AUS`` - (Beta) Data center for the Australia region.
-
-        **Note**: Beta features are subject to change. Please avoid using them in production environments.
+        - ``CAN`` - Data center for the Canada region.
+        - ``DEU`` - Data center for the Germany region.
+        - ``IND`` - Data center for the India region.
+        - ``JPN`` - Data center for the Japan region.
+        - ``GBR``  - Data center for the United Kingdom region.
       enum:
         - US
         - EMEA
         - AUS
+        - CAN
+        - DEU
+        - IND
+        - JPN
+        - GBR
     SupportedFormats:
-      description: An object that represents the successful response of a List Supported Formats operation.
+      description: Represents the successful response of a List Supported Formats operation.
       x-stoplight:
         id: 8a4da3d6557e2
       type: object
@@ -827,7 +837,7 @@ components:
               Key-value pairs. The key is the target file format. The value is an array of source design file formats that can be translated to the specified target file format.
       title: ''
     ObjectTree:
-      description: An object that represents the successful response of a Fetch Object Tree operation.
+      description: Represents the successful response of a Fetch Object Tree operation.
       type: object
       x-examples:
         example-1:
@@ -917,7 +927,7 @@ components:
       properties:
         data:
           type: object
-          description: An envelope that contains the return data.
+          description: Container for the data returned by the List Model Views operation.
           required:
             - type
             - metadata
@@ -948,9 +958,8 @@ components:
                   isMasterView:
                     type: boolean
                     description: |-
-                      ``true``: Model View is a Master View derived from a Revit source design.
-
-                      ``false``: Model View is not a Master View.
+                      - ``true``: Model View is a Master View derived from a Revit source design.
+                      - ``false``: Model View is not a Master View.
                 required:
                   - name
                   - guid
@@ -958,11 +967,9 @@ components:
                   - isMasterView
       required:
         - data
-      description: An object that represents the successful response of a List Model Views operation.
+      description: Represents the successful response of a List Model Views operation.
     Properties:
-      description: An object that represents a successful response to a Fetch All Properties operation.
-      x-stoplight:
-        id: 34f73d170c62a
+      description: Represents a successful response to a Fetch All Properties operation.
       type: object
       x-examples:
         example-1:
@@ -1067,7 +1074,7 @@ components:
       properties:
         data:
           type: object
-          description: An envelope that encapsulates the return data.
+          description: Container for the data returned by the Fetch All Properties operation.
           required:
             - type
             - collection
@@ -1117,7 +1124,7 @@ components:
       required:
         - data
     SpecificProperties:
-      description: An object that represents the successful response of a Fetch Specific Properties operation.
+      description: Represents the successful response of a Fetch Specific Properties operation.
       type: object
       x-examples:
         example-1:
@@ -1152,7 +1159,7 @@ components:
       properties:
         pagination:
           type: object
-          description: Envelope that contains pagination information.
+          description: Container for the attributes that define how the response paginated.
           required:
             - limit
             - offset
@@ -1190,7 +1197,7 @@ components:
             offset: 0
             limit: 20
           payload: text
-      description: An object that represents the request body of a Fetch Specific Properties operation.
+      description: Represents the request body of a Fetch Specific Properties operation.
       properties:
         pagination:
           type: object
@@ -1269,7 +1276,12 @@ components:
 
             - ``US`` - Data center for the US region.
             - ``EMEA`` - Data center for European Union, Middle East, and Africa. 
-            - ``APAC`` - Data center for the Australia region.
+            - ``AUS`` - Data center for the Australia region.
+            - ``CAN`` - Data center for the Canada region.
+            - ``DEU`` - Data center for the Germany region.
+            - ``IND`` - Data center for the India region.
+            - ``JPN`` - Data center for the Japan region.
+            - ``GBR``  - Data center for the United Kingdom region.
         version:
           type: string
           minLength: 1
@@ -1407,15 +1419,17 @@ components:
           region: US
           version: '1.0'
           status: success
-      description: An object that represents the successful response of a Fetch Manifest operation.
+      description: Represents the successful response of a Fetch Manifest operation.
     JobPayload:
       type: object
-      title: ''
-      description: An object that represents the request body of a Create Translation Job operation.
+      description: Represents the request body of a Create Translation Job operation.
+      required:
+        - input
+        - output
       properties:
         input:
           type: object
-          description: An object describing the attributes of the source design.
+          description: Describes the attributes of the source design.
           required:
             - urn
           properties:
@@ -1441,24 +1455,36 @@ components:
                 - ``false`` - (Default) Instructs the system not to check for references.
         output:
           type: object
-          description: An object describing the attributes of the requested derivatives.
+          description: Describes the attributes of the requested derivatives.
           required:
             - formats
           properties:
             destination:
               type: object
-              description: Specifies where to store generated derivatives.
+              description: |-
+                (Deprecated) Specifies where to store generated derivatives.
+
+                **Note:** Please use the ``region`` header instead of this attribute.
+              deprecated: true
               properties:
                 region:
                   type: string
                   description: |
                     Specifies where to store generated derivatives. Possible values are:
 
-                    - ``US``: (Default) Store derivatives at a data center for the United States of America.
-                    - ``EMEA``: Store derivatives at a data center for the European Union. 
-                    - ``APAC``: (Beta) Store derivatives at a data center for the Australia region. 
+                    - ``US`` - (Default) Store derivatives at a data center for the United States of America.
+                    - ``EMEA`` - Store derivatives at a data center for the European Union. 
+                    - ``AUS`` - (Beta) Store derivatives at a data center for the Australia region.
+                    - ``CAN`` - Data center for the Canada region.
+                    - ``DEU`` - Data center for the Germany region.
+                    - ``IND`` - Data center for the India region.
+                    - ``JPN`` - Data center for the Japan region.
+                    - ``GBR``  - Data center for the United Kingdom region.
 
-                    **Note**: Beta features are subject to change. Please avoid using them in production environments.
+                    **Note**: 
+
+                    - Please use the ``region`` header instead of this attribute.
+                  deprecated: true
             formats:
               type: array
               description: 'An array of objects, where each object represents a requested derivative format. You can request multiple derivatives.'
@@ -1466,7 +1492,7 @@ components:
                 $ref: '#/components/schemas/JobPayloadFormat'
         misc:
           type: object
-          description: A collection of miscellaneous parameters.
+          description: Contains webhook configuration settings for notifying external systems about translation job events.
           properties:
             workflow:
               type: string
@@ -1474,11 +1500,8 @@ components:
             workflowAttribute:
               type: object
               description: 'A user-defined JSON object, which you can use to set some custom workflow information. It must be less than 1KB and is ignored if ``misc.workflow`` is not specified.'
-      required:
-        - input
-        - output
     JobPayloadFormat:
-      description: Options for the output. The available options depend on the output type.
+      description: Contains the configuration settings for each output type a translation job must produce. The available options depend on the output type.
       anyOf:
         - $ref: '#/components/schemas/JobPayloadFormatSVF'
         - $ref: '#/components/schemas/JobPayloadFormatSVF2'
@@ -1493,7 +1516,7 @@ components:
       type: object
       x-stoplight:
         id: a17f6b6e90f6d
-      description: Options for SVF outputs.
+      description: Describes the options for translation jobs producing SVF outputs.
       properties:
         views:
           type: array
@@ -1503,7 +1526,7 @@ components:
         type:
           $ref: '#/components/schemas/OutputType'
         advanced:
-          description: Advanced options for ``svf`` output types. The available options depend on the input type.
+          description: Contains advanced configuration settings for translation jobs producing ``svf`` outputs. The available options depend on the input type.
           oneOf:
             - $ref: '#/components/schemas/JobPayloadFormatSVFAdvancedRVT'
             - $ref: '#/components/schemas/JobPayloadFormatSVFAdvancedDGN'
@@ -1517,7 +1540,7 @@ components:
       type: object
       x-stoplight:
         id: e31c34513f0dc
-      description: Options for SVF2 outputs.
+      description: Describes the options for translation jobs producing  SVF2 outputs.
       properties:
         views:
           type: array
@@ -1527,7 +1550,7 @@ components:
         type:
           $ref: '#/components/schemas/OutputType'
         advanced:
-          description: Advanced options for ``svf2`` output types. The available options depend on the input type.
+          description: Contains advanced configuration settings for translation jobs producing ``svf2`` outputs. The available options depend on the input type.
           anyOf:
             - $ref: '#/components/schemas/JobPayloadFormatSVF2AdvancedRVT'
             - $ref: '#/components/schemas/JobPayloadFormatSVF2AdvancedDGN'
@@ -1541,7 +1564,7 @@ components:
       type: object
       x-stoplight:
         id: 0c629432cb001
-      description: Options for thumbnail outputs.
+      description: Describes the options for translation jobs producing  thumbnail outputs.
       properties:
         type:
           $ref: '#/components/schemas/OutputType'
@@ -1552,7 +1575,7 @@ components:
       type: object
       x-stoplight:
         id: b4ca77d74d566
-      description: Options for STL outputs.
+      description: Describes the options for translation jobs producing  STL outputs.
       properties:
         type:
           $ref: '#/components/schemas/OutputType'
@@ -1571,7 +1594,7 @@ components:
             surfaceType: bounded
             sheetType: surface
             solidType: solid
-      description: Options for IGES outputs.
+      description: Describes the options for translation jobs producing  IGES outputs.
       properties:
         type:
           $ref: '#/components/schemas/OutputType'
@@ -1582,7 +1605,7 @@ components:
       type: object
       x-stoplight:
         id: dcd571776a0eb
-      description: Options for STEP outputs.
+      description: Describes the options for translation jobs producing  STEP outputs.
       properties:
         type:
           $ref: '#/components/schemas/OutputType'
@@ -1593,7 +1616,7 @@ components:
       type: object
       x-stoplight:
         id: f16ce1a277080
-      description: Options for OBJ outputs.
+      description: Describes the options for translation jobs producing  OBJ outputs.
       properties:
         type:
           $ref: '#/components/schemas/OutputType'
@@ -1609,7 +1632,7 @@ components:
           type: svf
           views:
             - 2d
-      description: Options for DWG outputs.
+      description: Describes the options for translation jobs producing  DWG outputs.
       properties:
         type:
           $ref: '#/components/schemas/OutputType'
@@ -1625,7 +1648,7 @@ components:
           type: svf
           views:
             - 2d
-      description: Options for IFC outputs.
+      description: Describes the options for translation jobs producing  IFC outputs.
       properties:
         type:
           $ref: '#/components/schemas/OutputType'
@@ -1656,7 +1679,7 @@ components:
               description: 'Identical to the ``output`` object of the request body. For information on each attribute, see the request body structure description.'
           description: List of the requested outputs.
       title: ''
-      description: An object that represents the successful response of a Create Translation Job operation.
+      description: Represents the successful response of a Create Translation Job operation.
     XAdsDerivativeFormat:
       type: string
       x-stoplight:
@@ -1675,7 +1698,7 @@ components:
       x-stoplight:
         id: y7tfjbr0mg37l
       type: object
-      description: An object that represents the successful response of a Fetch Derivative Download operation.
+      description: Represents the successful response of a Fetch Derivative Download operation.
       properties:
         etag:
           type: string
@@ -1706,7 +1729,7 @@ components:
       type: object
       x-stoplight:
         id: 1e0705e0ff030
-      description: Advanced options for Revit inputs.
+      description: Contains advanced configuration settings for translation jobs processing Revit inputs.
       properties:
         2dviews:
           $ref: '#/components/schemas/2dView'
@@ -1730,7 +1753,7 @@ components:
       type: object
       x-stoplight:
         id: evo9s66tdxtyo
-      description: Advanced options for Revit inputs.
+      description: Contains advanced configuration settings for translation jobs processing Revit inputs.
       properties:
         2dviews:
           $ref: '#/components/schemas/2dView'
@@ -1754,7 +1777,7 @@ components:
       type: object
       x-stoplight:
         id: 63cb7d72e76e6
-      description: Advanced options for IFC inputs.
+      description: Contains advanced configuration settings for translation jobs processing IFC inputs.
       properties:
         conversionMethod:
           $ref: '#/components/schemas/ConversionMethod'
@@ -1769,7 +1792,7 @@ components:
       type: object
       x-stoplight:
         id: idy8w05irf07j
-      description: Advanced options for IFC inputs.
+      description: Contains advanced configuration settings for translation jobs processing IFC inputs.
       properties:
         conversionMethod:
           $ref: '#/components/schemas/ConversionMethod'
@@ -1784,7 +1807,7 @@ components:
       type: object
       x-stoplight:
         id: bbfec7ed23a45
-      description: Advanced options for DGN inputs.
+      description: Contains advanced configuration settings for translation jobs processing DGN inputs.
       properties:
         requestedLinkageIDs:
           type: array
@@ -1796,7 +1819,7 @@ components:
       type: object
       x-stoplight:
         id: r402odcqc0iau
-      description: Advanced options for DGN inputs.
+      description: Contains advanced configuration settings for translation jobs processing  DGN inputs.
       properties:
         requestedLinkageIDs:
           type: array
@@ -1808,7 +1831,7 @@ components:
       type: object
       x-stoplight:
         id: 0544ebc2cd021
-      description: Advanced options for DWG inputs.
+      description: Contains advanced configuration settings for translation jobs processing DWG inputs.
       properties:
         2dviews:
           $ref: '#/components/schemas/2dView'
@@ -1817,7 +1840,7 @@ components:
       type: object
       x-stoplight:
         id: t79xhi9ygp3nx
-      description: Advanced options for DWG inputs.
+      description: Contains advanced configuration settings for translation jobs processing DWG inputs.
       properties:
         2dviews:
           $ref: '#/components/schemas/2dView'
@@ -1826,7 +1849,7 @@ components:
       type: object
       x-stoplight:
         id: 703336cb624d3
-      description: Advanced options for NWD inputs.
+      description: Contains advanced configuration settings for translation jobs processing NWD inputs.
       properties:
         hiddenObjects:
           type: boolean
@@ -1861,7 +1884,7 @@ components:
       type: object
       x-stoplight:
         id: 0q0d2nshacu4f
-      description: Advanced options for NWD inputs.
+      description: Contains advanced configuration settings for translation jobs processing NWD inputs.
       properties:
         hiddenObjects:
           type: boolean
@@ -1896,7 +1919,7 @@ components:
       type: object
       x-stoplight:
         id: 36da14c91473b
-      description: Advanced options for VUE inputs.
+      description: Contains advanced configuration settings for translation jobs processing VUE inputs.
       properties:
         hierarchy:
           $ref: '#/components/schemas/Hierarchy'
@@ -1905,7 +1928,7 @@ components:
       type: object
       x-stoplight:
         id: tk5if2m78gyb6
-      description: Advanced options for VUE inputs.
+      description: Contains advanced configuration settings for translation jobs processing VUE inputs.
       properties:
         hierarchy:
           $ref: '#/components/schemas/Hierarchy'
@@ -1932,11 +1955,17 @@ components:
     ManifestDerivative:
       type: object
       description: Represents a derivative generated for the source design.
+      required:
+        - name
+        - hasThumbnail
+        - progress
+        - outputType
+        - status
       properties:
         name:
           type: string
           minLength: 1
-          description: The name of the resource.
+          description: The name of the source design.
         hasThumbnail:
           type: string
           minLength: 1
@@ -1962,13 +1991,16 @@ components:
 
             - RVT - Revit models
             - NWD - Navisworks models
-            - DWG - AutoCAD models        
+            - DWG - AutoCAD models
         status:
           type: string
           minLength: 1
           description: 'Status of the task generating this derivative. Possible values are: ``pending``, ``inprogress``, ``success``, ``failed``, ``timeout``.'
         messages:
           type: array
+          description: 'An array of objects where each object represents a message logged to the manifest during translation. For example, error messages and warning messages.'
+          x-stoplight:
+            id: u09lec1rp7fpa
           items:
             $ref: '#/components/schemas/Messages'
         children:
@@ -1976,12 +2008,6 @@ components:
           description: 'An array of objects, where each object represents a resource generated for the derivative. For example, a Model View (Viewable) of the source design.'
           items:
             $ref: '#/components/schemas/ManifestResources'
-      required:
-        - name
-        - hasThumbnail
-        - progress
-        - outputType
-        - status
     ManifestResources:
       type: object
       description: Represents a resource generated for a derivative.
@@ -2067,7 +2093,7 @@ components:
         exportSettingName:
           type: string
           description: The export settings should be one of the DWG Export settings pre-saved in the source design.
-      description: An object that contains advanced options for an DWG output.
+      description: Contains advanced configuration settings for translation jobs producing DWG outputs.
     JobPayloadFormatAdvancedIFC:
       title: IFC
       x-stoplight:
@@ -2077,7 +2103,7 @@ components:
         exportSettingName:
           type: string
           description: The export settings should be one of the IFC Export settings pre-saved in the source design.
-      description: An object that contains advanced options for an IFC output.
+      description: Contains advanced configuration settings for translation jobs producing IFC outputs.
     JobPayloadFormatAdvancedIGES:
       title: IGES
       x-stoplight:
@@ -2095,7 +2121,7 @@ components:
           $ref: '#/components/schemas/SheetType'
         solidType:
           $ref: '#/components/schemas/SolidType'
-      description: An object that contains advanced options for an IGES output.
+      description: Contains advanced configuration settings for translation jobs producing IGES outputs.
     JobPayloadFormatAdvancedOBJ:
       title: OBJ
       x-stoplight:
@@ -2107,7 +2133,7 @@ components:
           description: The requested output type. ``obj`` in this case.
         advanced:
           type: object
-          description: Advanced options for OBJ output type.
+          description: Contains advanced configuration settings for translation jobs producing `obj` outputs.
           properties:
             exportFileStructure:
               $ref: '#/components/schemas/ExportFileStructure'
@@ -2122,7 +2148,7 @@ components:
                 Required for geometry extractions. Specifies the IDs of the objects (``objectID) to extract. -1 will extract the entire model.
               items:
                 type: integer
-      description: An object that contains advanced options for an OBJ output.
+      description: Contains advanced configuration settings for translation jobs producing `obj` outputs.
     JobPayloadFormatAdvancedSTEP:
       title: STEP
       x-stoplight:
@@ -2136,7 +2162,7 @@ components:
           description: Possible values are between `0` and `1`. By default it is set at 0.001.
           format: float
           default: 0.001
-      description: An object that contains advanced options for a STEP output.
+      description: Contains advanced configuration settings for translation jobs producing a STEP output.
     JobPayloadFormatAdvancedSTL:
       title: STL
       x-stoplight:
@@ -2148,17 +2174,19 @@ components:
           description: The requested output type. ``stl`` in this case.
         advanced:
           type: object
-          description: Advanced options for `stl` type.
+          description: Contains advanced configuration settings for translation jobs producing `stl` outputs.
           properties:
             format:
               $ref: '#/components/schemas/Format'
             exportColor:
               type: boolean
-              description: 'Color is exported by default. If set to ``true``, color is exported. If set to `false`, color is not exported.'
+              description: |
+                - ``true``- (Default) Exports color.
+                - ``false`` - Does not export color.
               default: true
             exportFileStructure:
               $ref: '#/components/schemas/ExportFileStructure'
-      description: An object that contains advanced options for a STL output.
+      description: Contains advanced configuration settings for translation jobs producing `stl` outputs.
     JobPayloadFormatAdvancedThumbnail:
       title: Thumbnail
       x-stoplight:
@@ -2169,16 +2197,13 @@ components:
           $ref: '#/components/schemas/Width'
         height:
           $ref: '#/components/schemas/Height'
-      description: An object that contains advanced options for a thumbnail output.
+      description: Contains advanced configuration settings for translation jobs producing thumbnail outputs.
     MatchId:
       title: Match Id
       x-stoplight:
         id: w2kvmvxr8ebo6
       type: object
-      description: |-
-        Use this to retrieve only the properties of objects with Object IDs or External IDs matching the specified values. 
-
-        Use the ``MatchIdType`` Enum to pick between Object IDs and External IDs. 
+      description: Describes a query for retrieving objects having the specified Object IDs or External IDs.
       properties:
         $in:
           type: array
@@ -2195,7 +2220,7 @@ components:
       x-stoplight:
         id: porw5ys3yrhlb
       type: object
-      description: 'Use this to retrieve only the properties of objects with names beginning with a specified string. '
+      description: Describes a query for retrieving objects with names that start with a specified string.
       properties:
         $prefix:
           type: array
@@ -2210,7 +2235,7 @@ components:
       x-stoplight:
         id: ulnf7b553sael
       type: object
-      description: Use this to retrieve only the properties of objects where a specified property is exactly equal to a specified value.
+      description: Describes a query for retrieving objects where a specified attribute exactly matches a specified value.
       properties:
         $eq:
           type: array
@@ -2233,15 +2258,14 @@ components:
       x-stoplight:
         id: njgq5ve7rm9tx
       type: object
-      description: |
-        Use this to retrieve only the properties of objects where a specified attribute is between two specified values.
+      description: Describes a query for retrieving objects where a specified numeric property falls within a specified range.
       properties:
         $between:
           type: array
           x-stoplight:
             id: wbtibkwfohj9v
           description: |-
-            Returns only the objects where the value of the specified numerical property lies between the specified values.
+            Returns only the objects where the value of the specified numeric property lies between the specified values.
 
             The first element of the array contains the name of the property. The next two elements specify the values that the property must lie between. The array can only be three elements long.
 
@@ -2257,14 +2281,14 @@ components:
       x-stoplight:
         id: gfxs84g4ci1x3
       type: object
-      description: 'Use this to retrieve only the properties of objects where a specified property is less than a specified value. '
+      description: Describes a query for retrieving objects where a specified numeric property is less than or equal to a specified value.
       properties:
         $le:
           type: array
           x-stoplight:
             id: t6r9nah57kkh8
           description: |-
-            Returns only the objects where the value of the specified numerical property is less than or equal to the specified value.
+            Returns only the objects where the value of the specified numeric property is less than or equal to the specified value.
 
             The first element of the array contains the name of the property. The next element specifies the values that the property must be less than or equal to. The array can only be two elements long.
 
@@ -2303,7 +2327,7 @@ components:
       x-stoplight:
         id: 4tfm4hibgzsul
       type: object
-      description: 'Use this to retrieve only the properties of objects where a specified property contains a specified value. '
+      description: Describes a query for retrieving objects where a specified property contains one or more words in a specified string.
       properties:
         $contains:
           type: array
@@ -2330,7 +2354,7 @@ components:
           x-stoplight:
             id: nmoc4tg01iitw
           description: A message describing outcome of the operation. Always ``success`` for status ``200``.
-      description: 'An object that represents the successful response of a Delete Manifest operation. '
+      description: 'Represents the successful response of a Delete Manifest operation. '
     SpecifyReferencesPayload:
       title: SpecifyReferencesPayload
       x-stoplight:
@@ -2379,7 +2403,7 @@ components:
         - urn
         - filename
         - references
-      description: An object that represents the successful response of a Specify References operation.
+      description: Represents the request body of a Specify References operation.
     SpecifyReferences:
       title: SpecifyReferences
       x-stoplight:
@@ -2396,13 +2420,13 @@ components:
           x-stoplight:
             id: spmylg7ygsfez
           description: The URN of the top level component.
-      description: 'An object that represents the successful response of a Specify References operation. '
+      description: 'Represents the successful response of a Specify References operation. '
     OutputType:
       title: OutputType
       x-stoplight:
         id: 2xuawbsgyqhuv
       type: string
-      description: 'The requested output types. Possible values include `svf`, `svf2`, `thumbnail`, `stl`, `step`, `iges`, `obj`, `ifc` or `dwg`. For a list of supported types, call the [GET formats](/en/docs/model-derivative/v2/reference/http/formats-GET) endpoint.'
+      description: 'The requested output types. Possible values include `svf`, `svf2`, `thumbnail`, `stl`, `step`, `iges`, `obj`, `ifc` or `dwg`. For a list of supported types, call [List Supported Formats](/en/docs/model-derivative/v2/reference/http/formats-GET).'
       enum:
         - svf
         - svf2
@@ -2459,7 +2483,7 @@ paths:
       description: |-
         Returns an up-to-date list of supported translations. This operation also provides information on the types of derivatives that can be generated for each source design file type. Furthermore, it allows you to obtain a list of translations that have changed since a specified date.
 
-        See the `Supported Translation Formats table </en/docs/model-derivative/v2/overview/supported-translations>`_ for more details.
+        See the [Supported Translation Formats table](/en/docs/model-derivative/v2/overview/supported-translations/) for more details.
 
         **Note:** We keep adding new file formats to our supported translations list, constantly.
       parameters:
