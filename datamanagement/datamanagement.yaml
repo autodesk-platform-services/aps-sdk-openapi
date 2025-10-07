@@ -3677,6 +3677,15 @@ components:
       description: Properties of an item.
       title: 'Item Attributes:'
       type: object
+      required:
+        - displayName
+        - createTime
+        - createUserId
+        - createUserName
+        - lastModifiedTime
+        - lastModifiedUserId
+        - lastModifiedUserName
+        - extension
       properties:
         displayName:
           type: string
@@ -3734,15 +3743,11 @@ components:
           description: The name of the user who reserved the item.
         extension:
           $ref: '#/components/schemas/item_extension_with_schema_link'
-      required:
-        - displayName
-        - createTime
-        - createUserId
-        - createUserName
-        - lastModifiedTime
-        - lastModifiedUserId
-        - lastModifiedUserName
-        - extension
+        pathInProject:
+          type: string
+          x-stoplight:
+            id: weoan682ts8ft
+          description: The relative path of the item starting from project’s root folder.
     ModifyItemPayload:
       description: An object that defines the attributes of an item that must be updated.
       x-stoplight:

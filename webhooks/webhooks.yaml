@@ -1044,6 +1044,8 @@ components:
         - adsk.c4r
         - adsk.flc.production
         - autodesk.construction.cost
+        - autodesk.construction.bc
+        - autodesk.construction.issues
       title: SystemEnum
       default: data
     Events:
@@ -1126,6 +1128,17 @@ components:
         - sco.created-1.0
         - sco.updated-1.0
         - sco.deleted-1.0
+        - bid.created
+        - opportunity.comment.created
+        - opportunity.comment.deleted
+        - opportunity.comment.updated
+        - opportunity.created
+        - opportunity.status.updated
+        - issue.created-1.0
+        - issue.updated-1.0
+        - issue.deleted-1.0
+        - issue.restored-1.0
+        - issue.unlinked-1.0
     Scopes:
       type: string
       x-stoplight:

@@ -1087,7 +1087,10 @@ paths:
       responses:
         '200':
           description: Upload successfully completed
-          content: {}
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/objectDetails'
         '400':
           $ref: '#/components/responses/BAD_REQUEST'
         '401':
@@ -1260,7 +1263,8 @@ components:
           type: string
           description: The Client ID of the application that owns the bucket.
         createdDate:
-          type: string
+          type: integer
+          format: int64
           description: 'The time the bucket was created, represented as a Unix timestamp.'
         permissions:
           type: array
