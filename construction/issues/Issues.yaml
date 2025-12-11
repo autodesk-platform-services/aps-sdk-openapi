@@ -667,7 +667,7 @@ paths:
         required: true
         description: The ID of the project.
     post:
-      summary: Your POST endpoint
+      summary: Add attachments to an issue
       tags:
         - Issue Attachments
       responses:
