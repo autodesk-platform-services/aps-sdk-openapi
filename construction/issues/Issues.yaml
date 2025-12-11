@@ -749,7 +749,7 @@ paths:
         - 3-legged-implicit: []
   '/construction/issues/v1/projects/{projectId}/attachments/{issueId}/items':
     get:
-      summary: Your GET endpoint
+      summary: Get all attachments for an issue
       tags:
         - Issue Attachments
       responses:
