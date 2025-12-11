@@ -725,7 +725,7 @@ paths:
         required: true
         description: 'The unique identifier of the attachment. To find the ID, call GET attachments.'
     delete:
-      summary: Your DELETE endpoint
+      summary: Delete an attachment from an issue
       tags:
         - Issue Attachments
       responses:
