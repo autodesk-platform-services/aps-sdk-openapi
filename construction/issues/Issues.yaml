@@ -69,7 +69,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/types_page'
+                $ref: '#/components/schemas/issue_types_page'
         '400':
           description: Bad Request
         '403':
@@ -577,7 +577,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/comments'
+                $ref: '#/components/schemas/commentsPage'
         '400':
           description: Bad Request
         '403':
@@ -633,7 +633,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/comments'
+                $ref: '#/components/schemas/comment'
         '400':
           description: Bad Request
         '403':
@@ -658,6 +658,140 @@ paths:
               $ref: '#/components/schemas/commentsPayload'
       tags:
         - Issue Comments
+  '/construction/issues/v1/projects/{projectId}/attachments':
+    parameters:
+      - schema:
+          type: string
+        name: projectId
+        in: path
+        required: true
+        description: The ID of the project.
+    post:
+      summary: Add attachments to an issue
+      tags:
+        - Issue Attachments
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/attachments'
+        '400':
+          description: Invalid input
+        '403':
+          description: The request is valid but lacks the necessary permissions.
+        '404':
+          description: Project not found
+        '409':
+          description: Conflict - one or more attachments already exist in the document service
+        '422':
+          description: The limit of 100 attachments per issue has been reached
+        '500':
+          description: Internal server error
+      operationId: add-attachments
+      x-stoplight:
+        id: txaf30uotjj6y
+      parameters: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/attachmentsPayload'
+      description: "Adds attachments to an existing issue.\r\n\r\nLinks one or more files in Autodesk Docs (uploaded via the Data Management OSS API) to the specified issue.\r\n\r\nNote that an issue can have up to 100 attachments. Files can include images, PDFs, or other supported formats.\r\n\r\nFor more information about uploading attachments, see the Upload Issue Attachment tutorial."
+      security:
+        - 2-legged: []
+        - 3-legged: []
+        - 3-legged-implicit: []
+    servers: []
+  '/construction/issues/v1/projects/{projectId}/attachments/{issueId}/items/{attachmentId}':
+    parameters:
+      - schema:
+          type: string
+        name: projectId
+        in: path
+        required: true
+        description: 'The ID of the project. Use the Data Management API to retrieve the project ID. For more information, see the Retrieve a Project ID tutorial. You need to convert the project ID into a project ID for the ACC API by removing the “b." prefix. For example, a project ID of b.a4be0c34a-4ab7 translates to a project ID of a4be0c34a-4ab7.'
+      - schema:
+          type: string
+        name: issueId
+        in: path
+        required: true
+        description: 'The unique identifier of the issue. To find the ID, call GET issues.'
+      - schema:
+          type: string
+        name: attachmentId
+        in: path
+        required: true
+        description: 'The unique identifier of the attachment. To find the ID, call GET attachments.'
+    delete:
+      summary: Delete an attachment from an issue
+      tags:
+        - Issue Attachments
+      responses:
+        '204':
+          description: No Content
+        '400':
+          description: Invalid input
+        '403':
+          description: The request is valid but lacks the necessary permissions.
+        '404':
+          description: 'Issue or attachment not found, or attachment has already been deleted'
+        '500':
+          description: Internal Server Error
+      operationId: delete-attachment
+      x-stoplight:
+        id: 4rg9kjdjouodf
+      description: Deletes a specific attachment from an issue in a project.
+      security:
+        - 2-legged: []
+        - 3-legged: []
+        - 3-legged-implicit: []
+  '/construction/issues/v1/projects/{projectId}/attachments/{issueId}/items':
+    get:
+      summary: Get all attachments for an issue
+      tags:
+        - Issue Attachments
+      responses:
+        '200':
+          description: OK
+          headers:
+            header-0:
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/attachments'
+        '400':
+          description: Invalid input
+        '403':
+          description: Forbidden
+        '404':
+          description: Issue not found
+        '500':
+          description: The request is valid but lacks the necessary permissions.
+      operationId: get-attachments
+      x-stoplight:
+        id: dvrvn24jvv1j5
+      description: "Retrieves all attachments for a specific issue in a project.\r\n\r\nFor details about retrieving metadata for a specific attachment, see the Retrieve Issue Attachment tutorial.\r\n\r\nFor details about downloading an attachment, see the Download Issue Attachment tutorial."
+      security:
+        - 2-legged: []
+        - 3-legged: []
+        - 3-legged-implicit: []
+    parameters:
+      - schema:
+          type: string
+        name: projectId
+        in: path
+        required: true
+        description: 'The ID of the project. Use the Data Management API to retrieve the project ID. For more information, see the Retrieve a Project ID tutorial. You need to convert the project ID into a project ID for the ACC API by removing the “b." prefix. For example, a project ID of b.a4be0c34a-4ab7 translates to a project ID of a4be0c34a-4ab7.'
+      - schema:
+          type: string
+        name: issueId
+        in: path
+        required: true
+        description: 'The unique identifier of the issue. To find the ID, call GET issues.'
 components:
   schemas:
     User:
@@ -728,7 +862,7 @@ components:
           description: 'The permission level of the user. Each permission level corresponds to a combination of values in the response. For example, a combination of read and create in the response, corresponds to a Create for other companies permission level.'
           items:
             $ref: '#/components/schemas/permission_level'
-    types_page:
+    issue_types_page:
       title: types_page
       type: object
       x-stoplight:
@@ -740,109 +874,7 @@ components:
           type: array
           description: A list of issue type categories.
           items:
-            type: object
-            properties:
-              id:
-                type: string
-                description: The ID of the issue type.
-              containerId:
-                type: string
-                description: Not relevant
-              title:
-                type: string
-                description: 'Max length: 250'
-              isActive:
-                type: boolean
-                description: States whether the issue type is active.
-              orderIndex:
-                type: integer
-                description: Not relevant
-              permittedActions:
-                type: array
-                description: Not relevant
-                items:
-                  type: string
-              permittedAttributes:
-                type: array
-                description: Not relevant
-                items:
-                  type: string
-              subtypes:
-                type: array
-                description: A list of subtypes of the specific issue type.
-                items:
-                  type: object
-                  properties:
-                    id:
-                      type: string
-                      description: The ID of the issue subtype.
-                    issueTypeId:
-                      type: string
-                      description: The ID of the parent issue type.
-                    title:
-                      type: string
-                      description: 'Max length: 250'
-                    code:
-                      type: string
-                      description: 3 chars pin label.
-                    isActive:
-                      type: boolean
-                      description: States whether the issue type is active.
-                    orderIndex:
-                      type: integer
-                      description: Not relevant
-                    isReadOnly:
-                      type: boolean
-                      description: Not relevant
-                    permittedActions:
-                      type: array
-                      description: Not relevant
-                      items:
-                        type: string
-                    permittedAttributes:
-                      type: array
-                      description: Not relevant
-                      items:
-                        type: string
-                    createdBy:
-                      type: string
-                      description: The unique identifier of the user who created the issue type.
-                    createdAt:
-                      type: string
-                      description: 'The date and time the issue was created, in ISO8601 format.'
-                    updatedBy:
-                      type: string
-                      description: The unique identifier of the user who updated the issue type.
-                    updatedAt:
-                      type: string
-                      description: 'The date and time the issue type was updated, in ISO8601 format.'
-                    deletedBy:
-                      type: string
-                      description: The unique identifier of the user who deleted the issue type.
-                    deletedAt:
-                      type: string
-                      description: 'The date and time the issue type was deleted, in ISO8601 format.'
-              statusSet:
-                type: string
-                description: Not relevant
-              createdBy:
-                type: string
-                description: The unique identifier of the user who created the issue type.
-              createdAt:
-                type: string
-                description: 'The date and time the issue was created, in ISO8601 format.'
-              updatedBy:
-                type: string
-                description: The unique identifier of the user who updated the issue type.
-              updatedAt:
-                type: string
-                description: 'The date and time the issue type was updated, in ISO8601 format.'
-              deletedBy:
-                type: string
-                description: The unique identifier of the user who deleted the issue type.
-              deletedAt:
-                type: string
-                description: 'The date and time the issue type was deleted, in ISO8601 format.'
+            $ref: '#/components/schemas/issue_type'
     root_cause_categories_page:
       title: root-cause-categories-page
       type: object
@@ -856,87 +888,7 @@ components:
           type: array
           description: A list of issue root cause categories.
           items:
-            type: object
-            properties:
-              id:
-                type: string
-                description: The ID of the issue root cause category.
-              title:
-                type: string
-                description: |-
-                  The title of the custom attribute.
-                  Max length: 100
-              isActive:
-                type: boolean
-                description: |-
-                  The description of the custom attribute.
-                  Max length: 500
-              permittedActions:
-                type: array
-                description: Not relevant
-                items:
-                  type: string
-              permittedAttributes:
-                type: array
-                description: Not relevant
-                items:
-                  type: string
-              rootCauses:
-                type: array
-                description: The metadata object; only relevant for list custom attributes.
-                items:
-                  type: object
-                  properties:
-                    id:
-                      type: string
-                      description: The ID of the issue root cause.
-                    rootCauseCategoryId:
-                      type: string
-                      description: The ID of the parent issue root cause category.
-                    title:
-                      type: string
-                      description: |-
-                        The title of the issue root cause.
-                        Max length: 100
-                    isActive:
-                      type: boolean
-                      description: |-
-                        The description of the custom attribute.
-                        Max length: 500
-                    permittedActions:
-                      type: array
-                      description: Not relevant
-                      items:
-                        type: string
-                    permittedAttributes:
-                      type: array
-                      description: Not relevant
-                      items:
-                        type: string
-                    deletedAt:
-                      type: string
-                      description: 'The date and time the custom attribute was deleted, in the following format: YYYY-MM-DDThh:mm:ss.sz.'
-                    deletedBy:
-                      type: string
-                      description: The Autodesk ID of the user who deleted the custom attribute.
-              createdAt:
-                type: string
-                description: 'The date and time the custom attribute was created, in the following format: YYYY-MM-DDThh:mm:ss.sz.'
-              createdBy:
-                type: string
-                description: The Autodesk ID of the user who created the custom attribute.
-              updatedAt:
-                type: string
-                description: 'The last date and time the custom attribute was updated, in the following format: YYYY-MM-DDThh:mm:ss.sz.'
-              updatedBy:
-                type: string
-                description: The Autodesk ID of the user who last updated the custom attribute.
-              deletedAt:
-                type: string
-                description: 'The date and time the custom attribute was deleted, in the following format: YYYY-MM-DDThh:mm:ss.sz.'
-              deletedBy:
-                type: string
-                description: The Autodesk ID of the user who deleted the custom attribute.
+            $ref: '#/components/schemas/root_cause_category'
     attr_definition_page:
       title: attr_definition
       type: object
@@ -948,99 +900,9 @@ components:
           $ref: '#/components/schemas/Pagination'
         results:
           type: array
-          description: A list of issue attribute mappings.
+          description: A list of issue attribute definition.
           items:
-            type: object
-            properties:
-              id:
-                type: string
-                description: The ID of the custom attribute.
-              containerId:
-                type: string
-                description: Not relevant
-              mappedItemType:
-                type: string
-                x-stoplight:
-                  id: rgkr2a56eyq5s
-              mappedItemId:
-                type: string
-                description: 'The ID of the item (type, or subtype) the custom attribute is mapped to.'
-              order:
-                type: integer
-                description: 'The order that the custom attributes were mapped to the item (type, subtype). This is only relevant to non-inherited mappings.'
-              dataType:
-                $ref: '#/components/schemas/dataType'
-              metadata:
-                type: object
-                x-stoplight:
-                  id: vpa2pq35qsa00
-                description: The metadata object; only relevant for list custom attributes.
-                properties:
-                  list:
-                    type: object
-                    x-stoplight:
-                      id: rd1fhxgy7rswy
-                    description: The list object.
-                    properties:
-                      options:
-                        type: array
-                        x-stoplight:
-                          id: 8zdw37ff98qva
-                        description: The options object.
-                        items:
-                          x-stoplight:
-                            id: ue5tmahyx0kgr
-                          type: object
-                          properties:
-                            id:
-                              type: string
-                              x-stoplight:
-                                id: 7eggkpbtz4wb9
-                              description: The id of the list option.
-                            value:
-                              type: string
-                              x-stoplight:
-                                id: 2dimim80rfccy
-                              description: The value of the list item.
-              permittedActions:
-                type: array
-                description: Not relevant
-                items:
-                  type: string
-              permittedAttributes:
-                type: array
-                description: Not relevant
-                items:
-                  type: string
-              createdAt:
-                type: string
-                description: 'The date and time the custom attribute was created, in the following format: YYYY-MM-DDThh:mm:ss.sz.'
-              createdBy:
-                type: string
-                description: The Autodesk ID of the user who created the custom attribute.
-              updatedAt:
-                type: string
-                description: 'The last date and time the custom attribute was updated, in the following format: YYYY-MM-DDThh:mm:ss.sz.'
-              updatedBy:
-                type: string
-                description: The Autodesk ID of the user who last updated the custom attribute.
-              deletedAt:
-                type: string
-                description: 'The date and time the custom attribute was deleted, in the following format: YYYY-MM-DDThh:mm:ss.sz.'
-              deletedBy:
-                type: string
-                description: The Autodesk ID of the user who deleted the custom attribute.
-              title:
-                type: string
-                x-stoplight:
-                  id: zd4k05m5j6ifx
-                description: |
-                  The title of the custom attribute.
-              description:
-                type: string
-                x-stoplight:
-                  id: jcsrljuzc5ltj
-                description: The description of the custom attribute.
+            $ref: '#/components/schemas/attr_definition'
     attr_mapping_page:
       title: attr_mapping
       x-stoplight:
@@ -1054,68 +916,9 @@ components:
           type: array
           description: A list of issue attribute mappings.
           items:
-            type: object
-            properties:
-              id:
-                type: string
-                description: The ID of the custom attribute.
-              attributeDefinitionId:
-                type: string
-                description: The ID of the custom attribute definition.
-              containerId:
-                type: string
-                description: Not relevant
-              title:
-                type: string
-                x-stoplight:
-                  id: zd4k05m5j6ifx
-                description: |
-                  The title of the custom attribute.
-              mappedItemType:
-                type: string
-                x-stoplight:
-                  id: rgkr2a56eyq5s
-              mappedItemId:
-                type: string
-                description: 'The ID of the item (type, or subtype) the custom attribute is mapped to.'
-              order:
-                type: integer
-                description: 'The order that the custom attributes were mapped to the item (type, subtype). This is only relevant to non-inherited mappings.'
-              permittedActions:
-                type: array
-                description: Not relevant
-                items:
-                  type: string
-              permittedAttributes:
-                type: array
-                description: Not relevant
-                items:
-                  type: string
-              createdAt:
-                type: string
-                description: 'The date and time the custom attribute was created, in the following format: YYYY-MM-DDThh:mm:ss.sz.'
-              createdBy:
-                type: string
-                description: The Autodesk ID of the user who created the custom attribute.
-              updatedAt:
-                type: string
-                description: 'The last date and time the custom attribute was updated, in the following format: YYYY-MM-DDThh:mm:ss.sz.'
-              updatedBy:
-                type: string
-                description: The Autodesk ID of the user who last updated the custom attribute.
-              deletedAt:
-                type: string
-                description: 'The date and time the custom attribute was deleted, in the following format: YYYY-MM-DDThh:mm:ss.sz.'
-              deletedBy:
-                type: string
-                description: The Autodesk ID of the user who deleted the custom attribute.
-              description:
-                type: string
-                x-stoplight:
-                  id: jcsrljuzc5ltj
-                description: The description of the custom attribute.
-    comments:
-      title: created_comment
+            $ref: '#/components/schemas/attr_mapping'
+    comment:
+      title: comment
       type: object
       x-stoplight:
         id: t2dkwitlw6jgu
@@ -1283,14 +1086,17 @@ components:
                     description: The position of the pushpin in the viewable.
                     properties:
                       x:
-                        type: integer
+                        type: number
                         description: The x-value of the position in the viewable.
+                        format: double
                       'y':
-                        type: integer
+                        type: number
                         description: The y-value of the position in the viewable.
+                        format: double
                       z:
-                        type: integer
+                        type: number
                         description: The z-value of the position in the viewable.
+                        format: double
                   objectId:
                     type: integer
                     description: The ID of the element the pushpin is associated with in the viewable.
@@ -1806,7 +1612,7 @@ components:
         results:
           type: array
           items:
-            $ref: '#/components/schemas/comments'
+            $ref: '#/components/schemas/comment'
     region:
       title: region
       x-stoplight:
@@ -1854,6 +1660,515 @@ components:
         totalResults:
           type: integer
           description: The number of items in the response.
+    attachmentObject:
+      title: attachmentObject
+      x-stoplight:
+        id: hgky8a2aqiaya
+      type: object
+      description: A list of attachments to add to the issue.
+      required:
+        - attachmentId
+        - displayName
+        - fileName
+        - attachmentType
+        - storageUrn
+      properties:
+        attachmentId:
+          type: string
+          x-stoplight:
+            id: xf0rx7ndbzv7q
+          description: 'The unique identifier for the attachment, set by the client when creating the attachment reference. This can be any unique GUID, but it is recommended to use the OSS storage GUID. For more information, see the Upload Issue Attachment tutorial.'
+        displayName:
+          type: string
+          x-stoplight:
+            id: w6gu5hswzintj
+          description: 'The human-readable display name for the attachment, including the file extension (for example, .pdf, .jpg, .dwg). This name appears in the ACC web UI and is used when downloading the file from the issue.'
+        fileName:
+          type: string
+          x-stoplight:
+            id: 66aop0tgqlw3j
+          description: "The unique filename of the attachment, typically formatted as {attachmentId}.{fileExtension}.\r\nThis value must exactly match the name of the file stored in Autodesk Docs (OSS) that you uploaded via the OSS process.\r\n\r\nFor more information, see the Upload Issue Attachment tutorial."
+        attachmentType:
+          x-stoplight:
+            id: a2yqbbh35br8y
+          enum:
+            - issue-attachment
+          description: 'The type of attachment to create. Set to issue-attachment. Will always be: issue-attachment'
+        storageUrn:
+          type: string
+          x-stoplight:
+            id: voywegs8sir9k
+          description: The Object Storage Service (OSS) URN that uniquely identifies where the file is stored in Autodesk’s cloud infrastructure. You obtain this value after uploading the file to OSS (see the Upload Issue Attachment tutorial) or by retrieving it from an existing attachment (see the Downloading Issue Attachments tutorial).
+    attachment:
+      title: attachment
+      x-stoplight:
+        id: 3qdhrtrx0wbin
+      type: object
+      description: A list of attachments to add to the issue.
+      properties:
+        attachmentId:
+          type: string
+          description: 'The unique identifier for the attachment, set by the client when creating the attachment reference. This can be any unique GUID, but it is recommended to use the OSS storage GUID. For more information, see the Upload Issue Attachment tutorial.'
+        displayName:
+          type: string
+          description: 'The human-readable display name for the attachment, including the file extension (for example, .pdf, .jpg, .dwg). This name appears in the ACC web UI and is used when downloading the file from the issue.'
+        fileName:
+          type: string
+          description: "The unique filename of the attachment, typically formatted as {attachmentId}.{fileExtension}.\r\nThis value must exactly match the name of the file stored in Autodesk Docs (OSS) that you uploaded via the OSS process.\r\n\r\nFor more information, see the Upload Issue Attachment tutorial."
+        attachmentType:
+          enum:
+            - issue-attachment
+          description: 'The type of attachment to create. Set to issue-attachment. Will always be: issue-attachment'
+        storageUrn:
+          type: string
+          description: The Object Storage Service (OSS) URN that uniquely identifies where the file is stored in Autodesk’s cloud infrastructure. You obtain this value after uploading the file to OSS (see the Upload Issue Attachment tutorial) or by retrieving it from an existing attachment (see the Downloading Issue Attachments tutorial).
+        fileSize:
+          type: integer
+          x-stoplight:
+            id: i2y7b0tq011zn
+          description: The size of the file in bytes.
+        fileType:
+          type: string
+          x-stoplight:
+            id: 3fiywa72cdk1v
+          description: 'The file extension (without the dot), for example pdf or jpg.'
+        domainEntityId:
+          type: string
+          x-stoplight:
+            id: 06tlcacip3ju0
+          description: The ID of the issue that owns the attachment.
+        lineageUrn:
+          type: string
+          x-stoplight:
+            id: zh6ah270gg1sg
+          description: The document lineage URN for the attachment’s source file.
+        version:
+          type: integer
+          x-stoplight:
+            id: yrcq7yz9pj0ci
+          description: The document version number.
+        versionUrn:
+          type: string
+          x-stoplight:
+            id: wt91zzho7mutk
+          description: The URN for the specific file version that was attached to the issue. This may differ from the latest version URN (tipVersionUrn) if a newer version of the file exists in Autodesk Docs.
+        tipVersionUrn:
+          type: string
+          x-stoplight:
+            id: 77op4l2u7dwlg
+          description: The URN for the latest (tip) version of the file.
+        bubbleUrn:
+          type: string
+          x-stoplight:
+            id: 2wne4s9okswp3
+          description: Not relevant
+        createdBy:
+          type: string
+          x-stoplight:
+            id: 41lfd9bvtxsgo
+          description: 'The ID of the user who created the issue attachment. For details about the user, call GET users.'
+        createdOn:
+          type: string
+          x-stoplight:
+            id: giliv7dulj0kn
+          description: 'The date and time when the issue attachment was created, in ISO8601 format.'
+        modifiedBy:
+          type: string
+          x-stoplight:
+            id: kpnqt4sj2kp5s
+          description: Not relevant
+        modifiedOn:
+          type: string
+          x-stoplight:
+            id: 0zddjbh06gb0v
+          description: Not relevant
+        deletedBy:
+          type: string
+          x-stoplight:
+            id: cv67vkbjf3nxl
+          description: 'The ID of the user who deleted the issue attachment, if applicable. For details about the user, call GET users.'
+        deletedOn:
+          type: string
+          x-stoplight:
+            id: 40nkce3nxqb48
+          description: 'The date and time when the issue attachment was deleted, if applicable.'
+        isDeleted:
+          type: boolean
+          x-stoplight:
+            id: 6dfy2pf5wjpmu
+          description: "true: The attachment has been deleted.\r\nfalse: (default) The attachment has not been deleted."
+    attachmentsPayload:
+      title: attachmentspayload
+      x-stoplight:
+        id: pki5fadhz4lko
+      type: object
+      properties:
+        domainEntityId:
+          type: string
+          x-stoplight:
+            id: h11ppw3rpqquf
+          description: The unique identifier of the issue to which the attachments will be added.
+        attachments:
+          type: array
+          items:
+            $ref: '#/components/schemas/attachmentObject'
+          description: The list of attachments to be added to the issue.
+      description: Represents the payload for adding attachments to an issue.
+    attachments:
+      title: attachments
+      x-stoplight:
+        id: hmg2bcxm6uj5e
+      type: object
+      description: An optional array of attachments associated with this object.
+      properties:
+        attachments:
+          type: array
+          x-stoplight:
+            id: 2euxnmoyqwhop
+          items:
+            $ref: '#/components/schemas/attachment'
+    issue_type:
+      title: issue_type
+      x-stoplight:
+        id: nm8sqouq3xu9p
+      type: object
+      properties:
+        id:
+          type: string
+          description: The ID of the issue type.
+        containerId:
+          type: string
+          description: Not relevant
+        title:
+          type: string
+          description: 'Max length: 250'
+        isActive:
+          type: boolean
+          description: States whether the issue type is active.
+        orderIndex:
+          type: integer
+          description: Not relevant
+        permittedActions:
+          type: array
+          description: Not relevant
+          items:
+            type: string
+        permittedAttributes:
+          type: array
+          description: Not relevant
+          items:
+            type: string
+        subtypes:
+          type: array
+          description: A list of subtypes of the specific issue type.
+          items:
+            type: object
+            properties:
+              id:
+                type: string
+                description: The ID of the issue subtype.
+              issueTypeId:
+                type: string
+                description: The ID of the parent issue type.
+              title:
+                type: string
+                description: 'Max length: 250'
+              code:
+                type: string
+                description: 3 chars pin label.
+              isActive:
+                type: boolean
+                description: States whether the issue type is active.
+              orderIndex:
+                type: integer
+                description: Not relevant
+              isReadOnly:
+                type: boolean
+                description: Not relevant
+              permittedActions:
+                type: array
+                description: Not relevant
+                items:
+                  type: string
+              permittedAttributes:
+                type: array
+                description: Not relevant
+                items:
+                  type: string
+              createdBy:
+                type: string
+                description: The unique identifier of the user who created the issue type.
+              createdAt:
+                type: string
+                description: 'The date and time the issue was created, in ISO8601 format.'
+              updatedBy:
+                type: string
+                description: The unique identifier of the user who updated the issue type.
+              updatedAt:
+                type: string
+                description: 'The date and time the issue type was updated, in ISO8601 format.'
+              deletedBy:
+                type: string
+                description: The unique identifier of the user who deleted the issue type.
+              deletedAt:
+                type: string
+                description: 'The date and time the issue type was deleted, in ISO8601 format.'
+        statusSet:
+          type: string
+          description: Not relevant
+        createdBy:
+          type: string
+          description: The unique identifier of the user who created the issue type.
+        createdAt:
+          type: string
+          description: 'The date and time the issue was created, in ISO8601 format.'
+        updatedBy:
+          type: string
+          description: The unique identifier of the user who updated the issue type.
+        updatedAt:
+          type: string
+          description: 'The date and time the issue type was updated, in ISO8601 format.'
+        deletedBy:
+          type: string
+          description: The unique identifier of the user who deleted the issue type.
+        deletedAt:
+          type: string
+          description: 'The date and time the issue type was deleted, in ISO8601 format.'
+    root_cause_category:
+      title: root_cause_category
+      x-stoplight:
+        id: xu7dv1hyc4jzi
+      type: object
+      properties:
+        id:
+          type: string
+          description: The ID of the issue root cause category.
+        title:
+          type: string
+          description: |-
+            The title of the custom attribute.
+            Max length: 100
+        isActive:
+          type: boolean
+          description: |-
+            The description of the custom attribute.
+            Max length: 500
+        permittedActions:
+          type: array
+          description: Not relevant
+          items:
+            type: string
+        permittedAttributes:
+          type: array
+          description: Not relevant
+          items:
+            type: string
+        rootCauses:
+          type: array
+          description: The metadata object; only relevant for list custom attributes.
+          items:
+            type: object
+            properties:
+              id:
+                type: string
+                description: The ID of the issue root cause.
+              rootCauseCategoryId:
+                type: string
+                description: The ID of the parent issue root cause category.
+              title:
+                type: string
+                description: |-
+                  The title of the issue root cause.
+                  Max length: 100
+              isActive:
+                type: boolean
+                description: |-
+                  The description of the custom attribute.
+                  Max length: 500
+              permittedActions:
+                type: array
+                description: Not relevant
+                items:
+                  type: string
+              permittedAttributes:
+                type: array
+                description: Not relevant
+                items:
+                  type: string
+              deletedAt:
+                type: string
+                description: 'The date and time the custom attribute was deleted, in the following format: YYYY-MM-DDThh:mm:ss.sz.'
+              deletedBy:
+                type: string
+                description: The Autodesk ID of the user who deleted the custom attribute.
+        createdAt:
+          type: string
+          description: 'The date and time the custom attribute was created, in the following format: YYYY-MM-DDThh:mm:ss.sz.'
+        createdBy:
+          type: string
+          description: The Autodesk ID of the user who created the custom attribute.
+        updatedAt:
+          type: string
+          description: 'The last date and time the custom attribute was updated, in the following format: YYYY-MM-DDThh:mm:ss.sz.'
+        updatedBy:
+          type: string
+          description: The Autodesk ID of the user who last updated the custom attribute.
+        deletedAt:
+          type: string
+          description: 'The date and time the custom attribute was deleted, in the following format: YYYY-MM-DDThh:mm:ss.sz.'
+        deletedBy:
+          type: string
+          description: The Autodesk ID of the user who deleted the custom attribute.
+      description: ''
+    attr_definition:
+      title: attr_definition
+      x-stoplight:
+        id: 3icmlmiozfuaj
+      type: object
+      properties:
+        id:
+          type: string
+          description: The ID of the custom attribute.
+        containerId:
+          type: string
+          description: Not relevant
+        description:
+          type: string
+          x-stoplight:
+            id: jcsrljuzc5ltj
+          description: The description of the custom attribute.
+        title:
+          type: string
+          x-stoplight:
+            id: zd4k05m5j6ifx
+          description: |
+            The title of the custom attribute.
+        dataType:
+          $ref: '#/components/schemas/dataType'
+        metadata:
+          type: object
+          x-stoplight:
+            id: vpa2pq35qsa00
+          description: The metadata object; only relevant for list custom attributes.
+          properties:
+            list:
+              type: object
+              x-stoplight:
+                id: rd1fhxgy7rswy
+              description: The list object.
+              properties:
+                options:
+                  type: array
+                  x-stoplight:
+                    id: 8zdw37ff98qva
+                  description: The options object.
+                  items:
+                    x-stoplight:
+                      id: ue5tmahyx0kgr
+                    type: object
+                    properties:
+                      id:
+                        type: string
+                        x-stoplight:
+                          id: 7eggkpbtz4wb9
+                        description: The id of the list option.
+                      value:
+                        type: string
+                        x-stoplight:
+                          id: 2dimim80rfccy
+                        description: The value of the list item.
+        permittedActions:
+          type: array
+          description: Not relevant
+          items:
+            type: string
+        permittedAttributes:
+          type: array
+          description: Not relevant
+          items:
+            type: string
+        createdAt:
+          type: string
+          description: 'The date and time the custom attribute was created, in the following format: YYYY-MM-DDThh:mm:ss.sz.'
+        createdBy:
+          type: string
+          description: The Autodesk ID of the user who created the custom attribute.
+        updatedAt:
+          type: string
+          description: 'The last date and time the custom attribute was updated, in the following format: YYYY-MM-DDThh:mm:ss.sz.'
+        updatedBy:
+          type: string
+          description: The Autodesk ID of the user who last updated the custom attribute.
+        deletedAt:
+          type: string
+          description: 'The date and time the custom attribute was deleted, in the following format: YYYY-MM-DDThh:mm:ss.sz.'
+        deletedBy:
+          type: string
+          description: The Autodesk ID of the user who deleted the custom attribute.
+    attr_mapping:
+      title: attr_mapping
+      x-stoplight:
+        id: e3wt184wry6i2
+      type: object
+      properties:
+        id:
+          type: string
+          description: The ID of the custom attribute.
+        attributeDefinitionId:
+          type: string
+          description: The ID of the custom attribute definition.
+        containerId:
+          type: string
+          description: Not relevant
+        title:
+          type: string
+          x-stoplight:
+            id: zd4k05m5j6ifx
+          description: |
+            The title of the custom attribute.
+        mappedItemType:
+          type: string
+          x-stoplight:
+            id: rgkr2a56eyq5s
+        mappedItemId:
+          type: string
+          description: 'The ID of the item (type, or subtype) the custom attribute is mapped to.'
+        order:
+          type: integer
+          description: 'The order that the custom attributes were mapped to the item (type, subtype). This is only relevant to non-inherited mappings.'
+        permittedActions:
+          type: array
+          description: Not relevant
+          items:
+            type: string
+        permittedAttributes:
+          type: array
+          description: Not relevant
+          items:
+            type: string
+        createdAt:
+          type: string
+          description: 'The date and time the custom attribute was created, in the following format: YYYY-MM-DDThh:mm:ss.sz.'
+        createdBy:
+          type: string
+          description: The Autodesk ID of the user who created the custom attribute.
+        updatedAt:
+          type: string
+          description: 'The last date and time the custom attribute was updated, in the following format: YYYY-MM-DDThh:mm:ss.sz.'
+        updatedBy:
+          type: string
+          description: The Autodesk ID of the user who last updated the custom attribute.
+        deletedAt:
+          type: string
+          description: 'The date and time the custom attribute was deleted, in the following format: YYYY-MM-DDThh:mm:ss.sz.'
+        deletedBy:
+          type: string
+          description: The Autodesk ID of the user who deleted the custom attribute.
+        description:
+          type: string
+          x-stoplight:
+            id: jcsrljuzc5ltj
+          description: The description of the custom attribute.
   securitySchemes:
     2-legged:
       type: oauth2
@@ -1887,6 +2202,7 @@ security:
   - 2-legged: []
   - 3-legged: []
 tags:
+  - name: Issue Attachments
   - name: Issue Attribute Definitions
   - name: Issue Attribute Mappings
   - name: Issue Comments

@@ -2685,6 +2685,11 @@ components:
             oneOf:
               - $ref: '#/components/schemas/FolderData'
               - $ref: '#/components/schemas/ItemData'
+            discriminator:
+              propertyName: type
+              mapping:
+                folders: '#/components/schemas/FolderData'
+                items: '#/components/schemas/ItemData'
         included:
           description: 'An array of objects, where each element represents a resource included within this resource.'
           type: array
@@ -3315,6 +3320,12 @@ components:
               - $ref: '#/components/schemas/VersionData'
                 x-stoplight:
                   id: porh9vpw16r4y
+            discriminator:
+              propertyName: type
+              mapping:
+                folders: '#/components/schemas/FolderData'
+                items: '#/components/schemas/ItemData'
+                versions: '#/components/schemas/VersionData'
     MetaRefs:
       description: Metadata on the resources referenced by this resource.
       type: object
@@ -4076,6 +4087,12 @@ components:
               - $ref: '#/components/schemas/VersionData'
                 x-stoplight:
                   id: qqyd7tqmmhicv
+            discriminator:
+              propertyName: type
+              mapping:
+                folders: '#/components/schemas/FolderData'
+                items: '#/components/schemas/ItemData'
+                versions: '#/components/schemas/VersionData'
       required:
         - jsonapi
         - links
@@ -4326,6 +4343,12 @@ components:
               - $ref: '#/components/schemas/VersionData'
                 x-stoplight:
                   id: byujkhsqw5k90
+            discriminator:
+              propertyName: type
+              mapping:
+                folders: '#/components/schemas/FolderData'
+                items: '#/components/schemas/ItemData'
+                versions: '#/components/schemas/VersionData'
     Versions:
       description: Successful retrieval of the versions collection associated with a specific item.
       type: object
@@ -6418,6 +6441,11 @@ components:
               - $ref: '#/components/schemas/VersionData'
                 x-stoplight:
                   id: rvp2eydjhj628
+            discriminator:
+              propertyName: type
+              mapping:
+                items: '#/components/schemas/ItemData'
+                versions: '#/components/schemas/VersionData'
     CheckPermissionPayload:
       type: object
       x-stoplight:
@@ -7793,6 +7821,15 @@ components:
             - $ref: '#/components/schemas/ListItems'
               x-stoplight:
                 id: 567bnr2jj15ns
+          discriminator:
+            propertyName: attributes/extension/type
+            mapping:
+              'commands:autodesk.core:CheckPermission': '#/components/schemas/CheckPermission'
+              'commands:autodesk.bim360:C4RModelPublish': '#/components/schemas/PublishModel'
+              'commands:autodesk.bim360:C4RPublishWithoutLinks': '#/components/schemas/PublishWithoutLinks'
+              'commands:autodesk.bim360:C4RModelGetPublishJob': '#/components/schemas/PublishModelJob'
+              'commands:autodesk.core:ListRefs': '#/components/schemas/ListRefs'
+              'commands:autodesk.core:ListItems': '#/components/schemas/ListItems'
     CommandPayload:
       description: Command Payload
       type: object
