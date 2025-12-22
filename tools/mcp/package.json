@@ -1,0 +1,23 @@
+{
+  "name": "@aps/mcp",
+  "version": "0.1.0",
+  "description": "Minimal MCP mock server for APS OpenAPI examples",
+  "main": "dist/index.js",
+  "scripts": {
+    "dev": "ts-node-dev --respawn --transpile-only src/index.ts",
+    "build": "tsc -p .",
+    "start": "node dist/index.js",
+    "test": "node test/run.js"
+  },
+  "dependencies": {
+    "fastify": "^4.20.0",
+    "js-yaml": "^4.1.0",
+    "openapi-sampler": "^1.1.0",
+    "swagger-parser": "^10.0.2",
+    "node-fetch": "^3.3.1"
+  },
+  "devDependencies": {
+    "ts-node-dev": "^2.0.0",
+    "typescript": "^5.2.0"
+  }
+}

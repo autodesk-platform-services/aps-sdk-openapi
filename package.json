@@ -1,0 +1,16 @@
+{
+  "name": "aps-tools",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "start:mcp-and-call": "node scripts/start-and-call.js",
+    "start:mcp-and-call-python": "python scripts/start-and-call.py",
+    "start:all": "python scripts/run-all.py",
+    "build:exe": "pwsh scripts/build-exe.ps1 -Name aps-run-all",
+    "mcp:dev": "npm --prefix tools/mcp run dev -- examples/petstore.yaml",
+    "cli:call": "npm --prefix tools/cli run dev -- call GET /pets --base http://localhost:3000"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}

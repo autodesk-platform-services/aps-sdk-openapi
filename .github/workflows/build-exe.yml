@@ -1,0 +1,28 @@
+name: Build Windows EXE
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [ main ]
+
+jobs:
+  build-exe:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.x'
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install pyinstaller
+      - name: Build EXE
+        run: |
+          pwsh scripts/build-exe.ps1 -Name aps-run-all
+      - name: Upload EXE artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: aps-run-all-windows
+          path: dist/windows/aps-run-all.exe
