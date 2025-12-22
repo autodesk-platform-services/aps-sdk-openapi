@@ -1,0 +1,23 @@
+{
+  "name": "@aps/cli",
+  "version": "0.1.0",
+  "description": "CLI for APS SDK OpenAPI repo",
+  "main": "dist/cli.js",
+  "bin": {
+    "aps": "dist/cli.js"
+  },
+  "scripts": {
+    "dev": "ts-node-dev --respawn --transpile-only src/cli.ts",
+    "build": "tsc -p .",
+    "start": "node dist/cli.js"
+  },
+  "dependencies": {
+    "commander": "^10.0.0",
+    "node-fetch": "^3.3.1",
+    "yaml": "^2.2.1"
+  },
+  "devDependencies": {
+    "ts-node-dev": "^2.0.0",
+    "typescript": "^5.2.0"
+  }
+}
