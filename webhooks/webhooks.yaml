@@ -1046,6 +1046,7 @@ components:
         - autodesk.construction.cost
         - autodesk.construction.bc
         - autodesk.construction.issues
+        - adsk.tandem
       title: SystemEnum
       default: data
     Events:
@@ -1139,6 +1140,10 @@ components:
         - issue.deleted-1.0
         - issue.restored-1.0
         - issue.unlinked-1.0
+        - dt.alert
+        - dt.mutation
+        - dt.applyTemplate
+        - dt.removeTemplate
     Scopes:
       type: string
       x-stoplight:
