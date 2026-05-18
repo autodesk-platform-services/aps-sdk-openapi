@@ -7988,7 +7988,7 @@ components:
       schema:
         type: boolean
       description: |
-        Specifies whether deleted folders are excluded from the response for BIM 360 Docs and Forma Data Management projects, when user context is provided. 
+        Specifies what folders and subfolders to return for BIM 360 Docs and Forma Data Management projects, when user context is provided. 
 
         - ``true``: Response will be restricted to folder and subfolders containing project files.  
         - ``false``: (Default) Response will include all available folders.
