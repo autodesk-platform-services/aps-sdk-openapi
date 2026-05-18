@@ -3,7 +3,7 @@ info:
   title: Data Management
   version: '1.0'
   description: |-
-    The Data Management API provides a unified and consistent way to access data across BIM 360 Team, Fusion Team (formerly known as A360 Team), BIM 360 Docs, A360 Personal, and the Object Storage Service.
+    The Data Management API provides a unified and consistent way to access data across BIM 360 Team, Fusion Team (formerly known as A360 Team), BIM 360 Docs, Forma, A360 Personal, and the Object Storage Service.
 
     With this API, you can accomplish a number of workflows, including accessing a Fusion model in Fusion Team and getting an ordered structure of items, IDs, and properties for generating a bill of materials in a 3rd-party process. Or, you might want to superimpose a Fusion model and a building model to use in the Viewer.
   termsOfService: 'https://www.autodesk.com/company/legal-notices-trademarks/terms-of-service-autodesk360-web-services/forge-platform-web-services-api-terms-of-service'
@@ -26,11 +26,11 @@ paths:
       description: |-
         Returns a collection of hubs that the user of your app can access.
 
-        The returned hubs can be BIM 360 Team hubs, Fusion Team hubs (formerly known as A360 Team hubs), A360 Personal hubs, ACC Docs (Autodesk Docs) accounts, or BIM 360 Docs accounts. Only active hubs are returned.
+        The returned hubs can be BIM 360 Team hubs, Fusion Team hubs (formerly known as A360 Team hubs), A360 Personal hubs, Forma Hubs, or BIM 360 Docs accounts. Only active hubs are returned.
 
-        For BIM 360 Docs and ACC Docs, a hub ID corresponds to an Account ID. To convert a BIM 360 or ACC Account ID to a hub ID, prefix the Account ID with ``b.``. For example, an Account ID of ```c8b0c73d-3ae9``` translates to a hub ID of ``b.c8b0c73d-3ae9``.
+        For BIM 360 Docs, a Data Management Hub ID corresponds to an Account ID. For Forma, a Data Management Hub ID corresponds to a Forma Hub ID. To convert either to a Data Management Hub ID, prefix the ID with ``b.`` For example, a BIM 360 Account ID or Forma Hub ID of ``c8b0c73d-3ae9`` translates to a Data Management Hub ID of ``b.c8b0c73d-3ae9``.
 
-        **Note:** This operation supports Autodesk Construction Cloud (ACC) Projects. For more information, see the [ACC Platform API documentation](https://en.docs.acc.v1/overview/introduction/). 
+        **Note:** This operation works with both BIM 360 Projects and Forma Projects. 
       security:
         - 2-legged:
             - 'data:read'
@@ -63,9 +63,9 @@ paths:
       description: |-
         Returns the hub specified by the ``hub_id`` parameter.
 
-        For BIM 360 Docs, a hub ID corresponds to a BIM 360 account ID. To convert a BIM 360 account ID to a hub ID, prefix the account ID with ``b.``. For example, an account ID of ```c8b0c73d-3ae9``` translates to a hub ID of ``b.c8b0c73d-3ae9``.
+        For BIM 360 Docs, a Data Management Hub ID corresponds to an Account ID. For Forma, a Data Management Hub ID corresponds to a Forma Hub ID. To convert either to a Data Management Hub ID, prefix the ID with ``b.`` For example, a BIM 360 Account ID or Forma Hub ID of ``c8b0c73d-3ae9`` translates to a Data Management Hub ID of ``b.c8b0c73d-3ae9``.
 
-        **Note:** This operation supports Autodesk Construction Cloud (ACC) Projects. For more information, see the [ACC Platform API documentation](https://en.docs.acc.v1/overview/introduction/). 
+        **Note:** This operation works with both BIM 360 Projects and Forma Projects. 
       security:
         - 2-legged:
             - 'data:read'
@@ -93,13 +93,13 @@ paths:
       operationId: getHubProjects
       summary: Get Projects
       description: |-
-        Returns a collection of active projects within the specified hub. The returned projects can be Autodesk Construction Cloud (ACC), BIM 360, BIM 360 Team, Fusion Team, and A360 Personal projects. 
+        Returns a collection of active projects within the specified hub. The returned projects can be Forma, BIM 360, BIM 360 Team, Fusion Team, and A360 Personal projects. 
 
-        For BIM 360 and ACC projects a hub ID corresponds to an Account ID. To convert an Account ID to a hub ID, prefix the account ID with ``b.``. For example, a BIM 360 account ID of ```c8b0c73d-3ae9``` translates to a hub ID of ``b.c8b0c73d-3ae9``.
+        For BIM 360 Docs, a Data Management Hub ID corresponds to an Account ID. For Forma, a Data Management Hub ID corresponds to a Forma Hub ID. To convert either to a Data Management Hub ID, prefix the ID with ``b.`` For example, a BIM 360 Account ID or Forma Hub ID of ``c8b0c73d-3ae9`` translates to a Data Management Hub ID of ``b.c8b0c73d-3ae9``.
 
-        Similarly, to convert a BIM 360 and ACC project IDs to  Data Management project IDs prefix the BIM 360 or ACC Project ID with ``b.``. For example, a project ID of ``c8b0c73d-3ae9`` translates to a project ID of ``b.c8b0c73d-3ae9``.
+        Similarly, to convert BIM 360 or Forma Project IDs to Data Management Project IDs, prefix them with ``b.`` For example, a Project ID of ``c8b0c73d-3ae9`` becomes ``b.c8b0c73d-3ae9``.
 
-        **Note:** This operation supports Autodesk Construction Cloud (ACC) Projects. For more information, see the [ACC Platform API documentation](https://en.docs.acc.v1/overview/introduction/). 
+        **Note:** This operation works with both BIM 360 Projects and Forma Projects. 
       security:
         - 2-legged:
             - 'data:read'
@@ -137,11 +137,11 @@ paths:
       description: |-
         Returns the specified project from within the specified hub.
 
-        For BIM 360 Docs, a hub ID corresponds to a BIM 360 account ID. To convert a BIM 360 account ID to a hub ID, prefix the account ID with ``b.``. For example, an account ID of ```c8b0c73d-3ae9``` translates to a hub ID of ``b.c8b0c73d-3ae9``.
+        For BIM 360 Docs, a Data Management Hub ID corresponds to an Account ID. For Forma, a Data Management Hub ID corresponds to a Forma Hub ID. To convert either to a Data Management Hub ID, prefix the ID with ``b.`` For example, a BIM 360 Account ID or Forma Hub ID of ``c8b0c73d-3ae9`` translates to a Data Management Hub ID of ``b.c8b0c73d-3ae9``.
 
-        Similarly, to convert a BIM 360 project ID to a Data Management project ID prefix the BIM 360 Project ID with ``b.``. For example, a project ID of ``c8b0c73d-3ae9`` translates to a project ID of ``b.c8b0c73d-3ae9``.
+        Similarly, to convert BIM 360 or Forma Project IDs to Data Management Project IDs, prefix them with ``b.`` For example, a Project ID of ``c8b0c73d-3ae9`` becomes ``b.c8b0c73d-3ae9``.
 
-        **Note:** This operation supports Autodesk Construction Cloud (ACC) Projects. For more information, see the [ACC Platform API documentation](https://en.docs.acc.v1/overview/introduction/). 
+        **Note:** This operation works with both BIM 360 Projects and Forma Projects. 
       security:
         - 2-legged:
             - 'data:read'
@@ -174,7 +174,7 @@ paths:
       description: |-
         Returns the hub that contains the project specified by the  ``project_id`` parameter.
 
-        **Note:** This operation supports Autodesk Construction Cloud (ACC) Projects. For more information, see the [ACC Platform API documentation](https://en.docs.acc.v1/overview/introduction/). 
+        **Note:** This operation works with both BIM 360 Projects and Forma Projects. 
       security:
         - 2-legged:
             - 'data:read'
@@ -211,7 +211,7 @@ paths:
 
         Users with access permission to a folder has access permission to all its subfolders.
 
-        **Note:** This operation supports Autodesk Construction Cloud (ACC) Projects. For more information, see the [ACC Platform API documentation](https://en.docs.acc.v1/overview/introduction/). 
+        **Note:** This operation works with both BIM 360 Projects and Forma Projects. 
       security:
         - 2-legged:
             - 'data:read'
@@ -246,7 +246,7 @@ paths:
       description: |-
         Returns the folder specified by the ``folder_id`` parameter from within the project identified by the ``project_id`` parameter. All folders and subfolders within a project (including the root folder) have a unique ID.
 
-        **Note:** This operation supports Autodesk Construction Cloud (ACC) Projects. For more information, see the [ACC Platform API documentation](https://en.docs.acc.v1/overview/introduction/). 
+        **Note:** This operation works with both BIM 360 Projects and Forma Projects. 
       security:
         - 2-legged:
             - 'data:read'
@@ -275,14 +275,18 @@ paths:
         - Folders
       operationId: patchFolder
       summary: Modify a Folder
-      description: |-
-        Renames, moves, hides, or unhides a folder. Marking a BIM 360 Docs folder as hidden effectively deletes it. You can restore it by changing its ``hidden`` attribute. You can also move BIM 360 Docs folders by changing their parent folder.
+      description: |
+        Renames, moves, hides, or unhides a folder. 
+        
+        For BIM 360 Docs and Forma Data Management folders, marking a folder as hidden effectively deletes it. You can restore it by changing its hidden attribute. You can also move these folders by changing their parent folder.
 
-        You cannot permanently delete BIM 360 Docs folders. They are tagged as hidden folders and are removed from the BIM 360 Docs UI and from regular Data Management API responses. You can use the hidden filter (``filter[hidden]=true``) to get a list of deleted folders with the [List Folder Contents](/en/docs/data/v2/reference/http/projects-project_id-folders-folder_id-contents-GET/) operation.
+        You cannot permanently delete BIM 360 Docs or Forma Data Management folders. Deleted folders are tagged as hidden and are removed from the product UI and from regular Data Management API responses. You can use the hidden filter (``filter[hidden]=true``) o retrieve hidden folders with the [List Folder Contents](/en/docs/data/v2/reference/http/projects-project_id-folders-folder_id-contents-GET/) operation.
 
-        Before you use the Data Management API to access BIM 360 Docs folders, provision your app through the BIM 360 Account Administrator portal. For details, see the [Manage Access to Docs tutorial](/en/docs/bim360/v1/tutorials/getting-started/manage-access-to-docs/).
+        Before using the Data Management API to access BIM 360 Docs folders, you must provision your app through the BIM 360 Account Administrator portal. For details, see the [Manage Access to Docs tutorial](/en/docs/bim360/v1/tutorials/getting-started/manage-access-to-docs/).
 
-        **Note:** This operation supports Autodesk Construction Cloud (ACC) Projects. For more information, see the [ACC Platform API documentation](/en.docs.acc.v1/overview/introduction/). 
+        Access to Forma Data Management folders requires a different provisioning process. Apps must be registered and approved as custom integrations before they can access Forma data. For instructions, see the [Custom Integrations documentation](https://help.autodesk.com/view/DOCS/ENU/?guid=Custom_Integrations).
+
+        **Note:** This operation works with both BIM 360 Projects and Forma Projects.  
       security:
         - 2-legged:
             - 'data:write'
@@ -325,9 +329,9 @@ paths:
       operationId: getFolderParent
       summary: Get Parent of a Folder
       description: |-
-        Returns the parent folder of the specified folder. In a project, folders are organized in a hierarchy. Each folder except for the root folder has a parent folder.
+        Returns the parent folder of the specified folder. In a project, folders are organized hierarchically, and all folders except the root have a parent.
 
-        **Note:** This operation supports Autodesk Construction Cloud (ACC) Projects. For more information, see the [ACC Platform API documentation](https://en.docs.acc.v1/overview/introduction/). 
+        **Note:** This operation works with both BIM 360 Projects and Forma Projects. 
       security:
         - 2-legged:
             - 'data:read'
@@ -363,7 +367,7 @@ paths:
 
         The resources contained in the ``included`` array of the response are their tip versions.
 
-        **Note:** This operation supports Autodesk Construction Cloud (ACC) Projects. For more information, see the [ACC Platform API documentation](https://en.docs.acc.v1/overview/introduction/). 
+        **Note:** This operation works with both BIM 360 Projects and Forma Projects. 
       security:
         - 2-legged:
             - 'data:read'
@@ -406,7 +410,7 @@ paths:
         Each relationship is defined by the id of the object at the other end of the relationship, together with type, attributes, and relationships links.
         Callers will typically use a filter parameter to restrict the response to the custom relationship types (``filter[meta.refType]``) they are interested in.
 
-        **Note:** This operation supports Autodesk Construction Cloud (ACC) Projects. For more information, see the [ACC Platform API documentation](https://en.docs.acc.v1/overview/introduction/). 
+        **Note:** This operation works with both BIM 360 Projects and Forma Projects. 
       security:
         - 2-legged:
             - 'data:read'
@@ -453,7 +457,7 @@ paths:
 
         To list the immediate contents of the folder without parsing subfolders, use the [List Folder Contents](/en/docs/data/v2/reference/http/projects-project_id-folders-folder_id-contents-GET/) operation.
 
-        **Note:** This operation supports Autodesk Construction Cloud (ACC) Projects. For more information, see the [ACC Platform API documentation](https://en.docs.acc.v1/overview/introduction/). 
+        **Note:** This operation works with both BIM 360 Projects and Forma Projects. 
       security:
         - 3-legged:
             - 'data:read'
@@ -490,7 +494,7 @@ paths:
         Callers will typically use a filter parameter to restrict the response to the custom relationship types (``filter[meta.refType]``) they are interested in.
         The response body will have an included array that contains the resources in the relationship, which is essentially what is returned by the [List Related Resources for a Folder](/en/docs/data/v2/reference/http/projects-project_id-folders-folder_id-refs-GET/) operation.  
 
-        **Note:** This operation supports Autodesk Construction Cloud (ACC) Projects. For more information, see the [ACC Platform API documentation](https://en.docs.acc.v1/overview/introduction/). 
+        **Note:** This operation works with both BIM 360 Projects and Forma Projects. 
       security:
         - 2-legged:
             - 'data:read'
@@ -558,7 +562,7 @@ paths:
 
         Custom relationships can be established between a folder and other external resources residing outside the data domain service. A link’s ``href`` attribute defines the target URI to access a resource.
 
-        **Note:** This operation supports Autodesk Construction Cloud (ACC) Projects. For more information, see the [ACC Platform API documentation](https://en.docs.acc.v1/overview/introduction/). 
+        **Note:** This operation works with both BIM 360 Projects and Forma Projects. 
       security:
         - 2-legged:
             - 'data:read'
@@ -594,7 +598,7 @@ paths:
         The tip version for the item is included in the included array of the payload.
         To retrieve multiple items, see the ListItems command.
 
-        **Note:** This operation supports Autodesk Construction Cloud (ACC) Projects. For more information, see the [ACC Platform API documentation](https://en.docs.acc.v1/overview/introduction/). 
+        **Note:** This operation works with both BIM 360 Projects and Forma Projects. 
       security:
         - 2-legged:
             - 'data:read'
@@ -622,9 +626,9 @@ paths:
       operationId: patchItem
       summary: Update an Item
       description: |-
-        Updates the ``displayName`` of the specified item. Note that updating the ``displayName`` of an item is not supported for BIM 360 Docs or ACC items.
+        Updates the ``displayName`` of the specified item. Note that updating the ``displayName`` of an item is not supported for BIM 360 Docs or Forma items.
 
-        **Note:** This operation supports Autodesk Construction Cloud (ACC) Projects. For more information, see the [ACC Platform API documentation](https://en.docs.acc.v1/overview/introduction/). 
+        **Note:** This operation works with both BIM 360 Projects and Forma Projects. 
       parameters:
         - $ref: '#/components/parameters/x-user-id'
       responses:
@@ -665,7 +669,7 @@ paths:
       description: |-
         Returns the parent folder of the specified item.
 
-        **Note:** This operation supports Autodesk Construction Cloud (ACC) Projects. For more information, see the [ACC Platform API documentation](https://en.docs.acc.v1/overview/introduction/). 
+        **Note:** This operation works with both BIM 360 Projects and Forma Projects. 
       security:
         - 2-legged:
             - 'data:read'
@@ -702,7 +706,7 @@ paths:
         Callers will typically use a filter parameter to restrict the response to the custom relationship types (``filter[meta.refType]``) they are interested in.
         The response body will have an included array that contains the resources in the relationship, which is essentially what is returned by the [List Related Resources for an Item](/en/docs/data/v2/reference/http/projects-project_id-items-item_id-refs-GET/) operation.
 
-        **Note:** This operation supports Autodesk Construction Cloud (ACC) Projects. For more information, see the [ACC Platform API documentation](https://en.docs.acc.v1/overview/introduction/). 
+        **Note:** This operation works with both BIM 360 Projects and Forma Projects. 
       security:
         - 2-legged:
             - 'data:read'
@@ -773,7 +777,7 @@ paths:
         Callers will typically use a filter parameter to restrict the response to the custom relationship types (``filter[meta.refType]``) they are interested in.
 
 
-        **Note:** This operation supports Autodesk Construction Cloud (ACC) Projects. For more information, see the [ACC Platform API documentation](https://en.docs.acc.v1/overview/introduction/). 
+        **Note:** This operation works with both BIM 360 Projects and Forma Projects. 
       security:
         - 2-legged:
             - 'data:read'
@@ -811,7 +815,7 @@ paths:
 
         Custom relationships can be established between an item and other external resources residing outside the data domain service. A link’s ``href`` attribute defines the target URI to access a resource.
 
-        **Note:** This operation supports Autodesk Construction Cloud (ACC) Projects. For more information, see the [ACC Platform API documentation](https://en.docs.acc.v1/overview/introduction/). 
+        **Note:** This operation works with both BIM 360 Projects and Forma Projects. 
       security:
         - 2-legged:
             - 'data:read'
@@ -844,7 +848,7 @@ paths:
       description: |-
         Returns the latest version of the specified item. A project can contain multiple versions of a resource item. The latest version is referred to as the tip version, which is returned by this operation.
 
-        **Note:** This operation supports Autodesk Construction Cloud (ACC) Projects. For more information, see the [ACC Platform API documentation](https://en.docs.acc.v1/overview/introduction/). 
+        **Note:** This operation works with both BIM 360 Projects and Forma Projects. 
       security:
         - 2-legged:
             - 'data:read'
@@ -877,7 +881,7 @@ paths:
       description: |-
         Lists all versions of the specified item. A project can contain multiple versions of a resource item.
 
-        **Note:** This operation supports Autodesk Construction Cloud (ACC) Projects. For more information, see the [ACC Platform API documentation](https://en.docs.acc.v1/overview/introduction/). 
+        **Note:** This operation works with both BIM 360 Projects and Forma Projects. 
       security:
         - 2-legged:
             - 'data:read'
@@ -915,7 +919,7 @@ paths:
       description: |-
         Returns the specified version of an item.
 
-        **Note:** This operation supports Autodesk Construction Cloud (ACC) Projects. For more information, see the [ACC Platform API documentation](https://en.docs.acc.v1/overview/introduction/). 
+        **Note:** This operation works with both BIM 360 Projects and Forma Projects. 
       security:
         - 2-legged:
             - 'data:read'
@@ -944,7 +948,7 @@ paths:
       description: |
         Updates the properties of the specified version of an  item. Currently, you can only change the name of the version.
 
-        **Note:** This operation is not supported for BIM 360 and ACC. If you want to rename a version, create a new version with a new name.
+        **Note:** This operation is not supported for BIM 360 and Forma. If you want to rename a version, create a new version with a new name.
       security:
         - 2-legged:
             - 'data:write'
@@ -983,7 +987,7 @@ paths:
       description: |-
         Returns the item corresponding to the specified version.
 
-        **Note:** This operation supports Autodesk Construction Cloud (ACC) Projects. For more information, see the [ACC Platform API documentation](https://en.docs.acc.v1/overview/introduction/). 
+        **Note:** This operation works with both BIM 360 Projects and Forma Projects. 
       security:
         - 2-legged:
             - 'data:read'
@@ -1022,7 +1026,7 @@ paths:
         - Callers will typically use a filter parameter to restrict the response to the custom relationship types (``filter[meta.refType]``) they are interested in.
         - The response body will have an included array that contains the ref resources that are involved in the relationship, which is essentially the response to the [List Custom Relationships for a Version](/en/docs/data/v2/reference/http/projects-project_id-versions-version_id-relationships-refs-GET/) operation. 
 
-        **Note:** This operation supports Autodesk Construction Cloud (ACC) Projects. For more information, see the [ACC Platform API documentation](https://en.docs.acc.v1/overview/introduction/). 
+        **Note:** This operation works with both BIM 360 Projects and Forma Projects. 
       security:
         - 2-legged:
             - 'data:read'
@@ -1065,7 +1069,7 @@ paths:
         - The response body will have an included array that contains the resources in the relationship, which is essentially the response to the [List Related Resources operation](/en/docs/data/v2/reference/http/projects-project_id-versions-version_id-relationships-refs-POST/).
         - To get custom relationships for multiple versions, see the ListRefs command.
 
-        **Note:** This operation supports Autodesk Construction Cloud (ACC) Projects. For more information, see the [ACC Platform API documentation](https://en.docs.acc.v1/overview/introduction/). 
+        **Note:** This operation works with both BIM 360 Projects and Forma Projects. 
       security:
         - 2-legged:
             - 'data:read'
@@ -1128,7 +1132,7 @@ paths:
       description: |-
         Returns a collection of links for the specified version of an item. Custom relationships can be established between a version of an item and other external resources residing outside the data domain service. A link’s href defines the target URI to access the resource.
 
-        **Note:** This operation supports Autodesk Construction Cloud (ACC) Projects. For more information, see the [ACC Platform API documentation](https://en.docs.acc.v1/overview/introduction/). 
+        **Note:** This operation works with both BIM 360 Projects and Forma Projects. 
       security:
         - 2-legged:
             - 'data:read'
@@ -1163,7 +1167,7 @@ paths:
       description: |-
         Creates a placeholder for an item or a version of an item in the OSS. Later, you can upload the binary content for the item or version to this storage location.
 
-        **Note:** This operation supports Autodesk Construction Cloud (ACC) Projects. For more information, see the [ACC Platform API documentation](https://en.docs.acc.v1/overview/introduction/). 
+        **Note:** This operation works with both BIM 360 Projects and Forma Projects. 
       security:
         - 2-legged:
             - 'data:create'
@@ -1201,11 +1205,13 @@ paths:
       description: |-
         Creates a new folder in the specified project. Use the ``parent`` attribute in the request body to specify where in the hierarchy the new folder should be located. Folders can be nested up to 25 levels deep.
 
-        Use the `Modify a Folder </en/docs/data/v2/reference/http/projects-project_id-folders-folder_id-PATCH/>`_ operation to delete and restore folders.
+        Use the ``Modify a Folder </en/docs/data/v2/reference/http/projects-project_id-folders-folder_id-PATCH/>``_ operation to delete and restore folders.
 
-        Before you use the Data Management API to access BIM 360 Docs folders, provision your app through the BIM 360 Account Administrator portal. For details, see the [Manage Access to Docs tutorial](/en/docs/bim360/v1/tutorials/getting-started/manage-access-to-docs/).
+        Before using the Data Management API to access BIM 360 Docs folders, you must provision your app through the BIM 360 Account Administrator portal. For details, see the [Manage Access to Docs tutorial](/en/docs/bim360/v1/tutorials/getting-started/manage-access-to-docs/).
 
-        **Note:** This operation supports Autodesk Construction Cloud (ACC) Projects. For more information, see the [ACC Platform API documentation](https://en.docs.acc.v1/overview/introduction/). 
+        Access to Forma Data Management folders requires a different provisioning process. Apps must be registered and approved as custom integrations before they can access Forma data. For instructions, see the [Custom Integrations documentation](https://help.autodesk.com/view/DOCS/ENU/?guid=Custom_Integrations).
+
+        **Note:** This operation works with both BIM 360 Projects and Forma Projects. 
       security:
         - 2-legged:
             - 'data:create'
@@ -1255,9 +1261,11 @@ paths:
 
         Use the [Create Version](/en/docs/data/v2/reference/http/projects-project_id-versions-POST/) operation with the ``copyFrom`` parameter if you want to create a new version of an item by copying a specific version of another item. 
 
-        Before you use the Data Management API to access BIM 360 Docs files, you must provision your app through the BIM 360 Account Administrator portal. For details, see the [Manage Access to Docs tutorial](/en/docs/bim360/v1/tutorials/getting-started/manage-access-to-docs/).
+        Before using the Data Management API to access BIM 360 Docs files, you must provision your app through the BIM 360 Account Administrator portal. For details, see the [Manage Access to Docs tutorial](/en/docs/bim360/v1/tutorials/getting-started/manage-access-to-docs/).
 
-        **Note:** This operation supports Autodesk Construction Cloud (ACC) Projects. For more information, see the [ACC Platform API documentation](https://en.docs.acc.v1/overview/introduction/). 
+        Access to Forma Data Management files requires a different provisioning process. Apps must be registered and approved as custom integrations before they can access Forma data. For instructions, see the [Custom Integrations documentation](https://help.autodesk.com/view/DOCS/ENU/?guid=Custom_Integrations).
+
+        **Note:** This operation works with both BIM 360 Projects and Forma Projects. 
       security:
         - 2-legged:
             - 'data:create'
@@ -1276,7 +1284,7 @@ paths:
 
             For copying files, users of your app must have permission to view the source folder. 
 
-            For information about managing and verifying folder permissions for BIM 360 Docs, see the section on [Managing Folder Permissions](http://help.autodesk.com/view/BIM360D/ENU/?guid=GUID-2643FEEF-B48A-45A1-B354-797DAD628C37).'
+            For information about managing and verifying folder permissions, see the folder permissions documentation for [BIM 360 Docs](http://help.autodesk.com/view/BIM360D/ENU/?guid=GUID-2643FEEF-B48A-45A1-B354-797DAD628C37) and [Forma Data Management](https://help.autodesk.com/view/DOCS/ENG/?guid=Folder_Permissions).
       responses:
         '201':
           description: The first version of an item was successfully created.
@@ -1319,9 +1327,11 @@ paths:
 
         This operation can also be used to delete files on BIM360 Document Management. For more information, please refer to the delete and restore a file tutorial.
 
-        Before you use the Data Management API to access BIM 360 Docs files, you must provision your app through the BIM 360 Account Administrator portal. For details, see the [Manage Access to Docs tutorial](/en/docs/bim360/v1/tutorials/getting-started/manage-access-to-docs/).
+        Before using the Data Management API to access BIM 360 Docs files, you must provision your app through the BIM 360 Account Administrator portal. For details, see the [Manage Access to Docs tutorial](/en/docs/bim360/v1/tutorials/getting-started/manage-access-to-docs/).
 
-        **Note:** This operation supports Autodesk Construction Cloud (ACC) Projects. For more information, see the [ACC Platform API documentation](https://en.docs.acc.v1/overview/introduction/). 
+        Access to Forma Data Management files requires a different provisioning process. Apps must be registered and approved as custom integrations before they can access Forma data. For instructions, see the [Custom Integrations documentation](https://help.autodesk.com/view/DOCS/ENU/?guid=Custom_Integrations).
+
+        **Note:** This operation works with both BIM 360 Projects and Forma Projects. 
       security:
         - 2-legged:
             - 'data:create'
@@ -1365,7 +1375,7 @@ paths:
       description: |-
         Returns a list of file formats the specified version of an item can be downloaded as.
 
-        **Note:** This operation supports Autodesk Construction Cloud (ACC) Projects. For more information, see the [ACC Platform API documentation](https://en.docs.acc.v1/overview/introduction/). 
+        **Note:** This operation works with both BIM 360 Projects and Forma Projects. 
       security:
         - 2-legged:
             - 'data:read'
@@ -2330,8 +2340,7 @@ components:
           minLength: 1
           description: Reserved for future Use. Do not use. Use ``attributes.name`` for the folder name.
         objectCount:
-          type: integer
-          format: int32
+          type: number
           description: The number of objects inside the folder.
         createTime:
           type: string
@@ -2391,8 +2400,7 @@ components:
           minLength: 1
           description: Reserved for future Use. Do not use. Use ``attributes.name`` for the folder name.
         objectCount:
-          type: integer
-          format: int32
+          type: number
           description: The number of objects inside the folder.
         createTime:
           type: string
@@ -2752,9 +2760,9 @@ components:
                 hidden:
                   type: boolean
                   description: |-
-                    ``true`` : Delete a BIM 360 Docs folder.
+                    ``true`` : Delete a BIM 360 Docs or Forma Data Management folder.
 
-                    ``false`` : Restore a BIM 360 Docs folder.
+                    ``false`` : Restore a BIM 360 Docs or Forma Data Management folder.
             relationships:
               type: object
               description: Contains links to resources that are directly related to this folder.
@@ -4973,7 +4981,7 @@ components:
                       description: |-
                         The type of the extension.
 
-                        For BIM 360 Docs folders, use ``folders:autodesk.bim360:Folder``.
+                        For BIM 360 Docs and Forma Data Management folders, use ``folders:autodesk.bim360:Folder``.
 
                         For all other services, use ``folders:auto``
                     version:
@@ -5013,7 +5021,7 @@ components:
                           description: |
                             The URN of the parent folder. For information on how to find the URN, see the initial steps of the [Download a File](/en/docs/data/v2/tutorials/download-file/) tutorial.
 
-                            Note that for BIM 360 Docs, new folders must be created within an existing folder (e.g., the Plans or Project Files folders), 
+                            Note that for BIM 360 Docs and Forma Data Management, new folders must be created within an existing folder (e.g., the Plans or Project Files folders), 
                             and not directly within the root folder. Permissions, visibility (e.g., ``items:autodesk.bim360:Document`` or ``items:autodesk.bim360:File``), 
                             and actions (e.g., OCR) are inherited from the existing parent folder. New folders also inherit subscriptions such as the 
                             notifications sent when files are added to a folder.
@@ -5095,7 +5103,7 @@ components:
                       description: |
                         The type of the extension.
 
-                        For BIM 360 Docs files, use ``items:autodesk.bim360:File``.
+                        For BIM 360 Docs and Forma Data Management files, use ``items:autodesk.bim360:File``.
 
                         For all other services, use ``items:autodesk.core:File``.
                     version:
@@ -5159,7 +5167,7 @@ components:
                           description: |
                             The URN of the parent folder.
 
-                            Note that you cannot copy files between folders in different BIM 360 Docs projects and accounts.
+                            Note that you cannot copy files between folders in different BIM 360 Docs projects or accounts. The same restriction applies to Forma Data Management, where files also cannot be copied between folders in different hubs or projects.
 
                             For information on how to find the URN, see the initial steps of the [Download a File](/en/docs/data/v2/tutorials/download-file/) tutorial.
         included:
@@ -5202,7 +5210,7 @@ components:
                         description: |
                           The type of the extension.
 
-                          For BIM 360 Docs files, use ``versions:autodesk.bim360:File``.
+                          For BIM 360 Docs and Forma Data Management files, use ``versions:autodesk.bim360:File``.
 
                           For A360 composite design files, use ``versions:autodesk.a360:CompositeDesign``.
 
@@ -7529,12 +7537,13 @@ components:
       enum:
         - BIM360
         - ACC
-      description: The type of project. Only relevant for BIM 360 and ACC projects.
+      description: The type of project. Only relevant for BIM 360 and Forma projects.
     region:
       type: string
       enum:
         - US
         - EMEA
+        - APAC
         - AUS
         - CAN
         - DEU
@@ -7958,9 +7967,9 @@ components:
       description: |
         The unique identifier of a project. 
 
-        For BIM 360 Docs and ACC Docs, a hub ID corresponds to an Account ID. To convert a BIM 360 or ACC Account ID to a hub ID, prefix the Account ID with ``b.``. For example, an Account ID of ```c8b0c73d-3ae9``` translates to a hub ID of ``b.c8b0c73d-3ae9``.
+        For BIM 360 Docs, a Data Management Hub ID corresponds to an Account ID. For Forma, a Data Management Hub ID corresponds to a Forma Hub ID. To convert either to a Data Management Hub ID, prefix the ID with ``b.`` For example, a BIM 360 Account ID or Forma Hub ID of ``c8b0c73d-3ae9`` translates to a Data Management Hub ID of ``b.c8b0c73d-3ae9``.
 
-        Similarly, to convert an ACC or BIM 360 project ID to a Data Management project ID prefix the ACC or BIM 360 project ID with ``b.``. For example, a project ID of ``c8b0c73d-3ae9`` translates to a project ID of ``b.c8b0c73d-3ae9``.
+        Similarly, to convert BIM 360 or Forma Project IDs to Data Management Project IDs, prefix them with ``b.`` For example, a Project ID of ``c8b0c73d-3ae9`` becomes ``b.c8b0c73d-3ae9``.
     excludeDeleted:
       name: excludeDeleted
       in: query
@@ -7968,10 +7977,10 @@ components:
       schema:
         type: boolean
       description: |
-        Specifies whether deleted folders are excluded from the response for BIM 360 Docs projects, when user context is provided. 
+        Specifies whether deleted folders are excluded from the response for BIM 360 Docs and Forma Data Management projects, when user context is provided. 
 
-        - ``true``: Response excludes deleted folders for BIM 360 Docs projects.  
-        - ``false``: (Default) Response will not exclude deleted folders for BIM 360 Docs projects.
+        - ``true``: Response excludes deleted folders.  
+        - ``false``: (Default) Response will not exclude deleted folders.
     projectFilesOnly:
       name: projectFilesOnly
       in: query
@@ -7979,9 +7988,9 @@ components:
       schema:
         type: boolean
       description: |
-        Specifies what folders and subfolders to return for BIM 360 Docs projects, when user context is provided. 
+        Specifies whether deleted folders are excluded from the response for BIM 360 Docs and Forma Data Management projects, when user context is provided. 
 
-        - ``true``: Response will be restricted to folder and subfolders containing project files for BIM 360 Docs projects.  
+        - ``true``: Response will be restricted to folder and subfolders containing project files.  
         - ``false``: (Default) Response will include all available folders.
     folder_id:
       name: folder_id

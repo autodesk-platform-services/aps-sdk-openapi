@@ -995,7 +995,7 @@ components:
           description: |-
             The ID of the hub that contains the entity that you want to monitor. Specify this attribute if the user calling this operation is a member of a large number of projects.
 
-            For BIM 360 Docs and ACC Docs, a hub ID corresponds to an Account ID. To convert a BIM 360 or ACC Account ID to a hub ID, prefix the Account ID with ``b.``. For example, an Account ID of ```c8b0c73d-3ae9``` translates to a hub ID of ``b.c8b0c73d-3ae9``.
+            For BIM 360, a Data Management Hub ID corresponds to an Account ID. For Forma, a Data Management Hub ID corresponds to a Forma Hub ID. To convert either to a Data Management Hub ID, prefix the ID with ``b.`` For example, a BIM 360 Account ID or Forma Hub ID of ``c8b0c73d-3ae9`` translates to a Data Management Hub ID of ``b.c8b0c73d-3ae9``.
         projectId:
           type: string
           x-stoplight:
@@ -1003,7 +1003,7 @@ components:
           description: |-
             The ID of the project that contains the entity that you want to monitor Specify this attribute if the user calling this operation is a member of a large number of projects.
 
-            BIM 360 and ACC project IDs are different to Data Management project IDs. To convert a BIM 360 and ACC project IDs to  Data Management project IDs, prefix the BIM 360 or ACC Project ID with ``b.``. For example, a project ID of ``c8b0c73d-3ae9`` translates to a project ID of ``b.c8b0c73d-3ae9``.
+            BIM 360 and Forma project IDs are different from Data Management project IDs. To convert BIM 360 or Forma Project IDs to Data Management Project IDs, prefix them with ``b.`` For example, a Project ID of `c8b0c73d-3ae9` becomes ``b.c8b0c73d-3ae9``.
         tenant:
           type: string
           x-stoplight:
@@ -1046,7 +1046,6 @@ components:
         - autodesk.construction.cost
         - autodesk.construction.bc
         - autodesk.construction.issues
-        - adsk.tandem
       title: SystemEnum
       default: data
     Events:
@@ -1140,10 +1139,6 @@ components:
         - issue.deleted-1.0
         - issue.restored-1.0
         - issue.unlinked-1.0
-        - dt.alert
-        - dt.mutation
-        - dt.applyTemplate
-        - dt.removeTemplate
     Scopes:
       type: string
       x-stoplight:
@@ -1170,7 +1165,7 @@ components:
 
         - ``US`` - (Default) Data center dedicated to serve the United States region.
         - ``EMEA`` - Data center dedicated to serve the European Union, Middle East, and Africa regions.
-        - ``AUS`` - (Beta) Data center dedicated to serve the Australia region.
+        - ``AUS`` - Data center dedicated to serve the Australia region.
         - ``CAN`` - Data center dedicated to serve the Canada region.
         - ``DEU`` - Data center dedicated to serve the Germany region.
         - ``IND`` - Data center dedicated to serve the India region.
@@ -1194,7 +1189,7 @@ components:
 
         - ``US`` - (Default) Data center dedicated to serve the United States region.
         - ``EMEA`` - Data center dedicated to serve the European Union, Middle East, and Africa regions.
-        - ``AUS`` - (Beta) Data center dedicated to serve the Australia region.
+        - ``AUS`` - Data center dedicated to serve the Australia region.
         - ``CAN`` - Data center dedicated to serve the Canada region.
         - ``DEU`` - Data center dedicated to serve the Germany region.
         - ``IND`` - Data center dedicated to serve the India region.
@@ -1294,17 +1289,14 @@ components:
 
         - ``US`` - (Default) Data center dedicated to serve the United States region.
         - ``EMEA`` - Data center dedicated to serve the European Union, Middle East, and Africa regions.
-        - ``AUS`` - (Beta) Data center dedicated to serve the Australia region.
+        - ``AUS`` - Data center dedicated to serve the Australia region.
         - ``CAN`` - Data center dedicated to serve the Canada region.
         - ``DEU`` - Data center dedicated to serve the Germany region.
         - ``IND`` - Data center dedicated to serve the India region.
         - ``JPN`` - Data center dedicated to serve the Japan region.
         - ``GBR`` - Data center dedicated to serve the United Kingdom region.
 
-        **Note:** 
-
-        1. Beta features are subject to change. Please avoid using them in production environments.
-        2. You can also use the ``x-ads-region`` header to specify the region. If you specify the ``region`` query string parameter as well as the ``x-ads-region`` header, the ``x-ads-region`` header takes precedence.
+        **Note:**  You can also use the ``x-ads-region`` header to specify the region. If you specify the ``region`` query string parameter as well as the ``x-ads-region`` header, the ``x-ads-region`` header takes precedence.
     x-ads-region:
       name: x-ads-region
       in: header
@@ -1316,17 +1308,14 @@ components:
 
         - ``US`` - (Default) Data center dedicated to serve the United States region.
         - ``EMEA`` - Data center dedicated to serve the European Union, Middle East, and Africa regions.
-        - ``AUS`` - (Beta) Data center dedicated to serve the Australia region.
+        - ``AUS`` - Data center dedicated to serve the Australia region.
         - ``CAN`` - Data center dedicated to serve the Canada region.
         - ``DEU`` - Data center dedicated to serve the Germany region.
         - ``IND`` - Data center dedicated to serve the India region.
         - ``JPN`` - Data center dedicated to serve the Japan region.
         - ``GBR`` - Data center dedicated to serve the United Kingdom region.
 
-        **Note:** 
-
-        1. Beta features are subject to change. Please avoid using them in production environments.
-        2. You can also use the ``region`` query string parameter to specify the region. If you specify the ``region`` query string parameter as well as the ``x-ads-region`` header, the ``x-ads-region`` header takes precedence.
+        **Note:** You can also use the ``region`` query string parameter to specify the region. If you specify the ``region`` query string parameter as well as the ``x-ads-region`` header, the ``x-ads-region`` header takes precedence.
     system:
       name: system
       in: path
