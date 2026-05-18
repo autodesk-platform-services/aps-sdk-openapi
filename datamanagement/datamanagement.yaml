@@ -1205,7 +1205,7 @@ paths:
       description: |-
         Creates a new folder in the specified project. Use the ``parent`` attribute in the request body to specify where in the hierarchy the new folder should be located. Folders can be nested up to 25 levels deep.
 
-        Use the ``Modify a Folder </en/docs/data/v2/reference/http/projects-project_id-folders-folder_id-PATCH/>``_ operation to delete and restore folders.
+        Use the `Modify a Folder </en/docs/data/v2/reference/http/projects-project_id-folders-folder_id-PATCH/>`_ operation to delete and restore folders.
 
         Before using the Data Management API to access BIM 360 Docs folders, you must provision your app through the BIM 360 Account Administrator portal. For details, see the [Manage Access to Docs tutorial](/en/docs/bim360/v1/tutorials/getting-started/manage-access-to-docs/).
 
