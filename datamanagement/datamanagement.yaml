@@ -280,7 +280,7 @@ paths:
         
         For BIM 360 Docs and Forma Data Management folders, marking a folder as hidden effectively deletes it. You can restore it by changing its hidden attribute. You can also move these folders by changing their parent folder.
 
-        You cannot permanently delete BIM 360 Docs or Forma Data Management folders. Deleted folders are tagged as hidden and are removed from the product UI and from regular Data Management API responses. You can use the hidden filter (``filter[hidden]=true``) o retrieve hidden folders with the [List Folder Contents](/en/docs/data/v2/reference/http/projects-project_id-folders-folder_id-contents-GET/) operation.
+        You cannot permanently delete BIM 360 Docs or Forma Data Management folders. Deleted folders are tagged as hidden and are removed from the product UI and from regular Data Management API responses. You can use the hidden filter (``filter[hidden]=true``) to retrieve hidden folders with the [List Folder Contents](/en/docs/data/v2/reference/http/projects-project_id-folders-folder_id-contents-GET/) operation.
 
         Before using the Data Management API to access BIM 360 Docs folders, you must provision your app through the BIM 360 Account Administrator portal. For details, see the [Manage Access to Docs tutorial](/en/docs/bim360/v1/tutorials/getting-started/manage-access-to-docs/).
 
