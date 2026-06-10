@@ -2330,7 +2330,8 @@ components:
           minLength: 1
           description: Reserved for future Use. Do not use. Use ``attributes.name`` for the folder name.
         objectCount:
-          type: number
+          type: integer
+          format: int32
           description: The number of objects inside the folder.
         createTime:
           type: string
@@ -2390,7 +2391,8 @@ components:
           minLength: 1
           description: Reserved for future Use. Do not use. Use ``attributes.name`` for the folder name.
         objectCount:
-          type: number
+          type: integer
+          format: int32
           description: The number of objects inside the folder.
         createTime:
           type: string
