@@ -22,7 +22,7 @@ paths:
 
         Invoking this operation is the first step in authenticating users and retrieving an authorization code grant. The authorization code that is generated remains valid for 5 minutes, while the ID token stays valid for 60 minutes. Any access tokens you obtain are valid for 60 minutes, and refresh tokens remain valid for 15 days.
 
-        This operation has a rate limit of 500 calls per minute.
+        This operation has a rate limit of 100 calls per minute.
 
         **Note:** This operation is intended for use with client-side applications only. It is not suitable for server-side applications.
       operationId: authorize
@@ -41,7 +41,7 @@ paths:
             -  ``code`` - Authorization code grant.
             -  ``id_token`` - OpenID Connect ID token.
           schema:
-            $ref: '#/components/schemas/responseType'
+            $ref: '#/components/schemas/ResponseType'
           required: true
         - name: redirect_uri
           in: query
@@ -54,15 +54,18 @@ paths:
             Must be specified as a URL-safe string. It can include query parameters or any other valid URL construct.
         - name: nonce
           in: query
-          description: A random string that is sent with the request. APS passes back the same string to you so that you can verify whether you received the same string that you sent. This check mitigates token replay attacks
+          description: |
+            A random string that is sent with the request. APS passes back the same string to you so that you can verify whether you received the same string that you sent. This check mitigates token replay attacks.
+
+            **Note:** This parameter is mandatory when ``scope`` is ``openid``.
           schema:
             type: string
         - name: state
           in: query
           description: |
-            A URL-encoded random string. The authorization flow will pass the same string back to the Callback URL using the ``state`` query string parameter. This process helps ensure that the callback you receive is a response to what you originally requested. It prevents malicious actors from forging requests.
+            A URL-encoded payload containing arbitrary data that the authentication flow will pass back verbatim in a ``state`` query parameter to the callback URL. This process helps ensure that the callback you receive is a response to what you originally requested. It prevents malicious actors from forging requests.
 
-            The string can only contain alphanumeric characters, commas, periods, underscores, and hyphens.            
+            **Note:** This is an optional parameter, but if set, then it is returned in the response. It is an opaque value used by the client to maintain state between the request and callback URL.
           schema:
             type: string
         - name: scope
@@ -70,10 +73,9 @@ paths:
           description: |-
             A URL-encoded space-delimited list of requested scopes. See the `Developer's Guide documentation on scopes </en/docs/oauth/v2/developers_guide/scopes/>`_ for a list of valid values you can provide.
 
-            The string you specify for this parameter must not exceed 2000 characters and it cannot contain more than 50 scopes.  
+            The string you specify for this parameter must not exceed 3000 characters and it cannot contain more than 50 scopes.
           schema:
             $ref: '#/components/schemas/Scopes'
-            type: string
           required: true
         - name: response_mode
           in: query
@@ -90,9 +92,10 @@ paths:
         - name: prompt
           in: query
           description: |
-            Specifies how to prompt users for authentication. Possible values are: 
+            Specifies how to prompt users for authentication. Possible values are:
 
-            - ``login`` : Always prompt the user for authentication, regardless of the state of the login session. 
+            - ``login`` : Always prompt the user for authentication, regardless of the state of the login session.
+            - ``create`` : Display the user registration/account creation screen instead of the standard sign-in screen.
 
             **Note:** If you do not specify this parameter, the system will not prompt the user for authentication as long as a login session is active. If a login session is not active, the system will prompt the user for authentication.
           schema:
@@ -118,10 +121,6 @@ paths:
       responses:
         '302':
           description: Successfully redirected to the redirect URI.
-          content:
-            application/json:
-              schema:
-                type: object
       tags:
         - Token
     parameters: []
@@ -146,9 +145,9 @@ paths:
                   description: |
                     The token to be revoked. 
                 token_type_hint:
-                  $ref: '#/components/schemas/tokenTypeHint'
+                  $ref: '#/components/schemas/TokenTypeHint'
                 client_id:
-                  $ref: '#/components/schemas/clientId'
+                  $ref: '#/components/schemas/ClientId'
               required:
                 - token
                 - token_type_hint
@@ -160,10 +159,12 @@ paths:
       responses:
         '200':
           description: The token was successfully revoked. This operation has no response body.
-          content:
-            application/json:
-              schema:
-                type: object
+        '400':
+          description: The request is missing a required parameter, or the ``client_id`` was supplied in the request body when Authorization headers are present.
+        '401':
+          description: No client credentials were found, or the client credentials are invalid.
+        '500':
+          description: Generic internal server error.
       tags:
         - Token
     parameters:
@@ -185,14 +186,19 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/jwks'
-              example:
-                keys:
-                  - kid: BMSYB0FZTBBA5EqqoF2g3CLYMuI5zEjl
-                    kty: RSA
-                    use: sig
-                    'n': hsCOmpYP17pNmRYgUjEPb3WzXNSvFQ0kmSWzbt2i5HYDkJmzKh7Vwgr5kQz5nQ6QVCFe2Ld30C0-a6Y9y2jolktskE6Chb8gG1bbvFdmH0TMsMLtOhzLOqSTfc8giwpYebJBmlW8BT_NWcdUH9Rk1ct4UPgu1OttzUHNulTG4t6d3X2I6oTndlGkonNPTjvEE9e5x4q38jC56RgWkS9pcdBSqa5vLeA-rGRcUyCDYVgLBaBJdnH-qxSNLbgftDmgDRdzj-sGUxUE85IY6wAadgdDMg0BWtLYwmFZwV38xPDyhSQ-AT3lvxDQMMco50Y7yOjoJf4qJ28XXZ-iNJXwUw
-                    e: AQAB
+                $ref: '#/components/schemas/Jwks'
+              examples:
+                example-1:
+                  summary: Successful retrieval of the list of public keys (200)
+                  value:
+                    keys:
+                      - kid: BMSYB0FZTBBA5EqqoF2g3CLYMuI5zEjl
+                        kty: RSA
+                        use: sig
+                        'n': hsCOmpYP17pNmRYgUjEPb3WzXNSvFQ0kmSWzbt2i5HYDkJmzKh7Vwgr5kQz5nQ6QVCFe2Ld30C0-a6Y9y2jolktskE6Chb8gG1bbvFdmH0TMsMLtOhzLOqSTfc8giwpYebJBmlW8BT_NWcdUH9Rk1ct4UPgu1OttzUHNulTG4t6d3X2I6oTndlGkonNPTjvEE9e5x4q38jC56RgWkS9pcdBSqa5vLeA-rGRcUyCDYVgLBaBJdnH-qxSNLbgftDmgDRdzj-sGUxUE85IY6wAadgdDMg0BWtLYwmFZwV38xPDyhSQ-AT3lvxDQMMco50Y7yOjoJf4qJ28XXZ-iNJXwUw
+                        e: AQAB
+        '500':
+          description: Generic internal server error.
       tags:
         - Token
     parameters: []
@@ -245,7 +251,15 @@ paths:
                 scope:
                   $ref: '#/components/schemas/Scopes'
                 client_id:
-                  $ref: '#/components/schemas/clientId'
+                  $ref: '#/components/schemas/ClientId'
+                client_secret:
+                  type: string
+                  description: |
+                    Client secret of the app.
+
+                    **Note:** Include this parameter in the request body if it is not passed in the header.
+              required:
+                - grant_type
           application/json:
             schema:
               type: object
@@ -256,8 +270,38 @@ paths:
           content:
             application/json:
               schema:
-                type: object
-                properties: {}
+                anyOf:
+                  - $ref: '#/components/schemas/TwoLeggedToken'
+                  - $ref: '#/components/schemas/ThreeLeggedToken'
+              examples:
+                authorization-code-grant:
+                  summary: Returns an access token and refresh token.
+                  value:
+                    access_token: eyJhbGciOiJSUzI1NiIsImtpZCI6IlU3c0dGRldUTzlBekNhSzBqZURRM2dQZXBURVdWN2VhIn0.eyJzY29wZSI6WyJkYXRhOnJlYWQiXSwiY2xpZW50X2lkIjoiR0NpNW9UWUxFMzZDVFVsY0w3d1diaHE5bUM1RHpHOXciLCJpc3MiOiJodHRwczovL2RldmVsb3Blci5hcGkuYXV0b2Rlc2suY29tIiwiYXVkIjoiaHR0cHM6Ly9hdXRvZGVzay5jb20iLCJqdGkiOiJXWUhWa3Mwc0hBdmYzZWphWHFCdUl4UWNKa29RMnpEMW9aSHkydG1sVHVMdTliN0R1M3pvU1padnpXRGxZM0lsIiwidXNlcmlkIjoiM1hWU0w3MkpMMlU1IiwiZXhwIjoxNjY5ODgzMjcyfQ.Z7M2ZeuCc9oCuPn1CBr7axkOfONWtrZIROq0rROmpZ_Or5S34YL1BvcrVqfQj8VnmXgw5WbJcUEmDrRnH3Qo9nxK5OxKaunOL00qTQZZQ8KrmOkCx9ZVeKZhrss21f4asQWI7kgG09xLRvlt1jNcFvSrbXSCDm8suALhBv5PF_8S2cTbH-lNz0vZVn2uHzsokAGFDGnxZkaEZagqJUHIOdQiSJF_dP3s4j5OFCq60LP_hwBV5LXkZ4eq2rSpqwtvpldJxzXE3T9KdXeHEz__GSnuItS7_EkCu0Gmk5tf6JWyZImV68-uu4c8rB1rXV2XaiLS69zRWfyD9bpX6OZw1w
+                    token_type: Bearer
+                    expires_in: 3599
+                    refresh_token: Zxn4ucyciQSfCN7dC7e4MWCaIZRLtYsB6vhcmg5LMH
+                refresh-token-grant:
+                  summary: Returns an access token and refresh token. It will not return an ID token.
+                  value:
+                    access_token: eyJhbGciOiJSUzI1NiIsImtpZCI6IlU3c0dGRldUTzlBekNhSzBqZURRM2dQZXBURVdWN2VhIn0.eyJzY29wZSI6WyJkYXRhOnJlYWQiXSwiY2xpZW50X2lkIjoiR0NpNW9UWUxFMzZDVFVsY0w3d1diaHE5bUM1RHpHOXciLCJpc3MiOiJodHRwczovL2RldmVsb3Blci5hcGkuYXV0b2Rlc2suY29tIiwiYXVkIjoiaHR0cHM6Ly9hdXRvZGVzay5jb20iLCJqdGkiOiJ3cjNmVTlLa1JINDBVdkNTRDVXS1BzTExEaEU0aFFLZHpHdXV3MzFYajlnWjlyRk9DQlFCa2RnNjEwdEZhVUtQIiwidXNlcmlkIjoiWERTWlJOODNFUVFBIiwiZXhwIjoxNjcwMzE0MTAwfQ.aUMk1YilDM1Tya0_gKohKmOaAAu_4NzPQyN-wnPRsiFp7FrvpBn51B4ehHMDBcceN1r9Me9SEHkItChMlj2mJt3_1WtxuoGn6xbyI4Yr9TZ9rQNtsGKJTM70lRs2ng0FWIZUb6RH3NNHgvFJexEE1XrAmvmY7XRbKtLoC3Md2_PsKQH7w-bQUif-oFfXQ17Nj9AwYgsyW5telD9GgbY29ozvlYcQBTz8eyhv7VlQJ34ihqZ2kE3e_2n4z3AvZ5MoaYg5tCzbx7hFxiJ-TeUKNkuBVefzp9aZz0psp6ao16bSgjnmfUbtiUJVqPRIYDitYq3iN29MH8wYySg7CKEbTQ
+                    token_type: Bearer
+                    expires_in: 3599
+                    refresh_token: BOqRZwG7EEIurStNOlk31U3lxrF2QFbyn0vQ0HbaHi
+                client-credentials-grant:
+                  summary: Successful exchange of client credentials for access token (200)
+                  value:
+                    access_token: eyJhbGciOiJSUzI1NiIsImtpZCI6IlU3c0dGRldUTzlBekNhSzBqZURRM2dQZXBURVdWN2VhIn0.eyJzY29wZSI6WyJkYXRhOnJlYWQiXSwiY2xpZW50X2lkIjoiRjZEbjh5cGVtMWo4UDZzVXo4SVgzcG1Tc09BOTlHVVQiLCJpc3MiOiJodHRwczovL2RldmVsb3Blci5hcGkuYXV0b2Rlc2suY29tIiwiYXVkIjoiaHR0cHM6Ly9hdXRvZGVzay5jb20iLCJqdGkiOiJCT0VKUW8wNDVwaGxoZjBFTGc4SDhwTGpGblJuYjJWV3BwZ0ZObU50dEx3Vkc1VVZjZ3RnMGNoMjlEeGRMcTRxIiwiZXhwIjoxNjcwMzEzODcwfQ.gQxqNjykOufnFEGTxFBDYjCh5OEgm_HonFMxOfy5JcqZv6Sx9goznniR74WG8-qXRre6zcR_EXfQaucvoyR3KETB0YcXCtHAtiYQha_yjDtHDF3dgS3O3fgh880d54jQf4YEdibdTTEfbeuN6DG-m0wLvvqgTq1LuxrAiAUeXGnYtPuJ3GZVkwphwJi7WgMzFwfRuZvc0uy08nmIHHtrq0_AJUlfPpKhTnqUN7FlNQPiyJSYREcwz87bgy4THF-QDAMCs8hwUr8709z_BwBOv9kKoeFGGwQQsoDvXBrZmwpAh6ftijZLvHEyQlzvap3cEHvBQ9Ziam7VmrFtDgNJYw
+                    token_type: Bearer
+                    expires_in: 3599
+        '400':
+          description: The token request is missing a required parameter or specifies an invalid ``grant_type``, ``scope``, or ``client_id``.
+        '401':
+          description: No client credentials were found, or the client credentials are invalid.
+        '429':
+          description: Rate limit exceeded; wait some time before retrying.
+        '500':
+          description: Generic internal server error.
       parameters:
         - $ref: '#/components/parameters/Authorization'
       tags:
@@ -271,7 +315,7 @@ paths:
 
         An application can only introspect its own tokens.
 
-        This operation has a rate limit of 500 calls per minute.
+        This operation has a rate limit of 100 calls per minute.
       operationId: introspect_token
       requestBody:
         content:
@@ -283,14 +327,35 @@ paths:
                   type: string
                   description: The token to be introspected.
                 client_id:
-                  $ref: '#/components/schemas/clientId'
+                  $ref: '#/components/schemas/ClientId'
+              required:
+                - token
       responses:
         '200':
           description: Metadata was successfully returned.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/introspectToken'
+                $ref: '#/components/schemas/IntrospectToken'
+              examples:
+                active:
+                  summary: The token is active; additional information is returned.
+                  value:
+                    active: true
+                    scope: offline_access openid
+                    client_id: 0oawv18w63i03CgmZ0h7
+                    exp: 1612952961
+                    userid: T8SLL89JABCK
+                inactive:
+                  summary: 'The token is expired, invalid or revoked.'
+                  value:
+                    active: false
+        '400':
+          description: The request is missing the required ``token`` parameter, or the ``client_id`` was supplied in the request body when Authorization headers are present.
+        '401':
+          description: The client credentials are invalid.
+        '500':
+          description: Generic internal server error.
       tags:
         - Token
       parameters:
@@ -308,6 +373,52 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/OidcSpec'
+              examples:
+                example-1:
+                  summary: Successful retrieval of the list of metadata (200)
+                  value:
+                    issuer: 'https://developer.api.autodesk.com'
+                    authorization_endpoint: 'https://developer.api.autodesk.com/authentication/v2/authorize'
+                    token_endpoint: 'https://developer.api.autodesk.com/authentication/v2/token'
+                    userinfo_endpoint: 'https://api.userprofile.autodesk.com/userinfo'
+                    jwks_uri: 'https://developer.api.autodesk.com/authentication/v2/keys'
+                    revoke_endpoint: 'https://developer.api.autodesk.com/authentication/v2/revoke'
+                    introspect_endpoint: 'https://developer.api.autodesk.com/authentication/v2/introspect'
+                    scopes_supported:
+                      - 'user-profile:read'
+                      - 'user:read'
+                      - 'user:write'
+                      - 'viewables:read'
+                      - 'data:read'
+                      - 'data:write'
+                      - 'data:create'
+                      - 'data:search'
+                      - 'bucket:create'
+                      - 'bucket:read'
+                      - 'bucket:update'
+                      - 'bucket:delete'
+                      - 'code:all'
+                      - 'account:read'
+                      - 'account:write'
+                      - openid
+                    response_types_supported:
+                      - code
+                      - code id_token
+                      - id_token
+                    response_modes_supported:
+                      - fragment
+                      - form_post
+                      - query
+                    grant_types_supported:
+                      - authorization_code
+                      - client_credentials
+                      - refresh_token
+                    subject_types_supported:
+                      - public
+                    id_token_signing_alg_values_supported:
+                      - RS256
+        '500':
+          description: Generic internal server error.
       operationId: get-oidc-spec
       description: 'Returns an OpenID Connect Discovery Specification compliant JSON document. It contains a list of the OpenID/OAuth endpoints, supported scopes, claims, public keys used to sign the tokens, and other details.'
   /authentication/v2/logout:
@@ -318,6 +429,8 @@ paths:
       responses:
         '302':
           description: The user was successfully logged out.
+        '500':
+          description: Generic internal server error.
       operationId: logout
       description: |
         Signs out the currently authenticated user from the APS authorization server. Thereafter, this operation redirects the user to the ``post_logout_redirect_uri``, or to the Autodesk Sign-in page when no ``post_logout_redirect_uri`` is provided.
@@ -333,6 +446,11 @@ paths:
 
             **Note:**  You must provide a redirect URI that is pre-registered with APS. This precaution is taken to prevent unauthorized applications from hijacking the logout process.
   /userinfo:
+    servers:
+      - url: 'https://api.aps.autodesk.com'
+        description: 'The User Profile API host. This operation is served by the User Profile API, not the Authentication API, so it does not share the Authentication host.'
+      - url: 'https://developer.api.autodesk.com'
+        description: 'Legacy host, still supported for this operation.'
     get:
       summary: Get User Info
       tags:
@@ -344,15 +462,88 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/UserInfo'
+              examples:
+                example-1:
+                  summary: This example demonstrates successful retrieval of a user profile.
+                  value:
+                    sub: ABCDEFGH
+                    name: First Last
+                    given_name: First
+                    family_name: Last
+                    preferred_username: username
+                    email: test@test.com
+                    email_verified: true
+                    profile: 'https://profile(-dev/-int/-stg/'''').autodesk.com'
+                    picture: 'https://images.profile(-dev/-int/-stg/'''').autodesk.com/ABCDEFGH/profilepictures/x120.jpg'
+                    locale: en-US
+                    updated_at: 1662583480
+                    is_twofa_enabled: false
+                    country_code: US
+                    address:
+                      street_address: |
+                        testaddress1
+                      locality: testcity
+                      region: ''
+                      postal_code: ''
+                      country: US
+                    phone_number: '+1 1234567890 #123'
+                    phone_number_verified: false
+                    ldap_enabled: true
+                    ldap_domain: autodesk.com
+                    job_title: 3D generalist
+                    industry: IT/Software development
+                    industry_code: NoGroupOther
+                    about_me: I'm completing a test right now.
+                    language: en
+                    company: Autodeskf
+                    created_date: '2017-12-11T20:54:18Z'
+                    last_login_date: '2020-05-10T04:00:29Z'
+                    eidm_guid: ABCDEFGH
+                    opt_in: false
+                    social_userinfo_list:
+                      - socialUserId: test.social_userid
+                        providerId: test1.uid
+                        providerName: Google
+                    twofa_type: Phone
+                    contact_mode: SMS
+                    user_source_type: Provisioned
+                    user_thumbnails:
+                      sizeX20: 'https://images.profile-dev.autodesk.com/default/user_X20.png'
+                      sizeX40: 'https://images.profile-dev.autodesk.com/default/user_X40.png'
+                      sizeX50: 'https://images.profile-dev.autodesk.com/default/user_X50.png'
+                      sizeX58: 'https://images.profile-dev.autodesk.com/default/user_X58.png'
+                      sizeX80: 'https://images.profile-dev.autodesk.com/default/user_X80.png'
+                      sizeX120: 'https://images.profile-dev.autodesk.com/default/user_X120.png'
+                      sizeX160: 'https://images.profile-dev.autodesk.com/default/user_X160.png'
+                      sizeX176: 'https://images.profile-dev.autodesk.com/default/user_X176.png'
+                      sizeX240: 'https://images.profile-dev.autodesk.com/default/user_X240.png'
+                      sizeX360: 'https://images.profile-dev.autodesk.com/default/user_X360.png'
+        '400':
+          description: The server was unable to process the request. The syntax of the request may be malformed or may be missing a required parameter. Do not repeat the request without fixing the issue. The response body may indicate what is wrong with the request.
+        '401':
+          description: The access token is invalid. It may have either expired or may not be a three-legged access token. Please verify the token and retry the request.
+        '403':
+          description: The request was successfully validated but lacked required permission. Please verify your credentials and permissions and retry the request.
+        '429':
+          description: Rate limit exceeded; wait some time before retrying.
+        '500':
+          description: 'An unknown server-side error occurred. Please try again later. If the problem persists, please contact support.'
       operationId: get-user-info
-      description: Retrieves information about the authenticated user.
+      description: |
+        Retrieves the profile information of an authorizing end user in a OIDC-compliant three-legged context.
+
+        This operation has a rate limit of 500 calls per minute.
+
+        **Note:** This operation is documented under the `User Profile API </en/docs/profile/v2/reference/http/oidc/get-user-info-GET/>`_, not the Authentication API, and its canonical host is ``https://api.aps.autodesk.com``. It is kept here because OIDC discovery advertises ``userinfo_endpoint`` alongside the other Authentication endpoints, and because ``https://developer.api.autodesk.com`` remains supported for it.
+
+        **Note:** This operation requires the ``openid`` scope. Additional scopes control which fields are returned; most requests need ``openid profapi:core-std-profile:read``.
       security:
         - 3-legged: []
       parameters: []
 components:
   schemas:
-    jwksKey:
-      title: jwkskey
+    JwksKey:
+      title: JwksKey
       type: object
       properties:
         kid:
@@ -376,14 +567,9 @@ components:
       x-stoplight:
         id: wp3vjpqnp0rt9
       description: Represents a JSON Web Key Set (JWKS).
-    introspectToken:
+    IntrospectToken:
       title: Introspect Token Response
       description: Represents the payload returned for an introspect token request.
-      required:
-        - active
-        - client_id
-        - exp
-        - scope
       type: object
       properties:
         active:
@@ -406,18 +592,12 @@ components:
           description: The ID of the user who authorized the token.
       x-stoplight:
         id: ovhi8qyq55tzp
-    twoLeggedToken:
+    TwoLeggedToken:
       title: Client Credentials Grant Response
       x-stoplight:
         id: 710vfesa2sjua
       type: object
       description: Represents the payload returned in response to a client credentials grant request.
-      x-examples:
-        example-1:
-          access_token: string
-          token_type: string
-          expires_in: 0
-          scope: string
       properties:
         access_token:
           type: string
@@ -436,10 +616,7 @@ components:
           x-stoplight:
             id: f6mpwstffkqqn
           description: Access token expiration time (in seconds).
-      required:
-        - access_token
-        - expires_in
-    threeLeggedToken:
+    ThreeLeggedToken:
       title: Authorization Code Grant Response
       description: Represents the payload returned in response to an authorization code grant request.
       x-stoplight:
@@ -467,9 +644,6 @@ components:
           x-stoplight:
             id: qwkwaepy78bpa
           description: Access token expiration time (in seconds).
-      required:
-        - refresh_token
-        - access_token
     OidcSpec:
       title: OIDC Specification Response
       type: object
@@ -492,9 +666,9 @@ components:
         revoke_endpoint:
           type: string
           description: The endpoint for revoking an access token or refresh token.
-        introspection_endpoint:
+        introspect_endpoint:
           type: string
-          description: The endpoint for obtaining metadata about an access token or refresh token.
+          description: Examines an access token including the reference token and returns the status information of the tokens.
         scopes_supported:
           type: array
           items:
@@ -525,48 +699,6 @@ components:
           items:
             type: string
           description: A list of all the token signing algorithms supported by APS.
-      x-examples:
-        Example 1:
-          issuer: 'https://developer.api.autodesk.com'
-          authorization_endpoint: 'https://developer.api.autodesk.com/authentication/v2/authorize'
-          token_endpoint: 'https://developer.api.autodesk.com/authentication/v2/token'
-          userinfo_endpoint: 'https://api.userprofile.autodesk.com/userinfo'
-          jwks_uri: 'https://developer.api.autodesk.com/authentication/v2/keys'
-          revocation_endpoint: 'https://developer.api.autodesk.com/authentication/v2/revoke'
-          introspection_endpoint: 'https://developer.api.autodesk.com/authentication/v2/introspect'
-          scopes_supported:
-            - 'user-profile:read'
-            - 'user:read'
-            - 'user:write'
-            - 'viewables:read'
-            - 'data:read'
-            - 'data:write'
-            - 'data:create'
-            - 'data:search'
-            - 'bucket:create'
-            - 'bucket:read'
-            - 'bucket:update'
-            - 'bucket:delete'
-            - 'code:all'
-            - 'account:read'
-            - 'account:write'
-            - openid
-          response_types_supported:
-            - code
-            - code id_token
-            - id_token
-          response_modes_supported:
-            - fragment
-            - form_post
-            - query
-          grant_types_supported:
-            - authorization_code
-            - client_credentials
-            - refresh_token
-          subject_types_supported:
-            - public
-          id_token_signing_alg_values_supported:
-            - RS256
       description: Represents a successful response to a Get OIDC Specification operation.
     Scopes:
       title: Scopes
@@ -594,7 +726,7 @@ components:
         - 'account:write'
         - openid
     GrantType:
-      title: grantType
+      title: GrantType
       x-stoplight:
         id: qabq62fprc7su
       type: string
@@ -649,10 +781,10 @@ components:
         updated_at:
           type: integer
           description: 'The time the user''s information was most recently updated, represented as a Unix timestamp.'
-        is_2fa_enabled:
+        is_twofa_enabled:
           type: boolean
           description: |
-            ``true``: Two-factor authentication is enabled for this user. 
+            ``true``: Two-factor authentication is enabled for this user.
 
             ``false``: Two-factor authentication is not enabled for this user.
         country_code:
@@ -743,65 +875,23 @@ components:
               providerName:
                 type: string
                 description: The name of the social media platform.
-        thumbnails:
+        twofa_type:
+          type: string
+          description: 'The type of two-factor authentication enabled for the user. Possible values: Phone, Email, Authenticator.'
+        contact_mode:
+          type: string
+          description: 'The mode of contact for two-factor authentication. Possible values: SMS, Email, Authenticator.'
+        user_source_type:
+          type: string
+          description: 'The source type of the user where the value indicates how the user was created. Possible values: Identity, EIDM, Rest API, Ldap/Enterprise, Test User, Provisioned, Ldap Provisioned.'
+        user_thumbnails:
           type: object
           additionalProperties:
             type: string
-          description: 'An array of key-value pairs containing image URLs for various thumbnail sizes of the user''s profile picture. The key is named ``sizeX<NUMBER>`` where ``<NUMBER>`` is the width and height of the thumbnail, in pixels. The corresponding value is the URL pointing to the thumbnail. For example, ``sizeX200`` would contain the URL for the 200x200 pixel thumbnail.'
-      x-examples:
-        Example 1:
-          sub: ABCDEFGH
-          name: First Last
-          given_name: First
-          family_name: Last
-          preferred_username: username
-          email: test@test.com
-          email_verified: true
-          profile: 'https://profile(-dev/-int/-stg/'''').autodesk.com'
-          picture: 'https://images.profile(-dev/-int/-stg/'''').autodesk.com/ABCDEFGH/profilepictures/x120.jpg'
-          locale: en-US
-          updated_at: 1662583480
-          is_2fa_enabled: false
-          country_code: US
-          address:
-            street_address: |
-              testaddress1
-            locality: testcity
-            region: ''
-            postal_code: ''
-            country: US
-          phone_number: '+1 1234567890 #123'
-          phone_number_verified: false
-          ldap_enabled: true
-          ldap_domain: autodesk.com
-          job_title: 3D generalist
-          industry: IT/Software development
-          industry_code: NoGroupOther
-          about_me: I'm completing a test right now.
-          language: en
-          company: Autodeskf
-          created_date: '2017-12-11T20:54:18Z'
-          last_login_date: '2020-05-10T04:00:29Z'
-          eidm_guid: ABCDEFGH
-          opt_in: false
-          social_userinfo_list:
-            - socialUserId: test.social_userid
-              providerId: test1.uid
-              providerName: Google
-          thumbnails:
-            sizeX20: 'https://images.profile-dev.autodesk.com/default/user_X20.png'
-            sizeX40: 'https://images.profile-dev.autodesk.com/default/user_X40.png'
-            sizeX50: 'https://images.profile-dev.autodesk.com/default/user_X50.png'
-            sizeX58: 'https://images.profile-dev.autodesk.com/default/user_X58.png'
-            sizeX80: 'https://images.profile-dev.autodesk.com/default/user_X80.png'
-            sizeX120: 'https://images.profile-dev.autodesk.com/default/user_X120.png'
-            sizeX160: 'https://images.profile-dev.autodesk.com/default/user_X160.png'
-            sizeX176: 'https://images.profile-dev.autodesk.com/default/user_X176.png'
-            sizeX240: 'https://images.profile-dev.autodesk.com/default/user_X240.png'
-            sizeX360: 'https://images.profile-dev.autodesk.com/default/user_X360.png'
+          description: 'An array of key-value pairs for image URLs of available thumbnail sizes of the user''s profile picture. The key is named ``sizeX<NUMBER>`` where ``<NUMBER>`` is the width and height of the thumbnail, in pixels. The corresponding value is the unique, secure, pre-signed & short-lived URL pointing to the thumbnail. For example, ``sizeX120`` would contain the URL for the 120x120 pixel thumbnail.'
       title: UserInfo Response
       description: Represents a successful response to a Get User Info operation.
-    jwks:
+    Jwks:
       title: JWKS Payload
       x-stoplight:
         id: 54hqs1b4gv5fy
@@ -814,9 +904,9 @@ components:
             id: mrc2tc7y5gded
           description: An array of objects where each object represents a JSON Web Key Set (JWKS).
           items:
-            $ref: '#/components/schemas/jwksKey'
-    tokenTypeHint:
-      title: tokenTypeHint
+            $ref: '#/components/schemas/JwksKey'
+    TokenTypeHint:
+      title: TokenTypeHint
       x-stoplight:
         id: ygxy8lpuc8nuh
       type: string
@@ -825,8 +915,8 @@ components:
         - refresh_token
       description: |
         The type of token to revoke. Possible values are: ``access_token`` and ``refresh_token``.
-    responseType:
-      title: responseType
+    ResponseType:
+      title: ResponseType
       x-stoplight:
         id: pzowclrc6omzd
       type: string
@@ -838,15 +928,12 @@ components:
 
          -  ``code`` - Authorization code grant.
          -  ``id_token`` - OpenID Connect ID token.
-    clientId:
-      title: clientId
+    ClientId:
+      title: ClientId
       x-stoplight:
         id: j0qsjvxe873qp
       type: string
-      description: |-
-        The Client ID of the application making the request.
-
-        **Note** This is required only for Traditional Web Apps and Server-to-Server Apps. It is not required for Desktop, Mobile, and Single-Page Apps.
+      description: Client ID of the app.
   responses: {}
   securitySchemes:
     client-credentials:
@@ -889,9 +976,9 @@ components:
       schema:
         type: string
       description: |
-        Must be ``Bearer <BASE64_ENCODED_STRING>`` where ``<BASE64_ENCODED_STRING>`` is the Base64 encoding of the concatenated string ``<CLIENT_ID>:<CLIENT_SECRET>``.'
+        Must be in the form ``Basic ${Base64(<client_id>:<client_secret>)}``.
 
-        **Note** This header is required only for Traditional Web Apps and Server-to-Server Apps. It is not required for Desktop, Mobile, and Single-Page Apps.
+        **Note:** Include this parameter in the header if it is not passed in the request body.
 tags:
   - name: Token
   - name: Users
