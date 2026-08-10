@@ -22,15 +22,34 @@ paths:
     get:
       summary: Get Webhook Details
       tags:
-        - Hooks
+        - Webhooks
       responses:
         '200':
-          description: 'Webhook details were successfully returned. '
+          description: Webhook details were successfully returned.
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/HookDetails'
-              examples: {}
+              examples:
+                success:
+                  summary: This example demonstrates how to retrieve the details of a webhook.
+                  value:
+                    hookId: 05f10350-991a-11e7-8cd7-91969336b9c2
+                    tenant: 'urn:adsk.wipprod:fs.folder:co.VsFvE6y5SNKnhSnogSeqcg'
+                    callbackUrl: 'http://cf069e23.ngrok.io/callback_test'
+                    createdBy: '********'
+                    event: dm.version.added
+                    createdDate: '2017-09-14T06:57:50.597+0000'
+                    lastUpdatedDate: '2020-09-14T17:04:10.444+0000'
+                    system: data
+                    creatorType: Application
+                    status: active
+                    autoReactivateHook: false
+                    hookExpiry: '2017-09-21T17:04:10.444Z'
+                    scope:
+                      folder: 'urn:adsk.wipprod:fs.folder:co.VsFvE6y5SNKnhSnogSeqcg'
+                    urn: 'urn:adsk.webhooks:events.hook:05f10350-991a-11e7-8cd7-91969336b9c2'
+                    __self__: /systems/data/events/dm.version.added/hooks/05f10350-991a-11e7-8cd7-91969336b9c2
         '400':
           $ref: '#/components/responses/400-general'
         '401':
@@ -41,9 +60,10 @@ paths:
           $ref: '#/components/responses/404-general'
         '500':
           $ref: '#/components/responses/500-general'
-      operationId: get-hook-details
+      operationId: getHookDetails
       description: Retrieves the details of the webhook for the specified event within the specified system.
       parameters:
+        - $ref: '#/components/parameters/region-header'
         - $ref: '#/components/parameters/x-ads-region'
         - $ref: '#/components/parameters/region'
       security:
@@ -51,22 +71,20 @@ paths:
             - 'data:read'
           3-legged:
             - 'data:read'
+      x-codeSamples:
+        - lang: cURL
+          source: 'curl -v "https://developer.api.autodesk.com/webhooks/v1/systems/data/events/dm.version.added/hooks/05f10350-991a-11e7-8cd7-91969336b9c2" -X GET -H "Authorization: Bearer 0X6mpTyg5IbH6YI8Okz2XJGpEDeK"'
     parameters:
       - $ref: '#/components/parameters/system'
       - $ref: '#/components/parameters/event'
-      - schema:
-          type: string
-        name: hook_id
-        in: path
-        required: true
-        description: The ID of the webhook to delete.
+      - $ref: '#/components/parameters/hook_id'
     patch:
       summary: Update a Webhook
       tags:
-        - Hooks
+        - Webhooks
       responses:
         '200':
-          description: 'The webhook was updated successfully. '
+          description: The webhook was updated successfully.
         '400':
           $ref: '#/components/responses/400-general'
         '401':
@@ -77,8 +95,9 @@ paths:
           $ref: '#/components/responses/404-general'
         '500':
           $ref: '#/components/responses/500-general'
-      operationId: patch-system-event-hook
+      operationId: patchSystemEventHook
       parameters:
+        - $ref: '#/components/parameters/region-header'
         - $ref: '#/components/parameters/x-ads-region'
         - $ref: '#/components/parameters/region'
       requestBody:
@@ -86,18 +105,42 @@ paths:
           application/json:
             schema:
               $ref: '#/components/schemas/ModifyHookPayload'
+            examples:
+              update:
+                summary: Successful Patch of a webhook
+                value:
+                  status: active
+                  autoReactivateHook: false
+                  filter: '$[?(@.ext==''txt'')]'
+                  hookAttribute:
+                    myfoo: 34
+                    projectId: someURN
+                    myobject:
+                      nested: true
+              deactivate:
+                summary: Successful deactivation of a webhook
+                value:
+                  status: inactive
+              clear-filter:
+                summary: Successful removal of existing filter and hook attributes
+                value:
+                  filter: null
+                  hookAttribute: null
+              extend-expiry:
+                summary: Successful update of hook expiry to a later date and time
+                value:
+                  hookExpiry: '2017-09-22T17:04:10.444Z'
       description: |-
-        Updates the webhook specified by the ``hook_id`` parameter. Currently the only attributes you can update are: 
+        Updates the webhook specified by the ``hook_id`` parameter.
+
+        The attributes that can be updated include:
 
         - filter
         - status
         - hook attribute
-        - token
-        - auto-reactivate hook flag
         - hook expiry
-        - callbackWithEventPaylaod flag 
 
-        See the request body documentation for more information.
+        See the request body documentation for the complete list of attributes you can update.
       security:
         - 2-legged:
             - 'data:read'
@@ -105,10 +148,13 @@ paths:
           3-legged:
             - 'data:read'
             - 'data:write'
+      x-codeSamples:
+        - lang: cURL
+          source: 'curl -v "https://developer.api.autodesk.com/webhooks/v1/systems/data/events/dm.version.added/hooks/05f10350-991a-11e7-8cd7-91969336b9c2" -X PATCH -H "Content-Type: application/json" -H "Authorization: Bearer 0X6mpTyg5IbH6YI8Okz2XJGpEDeK" --data ''{"status":"inactive"}'''
     delete:
       summary: Delete a Webhook
       tags:
-        - Hooks
+        - Webhooks
       responses:
         '204':
           description: The webhook was deleted successfully.
@@ -122,10 +168,12 @@ paths:
           $ref: '#/components/responses/404-general'
         '500':
           $ref: '#/components/responses/500-general'
-      operationId: delete-system-event-hook
+      operationId: deleteSystemEventHook
       parameters:
+        - $ref: '#/components/parameters/region-header'
         - $ref: '#/components/parameters/x-ads-region'
         - $ref: '#/components/parameters/region'
+        - $ref: '#/components/parameters/Content-Type'
       description: Deletes the webhook specified by its ID.
       security:
         - 2-legged:
@@ -134,6 +182,9 @@ paths:
           3-legged:
             - 'data:read'
             - 'data:write'
+      x-codeSamples:
+        - lang: cURL
+          source: 'curl -v "https://developer.api.autodesk.com/webhooks/v1/systems/data/events/dm.version.added/hooks/0f60f6a0-996c-11e7-abf3-51d68cff984c" -X DELETE -H "Authorization: Bearer bNU4P0trbQKNSzxWksLPTzSbbmUz"'
   '/webhooks/v1/systems/{system}/events/{event}/hooks':
     parameters:
       - $ref: '#/components/parameters/system'
@@ -141,14 +192,36 @@ paths:
     get:
       summary: List All Webhooks for an Event
       tags:
-        - Hooks
+        - Webhooks
       responses:
         '200':
-          description: 'A list webhooks was returned successfully. '
+          description: A list of webhooks was returned successfully.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Hooks'
+                $ref: '#/components/schemas/HooksPage'
+              examples:
+                page:
+                  summary: This example demonstrates how to retrieve a specific page of a list of webhooks for the dm.version.added event. The page is specified using the pageState query parameter.
+                  value:
+                    links:
+                      next: /systems/data/events/dm.version.added/hooks?pageState=AMMAEACAtgALYWRzay53aXBkZXYNZnMuZmlsZS5hZGRlZAZmb2xkZXIydXJuOmFkc2sud2lwcWE6ZnMuZm9sZGVyOmNvLlRSM253QUtoVFNDQ0x0azY0VE52Q2cydXJuOmFkc2sud2lwcWE6ZnMuZm9sZGVyOmNvLlRSM253QUtoVFNDQ0x0azY0VE52Q2ctaHR0cDovL2FwaS53ZWJob29raW5ib3guY29tL2kvM0l6eGlLZndmL2luL3gy8H____3wf____Twpc5_2RqlBtCsLMPJlT9kABA==
+                    data:
+                      - hookId: 0f60f6a0-996c-11e7-abf3-51d68cff984c
+                        tenant: 'urn:adsk.wipprod:fs.folder:co.wT5lCWlXSKeo3razOfHJAw'
+                        callbackUrl: 'http://bf067e05.ngrok.io/callback'
+                        createdBy: '*********'
+                        event: dm.version.added
+                        createdDate: '2017-09-14T17:04:10.444+0000'
+                        lastUpdatedDate: '2020-09-14T17:04:10.444+0000'
+                        system: data
+                        creatorType: Application
+                        status: active
+                        autoReactivateHook: false
+                        scope:
+                          folder: 'urn:adsk.wipprod:fs.folder:co.wT5lCWlXSKeo3razOfHJAw'
+                        urn: 'urn:adsk.webhooks:events.hook:0f60f6a0-996c-11e7-abf3-51d68cff984c'
+                        __self__: /systems/data/events/dm.version.added/hooks/0f60f6a0-996c-11e7-abf3-51d68cff984c
         '204':
           description: No webhooks exist.
         '400':
@@ -161,29 +234,38 @@ paths:
           $ref: '#/components/responses/404-general'
         '500':
           $ref: '#/components/responses/500-general'
-      operationId: get-system-event-hooks
+      operationId: getSystemEventHooks
       description: |-
         Retrieves a paginated list of webhooks for the specified event. The returned list contains a subset of webhooks accessible to the provided access token within the specified region. Each page includes up to 200 webhooks.
 
         If the ``pageState`` query string parameter is not provided, the first page of results is returned. Use the ``next`` value from the previous response to fetch subsequent pages.
       parameters:
+        - $ref: '#/components/parameters/region-header'
         - $ref: '#/components/parameters/x-ads-region'
         - $ref: '#/components/parameters/region'
         - schema:
             type: string
           in: query
           name: scopeName
-          description: 'Filters retrieved webhooks by the scope name used to create hook. For example : ``folder``.  If this parameter is not specified, the filter is not applied.'
+          description: 'Filters retrieved webhooks by the scope name used to create the hook. For example : ``folder``.'
+        - schema:
+            type: string
+          in: query
+          name: scopeValue
+          description: 'Further filters retrieved webhooks by the scope value used to create the hook. For example, a folder URN (``urn:adsk.wipprod:fs.folder:co.wT5lCWlXSKeo3razOfHJAw``) when ``scopeName`` is ``folder``, or a Model Derivative workflow ID when ``scopeName`` is ``workflow``. You must specify ``scopeName`` when using ``scopeValue``; otherwise ``scopeValue`` is ignored.'
         - $ref: '#/components/parameters/pageState'
         - $ref: '#/components/parameters/status'
       security:
         - 2-legged:
             - 'data:read'
           3-legged: []
+      x-codeSamples:
+        - lang: cURL
+          source: 'curl -v "https://developer.api.autodesk.com/webhooks/v1/systems/data/events/dm.version.added/hooks?scopeName=folder&scopeValue=urn:adsk.wipprod:fs.folder:co.wT5lCWlXSKeo3razOfHJAw&pageState=BNNBEACAtgALYWRzay53aXBkZXYNZnMuZmlsZS5hZGRlZAZmb2xkZXIydXJuOmFkc2sud2lwcWE6ZnMuZm9sZGVyOmNvLlRSM253QUtoVFNDQ0x0azY0VE52Q2cydXJuOmFkc2sud2lwcWE6ZnMuZm9sZGVyOmNvLlRSM253QUtoVFNDQ0x0azY0VE52Q2ctaHR0cDovL2FwaS53ZWJob29raW5ib3guY29tL2kvM0l6eGlLZndmL2luL3gy8H____3wf____Twpc5_2RqlBtCsLMPJlT9kABA==" -X GET -H "Authorization: Bearer bNU4P0trbQKNSzxWksLPTzSbbmUz"'
     post:
       summary: Create a Webhook for an Event
       tags:
-        - Hooks
+        - Webhooks
       responses:
         '201':
           description: The webhook was created successfully.
@@ -199,16 +281,31 @@ paths:
           description: The specified hook already exists.
         '500':
           $ref: '#/components/responses/500-general'
-      operationId: create-system-event-hook
+      operationId: createSystemEventHook
       description: Adds a new webhook to receive notifications of the occurrence of a specified event for the specified system.
       parameters:
         - $ref: '#/components/parameters/region'
+        - $ref: '#/components/parameters/region-header'
         - $ref: '#/components/parameters/x-ads-region'
       requestBody:
         content:
           application/json:
             schema:
               $ref: '#/components/schemas/HookPayload'
+            examples:
+              create:
+                summary: This example demonstrates how to create a webhook for the dm.version.added event.
+                value:
+                  callbackUrl: 'http://bf067e05.ngrok.io/callback'
+                  autoReactivateHook: false
+                  scope:
+                    folder: 'urn:adsk.wipprod:fs.folder:co.wT5lCWlXSKeo3razOfHJAw'
+                  hookAttribute:
+                    myfoo: 33
+                    projectId: someURN
+                    myobject:
+                      nested: true
+                  hookExpiry: '2017-09-21T17:04:10.444Z'
         description: ''
       security:
         - 2-legged:
@@ -217,20 +314,61 @@ paths:
           3-legged:
             - 'data:read'
             - 'data:write'
+      x-codeSamples:
+        - lang: cURL
+          source: 'curl -v "https://developer.api.autodesk.com/webhooks/v1/systems/data/events/dm.version.added/hooks" -X POST -H "Content-Type: application/json" -H "Authorization: Bearer bNU4P0trbQKNSzxWksLPTzSbbmUz" --data ''{"callbackUrl":"http://bf067e05.ngrok.io/callback","autoReactivateHook":false,"scope":{"folder":"urn:adsk.wipprod:fs.folder:co.wT5lCWlXSKeo3razOfHJAw"},"hookAttribute":{"myfoo":33,"projectId":"someURN","myobject":{"nested":true}},"hookExpiry":"2017-09-21T17:04:10.444Z"}'''
   '/webhooks/v1/systems/{system}/hooks':
     parameters:
       - $ref: '#/components/parameters/system'
     get:
       summary: List All Webhooks for a System
       tags:
-        - Hooks
+        - Webhooks
       responses:
         '200':
-          description: A list webhooks was returned successfully.
+          description: A list of webhooks was returned successfully.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Hooks'
+                $ref: '#/components/schemas/HooksPage'
+              examples:
+                page:
+                  summary: This example demonstrates how to retrieve a specific page of a list of webhooks for the system data. The page is specified using the pageState query parameter.
+                  value:
+                    links:
+                      next: /systems/data/hooks?pageState=AMMAEACAtgALYWRzay53aXBkZXYNZnMuZmlsZS5hZGRlZAZmb2xkZXIydXJuOmFkc2sud2lwcWE6ZnMuZm9sZGVyOmNvLlRSM253QUtoVFNDQ0x0azY0VE52Q2cydXJuOmFkc2sud2lwcWE6ZnMuZm9sZGVyOmNvLlRSM253QUtoVFNDQ0x0azY0VE52Q2ctaHR0cDovL2FwaS53ZWJob29raW5ib3guY29tL2kvM0l6eGlLZndmL2luL3gy8H____3wf____Twpc5_2RqlBtCsLMPJlT9kABA==
+                    data:
+                      - hookId: 0f60f6a0-996c-11e7-abf3-51d68cff984c
+                        tenant: 'urn:adsk.wipprod:fs.folder:co.wT5lCWlXSKeo3razOfHJAw'
+                        callbackUrl: 'http://bf067e05.ngrok.io/callback'
+                        createdBy: '*********'
+                        event: dm.version.added
+                        createdDate: '2017-09-14T17:04:10.444+0000'
+                        lastUpdatedDate: '2020-09-14T17:04:10.444+0000'
+                        system: data
+                        creatorType: Application
+                        status: active
+                        autoReactivateHook: false
+                        hookExpiry: '2017-09-21T17:04:10.444Z'
+                        scope:
+                          folder: 'urn:adsk.wipprod:fs.folder:co.wT5lCWlXSKeo3razOfHJAw'
+                        urn: 'urn:adsk.webhooks:events.hook:0f60f6a0-996c-11e7-abf3-51d68cff984c'
+                        __self__: /systems/data/events/dm.version.added/hooks/0f60f6a0-996c-11e7-abf3-51d68cff984c
+                      - hookId: 1f63f6a4-106c-11e7-qrf9-72d68cff984d
+                        tenant: 'urn:adsk.wipprod:fs.folder:co.wT5lCWlXSKeo3razOfHJAw'
+                        callbackUrl: 'http://bf067e05.ngrok.io/callback'
+                        createdBy: '*********'
+                        event: dm.version.copied
+                        createdDate: '2017-09-14T17:04:10.564+0000'
+                        lastUpdatedDate: '2020-09-14T17:04:10.444+0000'
+                        system: data
+                        creatorType: Application
+                        status: active
+                        autoReactivateHook: false
+                        scope:
+                          folder: 'urn:adsk.wipprod:fs.folder:co.wT5lCWlXSKeo3razOfHJAw'
+                        urn: 'urn:adsk.webhooks:events.hook:1f63f6a4-106c-11e7-qrf9-72d68cff984d'
+                        __self__: /systems/data/events/dm.version.copied/hooks/1f63f6a4-106c-11e7-qrf9-72d68cff984d
         '204':
           description: No webhooks exist.
         '400':
@@ -243,8 +381,9 @@ paths:
           $ref: '#/components/responses/404-general'
         '500':
           $ref: '#/components/responses/500-general'
-      operationId: get-system-hooks
+      operationId: getSystemHooks
       parameters:
+        - $ref: '#/components/parameters/region-header'
         - $ref: '#/components/parameters/x-ads-region'
         - $ref: '#/components/parameters/status'
         - $ref: '#/components/parameters/pageState'
@@ -258,17 +397,174 @@ paths:
             - 'data:read'
           3-legged:
             - 'data:read'
+      x-codeSamples:
+        - lang: cURL
+          source: 'curl -v "https://developer.api.autodesk.com/webhooks/v1/systems/data/hooks?pageState=BNNBEACAtgALYWRzay53aXBkZXYNZnMuZmlsZS5hZGRlZAZmb2xkZXIydXJuOmFkc2sud2lwcWE6ZnMuZm9sZGVyOmNvLlRSM253QUtoVFNDQ0x0azY0VE52Q2cydXJuOmFkc2sud2lwcWE6ZnMuZm9sZGVyOmNvLlRSM253QUtoVFNDQ0x0azY0VE52Q2ctaHR0cDovL2FwaS53ZWJob29raW5ib3guY29tL2kvM0l6eGlLZndmL2luL3gy8H____3wf____Twpc5_2RqlBtCsLMPJlT9kABA==" -X GET -H "Authorization: Bearer bNU4P0trbQKNSzxWksLPTzSbbmUz"'
     post:
       summary: Create Webhooks for All Events
       tags:
-        - Hooks
+        - Webhooks
       responses:
         '201':
           description: The webhooks were created successfully.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Hook'
+                $ref: '#/components/schemas/CreatedHooks'
+              examples:
+                created:
+                  summary: This example demonstrates how to create webhooks for all events of the system data.
+                  value:
+                    hooks:
+                      - hookId: 04f1033e-aa58-11e7-abc4-cec278b6b50a
+                        tenant: 'urn:adsk.wipprod:fs.folder:co.CHO-BbcmTsigjzymYeRCmQ'
+                        callbackUrl: 'http://bf067e05.ngrok.io/callback'
+                        createdBy: '*****'
+                        event: dm.version.added
+                        createdDate: '2017-09-19T18:58:16.636+0000'
+                        lastUpdatedDate: '2020-09-14T17:04:10.444+0000'
+                        system: data
+                        creatorType: O2User
+                        scope:
+                          folder: 'urn:adsk.wipprod:fs.folder:co.CHO-BbcmTsigjzymYeRCmQ'
+                        status: active
+                        autoReactivateHook: false
+                        urn: 'urn:adsk.webhooks:events.hook:04f1033e-aa58-11e7-abc4-cec278b6b50a'
+                        __self__: /systems/data/events/dm.version.added/hooks/04f1033e-aa58-11e7-abc4-cec278b6b50a
+                      - hookId: 04f1092e-aa58-11e7-abc4-cec278b6b50a
+                        tenant: 'urn:adsk.wipprod:fs.folder:co.CHO-BbcmTsigjzymYeRCmQ'
+                        callbackUrl: 'http://bf067e05.ngrok.io/callback'
+                        createdBy: '*****'
+                        event: dm.version.copied
+                        createdDate: '2017-09-19T18:58:16.312+0000'
+                        lastUpdatedDate: '2020-09-14T17:04:10.444+0000'
+                        system: data
+                        creatorType: O2User
+                        scope:
+                          folder: 'urn:adsk.wipprod:fs.folder:co.CHO-BbcmTsigjzymYeRCmQ'
+                        status: active
+                        autoReactivateHook: false
+                        urn: 'urn:adsk.webhooks:events.hook:04f1092e-aa58-11e7-abc4-cec278b6b50a'
+                        __self__: /systems/data/events/dm.version.copied/hooks/04f1092e-aa58-11e7-abc4-cec278b6b50a
+                      - hookId: 04f10a50-aa58-11e7-abc4-cec278b6b50a
+                        tenant: 'urn:adsk.wipprod:fs.folder:co.CHO-BbcmTsigjzymYeRCmQ'
+                        callbackUrl: 'http://bf067e05.ngrok.io/callback'
+                        createdBy: '*****'
+                        event: dm.version.deleted
+                        createdDate: '2017-09-19T18:58:16.716+0000'
+                        lastUpdatedDate: '2020-09-14T17:04:10.444+0000'
+                        system: data
+                        creatorType: O2User
+                        scope:
+                          folder: 'urn:adsk.wipprod:fs.folder:co.CHO-BbcmTsigjzymYeRCmQ'
+                        status: active
+                        autoReactivateHook: true
+                        urn: 'urn:adsk.webhooks:events.hook:04f10a50-aa58-11e7-abc4-cec278b6b50a'
+                        __self__: /systems/data/events/dm.version.deleted/hooks/04f10a50-aa58-11e7-abc4-cec278b6b50a
+                      - hookId: 04f10b22-aa58-11e7-abc4-cec278b6b50a
+                        tenant: 'urn:adsk.wipprod:fs.folder:co.CHO-BbcmTsigjzymYeRCmQ'
+                        callbackUrl: 'http://bf067e05.ngrok.io/callback'
+                        createdBy: '*****'
+                        event: dm.version.modified
+                        createdDate: '2017-09-19T18:58:16.121+0000'
+                        lastUpdatedDate: '2020-09-14T17:04:10.444+0000'
+                        system: data
+                        creatorType: O2User
+                        scope:
+                          folder: 'urn:adsk.wipprod:fs.folder:co.CHO-BbcmTsigjzymYeRCmQ'
+                        status: active
+                        autoReactivateHook: false
+                        urn: 'urn:adsk.webhooks:events.hook:04f10b22-aa58-11e7-abc4-cec278b6b50a'
+                        __self__: /systems/data/events/dm.version.modified/hooks/04f10b22-aa58-11e7-abc4-cec278b6b50a
+                      - hookId: 04f10bea-aa58-11e7-abc4-cec278b6b50a
+                        tenant: 'urn:adsk.wipprod:fs.folder:co.CHO-BbcmTsigjzymYeRCmQ'
+                        callbackUrl: 'http://bf067e05.ngrok.io/callback'
+                        createdBy: '*****'
+                        event: dm.version.moved
+                        createdDate: '2017-09-19T18:58:16.819+0000'
+                        lastUpdatedDate: '2020-09-14T17:04:10.444+0000'
+                        system: data
+                        creatorType: O2User
+                        scope:
+                          folder: 'urn:adsk.wipprod:fs.folder:co.CHO-BbcmTsigjzymYeRCmQ'
+                        status: active
+                        urn: 'urn:adsk.webhooks:events.hook:04f10bea-aa58-11e7-abc4-cec278b6b50a'
+                        __self__: /systems/data/events/dm.version.moved/hooks/04f10bea-aa58-11e7-abc4-cec278b6b50a
+                      - hookId: 04f10ca8-aa58-11e7-abc4-cec278b6b50a
+                        tenant: 'urn:adsk.wipprod:fs.folder:co.CHO-BbcmTsigjzymYeRCmQ'
+                        callbackUrl: 'http://bf067e05.ngrok.io/callback'
+                        createdBy: '*****'
+                        event: dm.folder.added
+                        createdDate: '2017-09-19T18:58:16.636+0000'
+                        lastUpdatedDate: '2020-09-14T17:04:10.444+0000'
+                        system: data
+                        creatorType: O2User
+                        scope:
+                          folder: 'urn:adsk.wipprod:fs.folder:co.CHO-BbcmTsigjzymYeRCmQ'
+                        status: active
+                        autoReactivateHook: false
+                        urn: 'urn:adsk.webhooks:events.hook:04f10ca8-aa58-11e7-abc4-cec278b6b50a'
+                        __self__: /systems/data/events/dm.folder.added/hooks/04f10ca8-aa58-11e7-abc4-cec278b6b50a
+                      - hookId: 04f10d70-aa58-11e7-abc4-cec278b6b50a
+                        tenant: 'urn:adsk.wipprod:fs.folder:co.CHO-BbcmTsigjzymYeRCmQ'
+                        callbackUrl: 'http://bf067e05.ngrok.io/callback'
+                        createdBy: '*****'
+                        event: dm.folder.copied
+                        createdDate: '2017-09-19T18:58:16.215+0000'
+                        lastUpdatedDate: '2020-09-14T17:04:10.444+0000'
+                        system: data
+                        creatorType: O2User
+                        scope:
+                          folder: 'urn:adsk.wipprod:fs.folder:co.CHO-BbcmTsigjzymYeRCmQ'
+                        status: active
+                        autoReactivateHook: true
+                        urn: 'urn:adsk.webhooks:events.hook:04f10d70-aa58-11e7-abc4-cec278b6b50a'
+                        __self__: /systems/data/events/dm.folder.copied/hooks/04f10d70-aa58-11e7-abc4-cec278b6b50a
+                      - hookId: 04f10e2e-aa58-11e7-abc4-cec278b6b50a
+                        tenant: 'urn:adsk.wipprod:fs.folder:co.CHO-BbcmTsigjzymYeRCmQ'
+                        callbackUrl: 'http://bf067e05.ngrok.io/callback'
+                        createdBy: '*****'
+                        event: dm.folder.deleted
+                        createdDate: '2017-09-19T18:58:16.896+0000'
+                        lastUpdatedDate: '2020-09-14T17:04:10.444+0000'
+                        system: data
+                        creatorType: O2User
+                        scope:
+                          folder: 'urn:adsk.wipprod:fs.folder:co.CHO-BbcmTsigjzymYeRCmQ'
+                        status: active
+                        autoReactivateHook: true
+                        urn: 'urn:adsk.webhooks:events.hook:04f10e2e-aa58-11e7-abc4-cec278b6b50a'
+                        __self__: /systems/data/events/dm.folder.deleted/hooks/04f10e2e-aa58-11e7-abc4-cec278b6b50a
+                      - hookId: 04f112d4-aa58-11e7-abc4-cec278b6b50a
+                        tenant: 'urn:adsk.wipprod:fs.folder:co.CHO-BbcmTsigjzymYeRCmQ'
+                        callbackUrl: 'http://bf067e05.ngrok.io/callback'
+                        createdBy: '*****'
+                        event: dm.folder.modified
+                        createdDate: '2017-09-19T18:58:16.771+0000'
+                        lastUpdatedDate: '2020-09-14T17:04:10.444+0000'
+                        system: data
+                        creatorType: O2User
+                        scope:
+                          folder: 'urn:adsk.wipprod:fs.folder:co.CHO-BbcmTsigjzymYeRCmQ'
+                        status: active
+                        autoReactivateHook: false
+                        urn: 'urn:adsk.webhooks:events.hook:04f112d4-aa58-11e7-abc4-cec278b6b50a'
+                        __self__: /systems/data/events/dm.folder.modified/hooks/04f112d4-aa58-11e7-abc4-cec278b6b50a
+                      - hookId: 04f113d8-aa58-11e7-abc4-cec278b6b50a
+                        tenant: 'urn:adsk.wipprod:fs.folder:co.CHO-BbcmTsigjzymYeRCmQ'
+                        callbackUrl: 'http://bf067e05.ngrok.io/callback'
+                        createdBy: '*****'
+                        event: dm.folder.moved
+                        createdDate: '2017-09-19T18:58:16.229+0000'
+                        lastUpdatedDate: '2020-09-14T17:04:10.444+0000'
+                        system: data
+                        creatorType: O2User
+                        scope:
+                          folder: 'urn:adsk.wipprod:fs.folder:co.CHO-BbcmTsigjzymYeRCmQ'
+                        status: active
+                        autoReactivateHook: false
+                        urn: 'urn:adsk.webhooks:events.hook:04f113d8-aa58-11e7-abc4-cec278b6b50a'
+                        __self__: /systems/data/events/dm.folder.moved/hooks/04f113d8-aa58-11e7-abc4-cec278b6b50a
         '400':
           $ref: '#/components/responses/400-general'
         '401':
@@ -279,9 +575,10 @@ paths:
           $ref: '#/components/responses/404-general'
         '500':
           $ref: '#/components/responses/500-general'
-      operationId: create-system-hook
+      operationId: createSystemHook
       description: Adds a new webhook to receive notifications of all events for the specified system.
       parameters:
+        - $ref: '#/components/parameters/region-header'
         - $ref: '#/components/parameters/x-ads-region'
         - $ref: '#/components/parameters/region'
       requestBody:
@@ -289,6 +586,13 @@ paths:
           application/json:
             schema:
               $ref: '#/components/schemas/HookPayload'
+            examples:
+              create-all:
+                summary: This example demonstrates how to create webhooks for all events of the system data.
+                value:
+                  callbackUrl: 'http://bf067e05.ngrok.io/callback'
+                  scope:
+                    folder: 'urn:adsk.wipprod:fs.folder:co.CHO-BbcmTsigjzymYeRCmQ'
       security:
         - 2-legged:
             - 'data:read'
@@ -296,18 +600,59 @@ paths:
           3-legged:
             - 'data:read'
             - 'data:write'
+      x-codeSamples:
+        - lang: cURL
+          source: 'curl -v "https://developer.api.autodesk.com/webhooks/v1/systems/data/hooks" -X POST -H "Content-Type: application/json" -H "Authorization: Bearer bNU4P0trbQKNSzxWksLPTzSbbmUz" --data ''{"callbackUrl":"http://bf067e05.ngrok.io/callback","scope":{"folder":"urn:adsk.wipprod:fs.folder:co.CHO-BbcmTsigjzymYeRCmQ"}}'''
   /webhooks/v1/hooks:
     get:
       summary: List All Webhooks
       tags:
-        - Hooks
+        - Webhooks
       responses:
         '200':
-          description: 'A list webhooks was returned successfully. '
+          description: A list of webhooks was returned successfully.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Hooks'
+                $ref: '#/components/schemas/HooksPage'
+              examples:
+                page:
+                  summary: This example demonstrates how to retrieve a specific page of a list of webhooks that the calling application has access to. The page is specified using the pageState query parameter.
+                  value:
+                    links:
+                      next: /hooks?pageState=AMMAEACAtgALYWRzay53aXBkZXYNZnMuZmlsZS5hZGRlZAZmb2xkZXIydXJuOmFkc2sud2lwcWE6ZnMuZm9sZGVyOmNvLlRSM253QUtoVFNDQ0x0azY0VE52Q2cydXJuOmFkc2sud2lwcWE6ZnMuZm9sZGVyOmNvLlRSM253QUtoVFNDQ0x0azY0VE52Q2ctaHR0cDovL2FwaS53ZWJob29raW5ib3guY29tL2kvM0l6eGlLZndmL2luL3gy8H____3wf____Twpc5_2RqlBtCsLMPJlT9kABA==
+                    data:
+                      - hookId: 0f60f6a0-996c-11e7-abf3-51d68cff984c
+                        tenant: 'urn:adsk.wipprod:fs.folder:co.wT5lCWlXSKeo3razOfHJAw'
+                        callbackUrl: 'http://bf067e05.ngrok.io/callback'
+                        createdBy: '*********'
+                        event: dm.version.added
+                        createdDate: '2017-09-14T17:04:10.444+0000'
+                        lastUpdatedDate: '2020-09-14T17:04:10.444+0000'
+                        system: data
+                        creatorType: Application
+                        status: active
+                        autoReactivateHook: false
+                        hookExpiry: '2017-09-21T17:04:10.444Z'
+                        scope:
+                          folder: 'urn:adsk.wipprod:fs.folder:co.wT5lCWlXSKeo3razOfHJAw'
+                        urn: 'urn:adsk.webhooks:events.hook:0f60f6a0-996c-11e7-abf3-51d68cff984c'
+                        __self__: /systems/data/events/dm.version.added/hooks/0f60f6a0-996c-11e7-abf3-51d68cff984c
+                      - hookId: 1f63f6a4-106c-11e7-qrf9-72d68cff984d
+                        tenant: 'urn:adsk.wipprod:fs.folder:co.wT5lCWlXSKeo3razOfHJAw'
+                        callbackUrl: 'http://bf067e05.ngrok.io/callback'
+                        createdBy: '*********'
+                        event: dm.version.copied
+                        createdDate: '2017-09-14T17:04:10.564+0000'
+                        lastUpdatedDate: '2020-09-14T17:04:10.444+0000'
+                        system: data
+                        creatorType: Application
+                        status: active
+                        autoReactivateHook: false
+                        scope:
+                          folder: 'urn:adsk.wipprod:fs.folder:co.wT5lCWlXSKeo3razOfHJAw'
+                        urn: 'urn:adsk.webhooks:events.hook:1f63f6a4-106c-11e7-qrf9-72d68cff984d'
+                        __self__: /systems/data/events/dm.version.copied/hooks/1f63f6a4-106c-11e7-qrf9-72d68cff984d
         '204':
           description: No webhooks exist.
         '400':
@@ -320,11 +665,12 @@ paths:
           $ref: '#/components/responses/404-general'
         '500':
           $ref: '#/components/responses/500-general'
-      operationId: get-hooks
+      operationId: getHooks
       parameters:
         - $ref: '#/components/parameters/pageState'
         - $ref: '#/components/parameters/status'
         - $ref: '#/components/parameters/region'
+        - $ref: '#/components/parameters/region-header'
         - $ref: '#/components/parameters/x-ads-region'
       description: |-
         Retrieves a paginated list of webhooks available to the provided access token within the specified region. Each page includes up to 200 webhooks.
@@ -335,19 +681,60 @@ paths:
             - 'data:read'
           3-legged:
             - 'data:read'
+      x-codeSamples:
+        - lang: cURL
+          source: 'curl -v "https://developer.api.autodesk.com/webhooks/v1/hooks?pageState=BNNBEACAtgALYWRzay53aXBkZXYNZnMuZmlsZS5hZGRlZAZmb2xkZXIydXJuOmFkc2sud2lwcWE6ZnMuZm9sZGVyOmNvLlRSM253QUtoVFNDQ0x0azY0VE52Q2cydXJuOmFkc2sud2lwcWE6ZnMuZm9sZGVyOmNvLlRSM253QUtoVFNDQ0x0azY0VE52Q2ctaHR0cDovL2FwaS53ZWJob29raW5ib3guY29tL2kvM0l6eGlLZndmL2luL3gy8H____3wf____Twpc5_2RqlBtCsLMPJlT9kABA==" -X GET -H "Authorization: Bearer bNU4P0trbQKNSzxWksLPTzSbbmUz"'
     parameters: []
   /webhooks/v1/app/hooks:
     get:
       summary: List All Webhooks for an App
       tags:
-        - Hooks
+        - Webhooks
       responses:
         '200':
-          description: 'A list webhooks was returned successfully. '
+          description: A list of webhooks was returned successfully.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Hooks'
+                $ref: '#/components/schemas/HooksPage'
+              examples:
+                app-hooks:
+                  summary: This example demonstrates how to retrieve a list of webhooks created by the calling application.
+                  value:
+                    links:
+                      next: /hooks?pageState=AMMAEACAtgALYWRzay53aXBkZXYNZnMuZmlsZS5hZGRlZAZmb2xkZXIydXJuOmFkc2sud2lwcWE6ZnMuZm9sZGVyOmNvLlRSM253QUtoVFNDQ0x0azY0VE52Q2cydXJuOmFkc2sud2lwcWE6ZnMuZm9sZGVyOmNvLlRSM253QUtoVFNDQ0x0azY0VE52Q2ctaHR0cDovL2FwaS53ZWJob29raW5ib3guY29tL2kvM0l6eGlLZndmL2luL3gy8H____3wf____Twpc5_2RqlBtCsLMPJlT9kABA==
+                    data:
+                      - hookId: 0f60f6a0-996c-11e7-abf3-51d68cff984c
+                        tenant: 'urn:adsk.wipprod:fs.folder:co.wT5lCWlXSKeo3razOfHJAw'
+                        callbackUrl: 'http://bf067e05.ngrok.io/callback'
+                        createdBy: '*********'
+                        event: dm.version.added
+                        createdDate: '2017-09-14T17:04:10.444+0000'
+                        lastUpdatedDate: '2020-09-14T17:04:10.444+0000'
+                        system: data
+                        creatorType: Application
+                        status: active
+                        autoReactivateHook: false
+                        hookExpiry: '2017-09-21T17:04:10.444Z'
+                        scope:
+                          folder: 'urn:adsk.wipprod:fs.folder:co.wT5lCWlXSKeo3razOfHJAw'
+                        urn: 'urn:adsk.webhooks:events.hook:0f60f6a0-996c-11e7-abf3-51d68cff984c'
+                        __self__: /systems/data/events/dm.version.added/hooks/0f60f6a0-996c-11e7-abf3-51d68cff984c
+                      - hookId: 1f63f6a4-106c-11e7-qrf9-72d68cff984d
+                        tenant: 'urn:adsk.wipprod:fs.folder:co.wT5lCWlXSKeo3razOfHJAw'
+                        callbackUrl: 'http://bf067e05.ngrok.io/callback'
+                        createdBy: '*********'
+                        event: dm.version.copied
+                        createdDate: '2017-09-14T17:04:10.564+0000'
+                        lastUpdatedDate: '2020-09-14T17:04:10.444+0000'
+                        system: data
+                        creatorType: Application
+                        status: active
+                        autoReactivateHook: false
+                        scope:
+                          folder: 'urn:adsk.wipprod:fs.folder:co.wT5lCWlXSKeo3razOfHJAw'
+                        urn: 'urn:adsk.webhooks:events.hook:1f63f6a4-106c-11e7-qrf9-72d68cff984d'
+                        __self__: /systems/data/events/dm.version.copied/hooks/1f63f6a4-106c-11e7-qrf9-72d68cff984d
         '400':
           $ref: '#/components/responses/400-general'
         '401':
@@ -358,14 +745,15 @@ paths:
           $ref: '#/components/responses/404-general'
         '500':
           $ref: '#/components/responses/500-general'
-      operationId: get-app-hooks
+      operationId: getAppHooks
       description: |-
         Retrieves a paginated list of webhooks created by the calling application. Each page includes up to 200 webhooks.
 
         If the ``pageState`` query string parameter is not provided, the first page of results is returned. Use the ``next`` value from the previous response to fetch subsequent pages.
 
-        **Note:** This operation requires an access token through a Client Credentials flow (two-legged OAuth). 
+        **Note:** This operation requires an access token through a Client Credentials flow (two-legged OAuth).
       parameters:
+        - $ref: '#/components/parameters/region-header'
         - $ref: '#/components/parameters/x-ads-region'
         - $ref: '#/components/parameters/pageState'
         - $ref: '#/components/parameters/status'
@@ -374,6 +762,9 @@ paths:
       security:
         - 2-legged:
             - 'data:read'
+      x-codeSamples:
+        - lang: cURL
+          source: 'curl -v "https://developer.api.autodesk.com/webhooks/v1/app/hooks?sort=desc&status=inactive&pageState=BNNBEACAtgALYWRzay53aXBkZXYNZnMuZmlsZS5hZGRlZAZmb2xkZXIydXJuOmFkc2sud2lwcWE6ZnMuZm9sZGVyOmNvLlRSM253QUtoVFNDQ0x0azY0VE52Q2cydXJuOmFkc2sud2lwcWE6ZnMuZm9sZGVyOmNvLlRSM253QUtoVFNDQ0x0azY0VE52Q2ctaHR0cDovL2FwaS53ZWJob29raW5ib3guY29tL2kvM0l6eGlLZndmL2luL3gy8H____3wf____Twpc5_2RqlBtCsLMPJlT9kABA==" -X GET -H "Authorization: Bearer bNU4P0trbQKNSzxWksLPTzSbbmUz"'
     parameters: []
   /webhooks/v1/tokens:
     post:
@@ -387,6 +778,13 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Token'
+              examples:
+                created:
+                  summary: This example demonstrates how to create a secret token.
+                  value:
+                    status: 200
+                    detail:
+                      - 'Token created successfully for client: *****'
         '400':
           description: The request is invalid. Secret token already exists.
         '401':
@@ -397,9 +795,9 @@ paths:
           $ref: '#/components/responses/404-general'
         '500':
           $ref: '#/components/responses/500-general'
-      operationId: create-token
+      operationId: createToken
       description: |-
-        Sets a secret token to verify the authenticity of webhook payloads. 
+        Sets a secret token to verify the authenticity of webhook payloads.
 
         When a webhook event occurs, the service calculates a hash signature using the token and includes it in the event notification. The receiving application listening at the callback URL can verify the payload's integrity by comparing the calculated signature to the one received.
 
@@ -413,6 +811,7 @@ paths:
 
         See the [Secret Token](/en/docs/webhooks/v1/developers_guide/basics/#secret-token) section in API Basics for more information.
       parameters:
+        - $ref: '#/components/parameters/region-header'
         - $ref: '#/components/parameters/x-ads-region'
         - $ref: '#/components/parameters/region'
       requestBody:
@@ -420,6 +819,11 @@ paths:
           application/json:
             schema:
               $ref: '#/components/schemas/TokenPayload'
+            examples:
+              create:
+                summary: This example demonstrates how to create a secret token.
+                value:
+                  token: awffbvdb3trf4fvdfbUyt39suHnbe5Mnrks3
         description: The request payload for a Create Secret request
       security:
         - 2-legged:
@@ -428,6 +832,9 @@ paths:
           3-legged:
             - 'data:read'
             - 'data:write'
+      x-codeSamples:
+        - lang: cURL
+          source: 'curl -v "https://developer.api.autodesk.com/webhooks/v1/tokens" -X POST -H "Content-Type: application/json" -H "Authorization: Bearer eyJhbGciOiJIUzI1NiIsImtpZCI6Imp3dF9zeW1tZX" --data ''{"token":"awffbvdb3trf4fvdfbUyt39suHnbe5Mnrks3"}'''
     parameters: []
   /webhooks/v1/tokens/@me:
     put:
@@ -447,22 +854,23 @@ paths:
           $ref: '#/components/responses/404-general'
         '500':
           $ref: '#/components/responses/500-general'
-      operationId: put-token
+      operationId: putToken
       description: |-
-        Replaces an existing secret token with a new one. 
+        Replaces an existing secret token with a new one.
 
         Note that there can be a delay of up to 10 minutes while the change takes effect. We recommend that your callback accept both secret token values for a period of time to allow all requests to go through.
 
         The webhooks affected by this operation are determined by the type of access token you use.
 
         - Two-legged Access Token: Sets the secret token for all webhooks owned by calling the app.
-        - Three-legged Access Token: Sets the secrety token for all webhooks owned by the calling user
+        - Three-legged Access Token: Sets the secret token for all webhooks owned by the calling user
 
         **Note:** Use the [Update Webhook operation](/en/docs/webhooks/v1/reference/http/webhooks/systems-system-events-event-hooks-hook_id-PATCH/) to set a token for a specific webhook.
 
 
         See the [Secret Token](/en/docs/webhooks/v1/developers_guide/basics/#secret-token) section in API Basics for more information.
       parameters:
+        - $ref: '#/components/parameters/region-header'
         - $ref: '#/components/parameters/x-ads-region'
         - $ref: '#/components/parameters/region'
       requestBody:
@@ -470,6 +878,11 @@ paths:
           application/json:
             schema:
               $ref: '#/components/schemas/TokenPayload'
+            examples:
+              update:
+                summary: This example demonstrates how to update a secret token.
+                value:
+                  token: awffbvdb3trf4fvdfbUyt39suHnbe5Mnrks1
       security:
         - 2-legged:
             - 'data:read'
@@ -477,6 +890,9 @@ paths:
           3-legged:
             - 'data:read'
             - 'data:write'
+      x-codeSamples:
+        - lang: cURL
+          source: 'curl -v "https://developer.api.autodesk.com/webhooks/v1/tokens/@me" -X PUT -H "Content-Type: application/json" -H "Authorization: Bearer eyJhbGciOiJIUzI1NiIsImtpZCI6Imp3dF9zeW1tZX" --data ''{"token":"awffbvdb3trf4fvdfbUyt39suHnbe5Mnrks1"}'''
     delete:
       summary: Delete Secret Token
       tags:
@@ -494,21 +910,23 @@ paths:
           $ref: '#/components/responses/404-general'
         '500':
           $ref: '#/components/responses/500-general'
-      operationId: delete-token
+      operationId: deleteToken
       description: |-
-        Removes an existing secret token from the webhooks impacted by this operation. 
+        Removes an existing secret token from the webhooks impacted by this operation.
 
         The webhooks affected by this operation are determined by the type of access token you use.
 
         - Two-legged Access Token: Sets the secret token for all webhooks owned by calling the app.
-        - Three-legged Access Token: Sets the secrety token for all webhooks owned by the calling user
+        - Three-legged Access Token: Sets the secret token for all webhooks owned by the calling user
 
         Note that there can be a delay of up to 10 minutes while the change takes effect. We recommend that your callback accept both secret token values for a period of time to allow all requests to go through.
 
         See the [Secret Token](/en/docs/webhooks/v1/developers_guide/basics/#secret-token) section in API Basics for more information.
       parameters:
+        - $ref: '#/components/parameters/region-header'
         - $ref: '#/components/parameters/x-ads-region'
         - $ref: '#/components/parameters/region'
+        - $ref: '#/components/parameters/Content-Type'
       security:
         - 2-legged:
             - 'data:read'
@@ -516,32 +934,15 @@ paths:
           3-legged:
             - 'data:read'
             - 'data:write'
+      x-codeSamples:
+        - lang: cURL
+          source: 'curl -v "https://developer.api.autodesk.com/webhooks/v1/tokens/@me" -X DELETE -H "Content-Type: application/json" -H "Authorization: Bearer eyJhbGciOiJIUzI1NiIsImtpZCI6Imp3dF9zeW1tZX"'
     parameters: []
 components:
   schemas:
     HookDetails:
       description: Contains the details of a webhook.
-      x-stoplight:
-        id: c20b19264ce9a
       type: object
-      x-examples:
-        example-1:
-          hookId: 05f10350-991a-11e7-8cd7-91969336b9c2
-          tenant: 'urn:adsk.wipprod:fs.folder:co.VsFvE6y5SNKnhSnogSeqcg'
-          callbackUrl: 'http://cf069e23.ngrok.io/callback_test'
-          createdBy: '********'
-          event: dm.version.added
-          createdDate: '2017-09-14T06:57:50.597+0000'
-          lastUpdatedDate: '2020-09-14T17:04:10.444+0000'
-          system: data
-          creatorType: Application
-          status: active
-          autoReactivateHook: false
-          hookExpiry: '2017-09-21T17:04:10.444Z'
-          scope:
-            folder: 'urn:adsk.wipprod:fs.folder:co.VsFvE6y5SNKnhSnogSeqcg'
-          urn: 'urn:adsk.webhooks:events.hook:05f10350-991a-11e7-8cd7-91969336b9c2'
-          __self__: /systems/data/events/dm.version.added/hooks/05f10350-991a-11e7-8cd7-91969336b9c2
       title: HookDetails
       properties:
         hookId:
@@ -552,26 +953,26 @@ components:
           type: string
           minLength: 1
           description: |-
-            The ID of the tenant from which the event 
+            The ID of the tenant from which the event
             originates.
         callbackUrl:
           type: string
           minLength: 1
           description: |-
-            The URL to send notifications to when the 
-            event is triggered. 
+            The URL to send notifications to when the
+            event is triggered.
         createdBy:
           type: string
           minLength: 1
           description: |-
             The ID of the entity that created the webhook. It can be one of the following:
 
-            - Client ID of an app: If created using a Client Credentials flow (two-legged OAuth). 
+            - Client ID of an app: If created using a Client Credentials flow (two-legged OAuth).
             - User ID of a user: If created using an Authorization Code flow (three-legged OAuth).
         event:
           type: string
           minLength: 1
-          description: 'The ID of the event the webhook monitors.  See [Supported Events](/en/docs/webhooks/v1/reference/events/) for a full list of events and wildcard patterns.'
+          description: 'The event type the webhook subscribes to. See [Supported Events](/en/docs/webhooks/v1/reference/events/) for a full list of events and wildcard patterns.'
         createdDate:
           type: string
           minLength: 1
@@ -593,7 +994,7 @@ components:
             - ``O2User`` - Created by a user through an Authorization Code flow (three-legged OAuth).
             - ``Application`` - Created by an application using a Client Credentials flow (two-legged OAuth).
         status:
-          $ref: '#/components/schemas/status'
+          $ref: '#/components/schemas/Status'
         autoReactivateHook:
           type: boolean
           description: |-
@@ -604,206 +1005,61 @@ components:
             See [Event Delivery Guarantees](/en/docs/webhooks/v1/developers_guide/event-delivery-guarantees/) for more information on how the webhooks service handles reactivation.
         hookExpiry:
           type: string
-          minLength: 1
+          nullable: true
           description: |-
             The date and time when the webhook will expire, formatted as an ISO 8601 date/time string. A missing or null value indicates that the webhook will never expire.
 
             ``hookExpiry`` is returned only if it was specified when the webhook was created.
         hookAttribute:
           type: object
-          description: Custom metadata which will be less than 1KB in size.
+          description: A JSON object for storing user-defined custom information. The maximum size of this object is less than 1KB.
+          additionalProperties: true
         scope:
           type: object
-          description: 'Represents the extent to which the event is monitored. For example, if the scope is folder, the webhooks service generates a notification for the specified event occurring in any sub folder or item within that folder.'
+          description: 'Specifies the extent to which the event is monitored. For example, if the scope is set to ``folder``, the webhooks service will generate notifications for the specified event occurring in that folder and any subfolders or contained items.'
           properties:
             folder:
               type: string
               minLength: 1
               description: |-
-                The URN of the folder the scope is set to. Present only for Data Management events. 
+                The URN of the folder the scope is set to. Present only for Data Management events.
 
                 See [Creating a Webhook and Listening to Data Management Events](/en/docs/webhooks/v1/tutorials/create-a-hook-data-management/) for more information.
             workflow:
               type: string
-              x-stoplight:
-                id: u9krv2gxv7lxh
               description: |
                 The ID of a Model Derivative workflow the scope is set to. Present only for Model Derivative events.
 
                 See [Creating a Webhook and Listening to Model Derivative Events](/en/docs/webhooks/v1/tutorials/create-a-hook-model-derivative/) for more information.
+        hubId:
+          type: string
+          description: |-
+            The ID of the hub that contains the entity monitored by this webhook. This attribute is returned only if it was specified during the webhook's creation.
+
+            For BIM 360, a Data Management Hub ID corresponds to an Account ID. For Forma, a Data Management Hub ID corresponds to a Forma Hub ID. To convert either to a Data Management Hub ID, prefix the ID with ``b.`` For example, a BIM 360 Account ID or Forma Hub ID of ``c8b0c73d-3ae9`` translates to a Data Management Hub ID of ``b.c8b0c73d-3ae9``.
+        projectId:
+          type: string
+          description: |-
+            The ID of the project that contains the entity monitored by this webhook. This attribute is returned only if it was specified during the webhook's creation.
+
+            BIM 360 and Forma project IDs are different from Data Management project IDs. To convert BIM 360 or Forma Project IDs to Data Management Project IDs, prefix them with ``b.`` For example, a Project ID of ``c8b0c73d-3ae9`` becomes ``b.c8b0c73d-3ae9``.
+        token:
+          type: string
+          description: |-
+            A secret token that is used to generate a hash signature, which is passed along with notification requests to the callback URL.
+
+            See the [Secret Token](/en/docs/webhooks/v1/developers_guide/basics/#secret-token) section in API Basics for more information.
         urn:
           type: string
           minLength: 1
           description: The URN of the webhook.
-        callbackWithEventPayloadOnly:
-          type: string
-          x-stoplight:
-            id: 0o8hrmevlbp5c
-          description: |-
-            ``true`` - The callback request payload will only contain information about the event. It will not contain any information about the webhook.
-
-            ``false`` - The callback request payload will contain information about the event as well as the webhook.
         __self__:
           type: string
           minLength: 1
           description: A link to itself.
-    Hook:
-      x-stoplight:
-        id: b96631228222b
+    CreatedHooks:
       type: object
-      x-examples:
-        example-1:
-          hooks:
-            - hookId: 04f1033e-aa58-11e7-abc4-cec278b6b50a
-              tenant: 'urn:adsk.wipprod:fs.folder:co.CHO-BbcmTsigjzymYeRCmQ'
-              callbackUrl: 'http://bf067e05.ngrok.io/callback'
-              createdBy: '*****'
-              event: dm.version.added
-              createdDate: '2017-09-19T18:58:16.636+0000'
-              lastUpdatedDate: '2020-09-14T17:04:10.444+0000'
-              system: data
-              creatorType: O2User
-              scope:
-                folder: 'urn:adsk.wipprod:fs.folder:co.CHO-BbcmTsigjzymYeRCmQ'
-              status: active
-              autoReactivateHook: false
-              urn: 'urn:adsk.webhooks:events.hook:04f1033e-aa58-11e7-abc4-cec278b6b50a'
-              __self__: /systems/data/events/dm.version.added/hooks/04f1033e-aa58-11e7-abc4-cec278b6b50a
-            - hookId: 04f1092e-aa58-11e7-abc4-cec278b6b50a
-              tenant: 'urn:adsk.wipprod:fs.folder:co.CHO-BbcmTsigjzymYeRCmQ'
-              callbackUrl: 'http://bf067e05.ngrok.io/callback'
-              createdBy: '*****'
-              event: dm.version.copied
-              createdDate: '2017-09-19T18:58:16.312+0000'
-              lastUpdatedDate: '2020-09-14T17:04:10.444+0000'
-              system: data
-              creatorType: O2User
-              scope:
-                folder: 'urn:adsk.wipprod:fs.folder:co.CHO-BbcmTsigjzymYeRCmQ'
-              status: active
-              autoReactivateHook: false
-              urn: 'urn:adsk.webhooks:events.hook:04f1092e-aa58-11e7-abc4-cec278b6b50a'
-              __self__: /systems/data/events/dm.version.copied/hooks/04f1092e-aa58-11e7-abc4-cec278b6b50a
-            - hookId: 04f10a50-aa58-11e7-abc4-cec278b6b50a
-              tenant: 'urn:adsk.wipprod:fs.folder:co.CHO-BbcmTsigjzymYeRCmQ'
-              callbackUrl: 'http://bf067e05.ngrok.io/callback'
-              createdBy: '*****'
-              event: dm.version.deleted
-              createdDate: '2017-09-19T18:58:16.716+0000'
-              lastUpdatedDate: '2020-09-14T17:04:10.444+0000'
-              system: data
-              creatorType: O2User
-              scope:
-                folder: 'urn:adsk.wipprod:fs.folder:co.CHO-BbcmTsigjzymYeRCmQ'
-              status: active
-              autoReactivateHook: true
-              urn: 'urn:adsk.webhooks:events.hook:04f10a50-aa58-11e7-abc4-cec278b6b50a'
-              __self__: /systems/data/events/dm.version.deleted/hooks/04f10a50-aa58-11e7-abc4-cec278b6b50a
-            - hookId: 04f10b22-aa58-11e7-abc4-cec278b6b50a
-              tenant: 'urn:adsk.wipprod:fs.folder:co.CHO-BbcmTsigjzymYeRCmQ'
-              callbackUrl: 'http://bf067e05.ngrok.io/callback'
-              createdBy: '*****'
-              event: dm.version.modified
-              createdDate: '2017-09-19T18:58:16.121+0000'
-              lastUpdatedDate: '2020-09-14T17:04:10.444+0000'
-              system: data
-              creatorType: O2User
-              scope:
-                folder: 'urn:adsk.wipprod:fs.folder:co.CHO-BbcmTsigjzymYeRCmQ'
-              status: active
-              autoReactivateHook: false
-              urn: 'urn:adsk.webhooks:events.hook:04f10b22-aa58-11e7-abc4-cec278b6b50a'
-              __self__: /systems/data/events/dm.version.modified/hooks/04f10b22-aa58-11e7-abc4-cec278b6b50a
-            - hookId: 04f10bea-aa58-11e7-abc4-cec278b6b50a
-              tenant: 'urn:adsk.wipprod:fs.folder:co.CHO-BbcmTsigjzymYeRCmQ'
-              callbackUrl: 'http://bf067e05.ngrok.io/callback'
-              createdBy: '*****'
-              event: dm.version.moved
-              createdDate: '2017-09-19T18:58:16.819+0000'
-              lastUpdatedDate: '2020-09-14T17:04:10.444+0000'
-              system: data
-              creatorType: O2User
-              scope:
-                folder: 'urn:adsk.wipprod:fs.folder:co.CHO-BbcmTsigjzymYeRCmQ'
-              status: active
-              urn: 'urn:adsk.webhooks:events.hook:04f10bea-aa58-11e7-abc4-cec278b6b50a'
-              __self__: /systems/data/events/dm.version.moved/hooks/04f10bea-aa58-11e7-abc4-cec278b6b50a
-            - hookId: 04f10ca8-aa58-11e7-abc4-cec278b6b50a
-              tenant: 'urn:adsk.wipprod:fs.folder:co.CHO-BbcmTsigjzymYeRCmQ'
-              callbackUrl: 'http://bf067e05.ngrok.io/callback'
-              createdBy: '*****'
-              event: dm.folder.added
-              createdDate: '2017-09-19T18:58:16.636+0000'
-              lastUpdatedDate: '2020-09-14T17:04:10.444+0000'
-              system: data
-              creatorType: O2User
-              scope:
-                folder: 'urn:adsk.wipprod:fs.folder:co.CHO-BbcmTsigjzymYeRCmQ'
-              status: active
-              autoReactivateHook: false
-              urn: 'urn:adsk.webhooks:events.hook:04f10ca8-aa58-11e7-abc4-cec278b6b50a'
-              __self__: /systems/data/events/dm.folder.added/hooks/04f10ca8-aa58-11e7-abc4-cec278b6b50a
-            - hookId: 04f10d70-aa58-11e7-abc4-cec278b6b50a
-              tenant: 'urn:adsk.wipprod:fs.folder:co.CHO-BbcmTsigjzymYeRCmQ'
-              callbackUrl: 'http://bf067e05.ngrok.io/callback'
-              createdBy: '*****'
-              event: dm.folder.copied
-              createdDate: '2017-09-19T18:58:16.215+0000'
-              lastUpdatedDate: '2020-09-14T17:04:10.444+0000'
-              system: data
-              creatorType: O2User
-              scope:
-                folder: 'urn:adsk.wipprod:fs.folder:co.CHO-BbcmTsigjzymYeRCmQ'
-              status: active
-              autoReactivateHook: true
-              urn: 'urn:adsk.webhooks:events.hook:04f10d70-aa58-11e7-abc4-cec278b6b50a'
-              __self__: /systems/data/events/dm.folder.copied/hooks/04f10d70-aa58-11e7-abc4-cec278b6b50a
-            - hookId: 04f10e2e-aa58-11e7-abc4-cec278b6b50a
-              tenant: 'urn:adsk.wipprod:fs.folder:co.CHO-BbcmTsigjzymYeRCmQ'
-              callbackUrl: 'http://bf067e05.ngrok.io/callback'
-              createdBy: '*****'
-              event: dm.folder.deleted
-              createdDate: '2017-09-19T18:58:16.896+0000'
-              lastUpdatedDate: '2020-09-14T17:04:10.444+0000'
-              system: data
-              creatorType: O2User
-              scope:
-                folder: 'urn:adsk.wipprod:fs.folder:co.CHO-BbcmTsigjzymYeRCmQ'
-              status: active
-              autoReactivateHook: true
-              urn: 'urn:adsk.webhooks:events.hook:04f10e2e-aa58-11e7-abc4-cec278b6b50a'
-              __self__: /systems/data/events/dm.folder.deleted/hooks/04f10e2e-aa58-11e7-abc4-cec278b6b50a
-            - hookId: 04f112d4-aa58-11e7-abc4-cec278b6b50a
-              tenant: 'urn:adsk.wipprod:fs.folder:co.CHO-BbcmTsigjzymYeRCmQ'
-              callbackUrl: 'http://bf067e05.ngrok.io/callback'
-              createdBy: '*****'
-              event: dm.folder.modified
-              createdDate: '2017-09-19T18:58:16.771+0000'
-              lastUpdatedDate: '2020-09-14T17:04:10.444+0000'
-              system: data
-              creatorType: O2User
-              scope:
-                folder: 'urn:adsk.wipprod:fs.folder:co.CHO-BbcmTsigjzymYeRCmQ'
-              status: active
-              autoReactivateHook: false
-              urn: 'urn:adsk.webhooks:events.hook:04f112d4-aa58-11e7-abc4-cec278b6b50a'
-              __self__: /systems/data/events/dm.folder.modified/hooks/04f112d4-aa58-11e7-abc4-cec278b6b50a
-            - hookId: 04f113d8-aa58-11e7-abc4-cec278b6b50a
-              tenant: 'urn:adsk.wipprod:fs.folder:co.CHO-BbcmTsigjzymYeRCmQ'
-              callbackUrl: 'http://bf067e05.ngrok.io/callback'
-              createdBy: '*****'
-              event: dm.folder.moved
-              createdDate: '2017-09-19T18:58:16.229+0000'
-              lastUpdatedDate: '2020-09-14T17:04:10.444+0000'
-              system: data
-              creatorType: O2User
-              scope:
-                folder: 'urn:adsk.wipprod:fs.folder:co.CHO-BbcmTsigjzymYeRCmQ'
-              status: active
-              autoReactivateHook: false
-              urn: 'urn:adsk.webhooks:events.hook:04f113d8-aa58-11e7-abc4-cec278b6b50a'
-              __self__: /systems/data/events/dm.folder.moved/hooks/04f113d8-aa58-11e7-abc4-cec278b6b50a
-      title: Hook
+      title: CreatedHooks
       properties:
         hooks:
           type: array
@@ -813,48 +1069,10 @@ components:
           items:
             $ref: '#/components/schemas/HookDetails'
       description: Contains the response to a Create Webhooks for All Events request.
-    Hooks:
+    HooksPage:
       description: 'A paginated list of webhooks. '
-      x-stoplight:
-        id: 03772dcd50e6a
       type: object
-      x-examples:
-        example-1:
-          links:
-            next: /hooks?pageState=AMMAEACAtgALYWRzay53aXBkZXYNZnMuZmlsZS5hZGRlZAZmb2xkZXIydXJuOmFkc2sud2lwcWE6ZnMuZm9sZGVyOmNvLlRSM253QUtoVFNDQ0x0azY0VE52Q2cydXJuOmFkc2sud2lwcWE6ZnMuZm9sZGVyOmNvLlRSM253QUtoVFNDQ0x0azY0VE52Q2ctaHR0cDovL2FwaS53ZWJob29raW5ib3guY29tL2kvM0l6eGlLZndmL2luL3gy8H____3wf____Twpc5_2RqlBtCsLMPJlT9kABA==
-          data:
-            - hookId: 0f60f6a0-996c-11e7-abf3-51d68cff984c
-              tenant: 'urn:adsk.wipprod:fs.folder:co.wT5lCWlXSKeo3razOfHJAw'
-              callbackUrl: 'http://bf067e05.ngrok.io/callback'
-              createdBy: '*********'
-              event: dm.version.added
-              createdDate: '2017-09-14T17:04:10.444+0000'
-              lastUpdatedDate: '2020-09-14T17:04:10.444+0000'
-              system: data
-              creatorType: Application
-              status: active
-              autoReactivateHook: false
-              hookExpiry: '2017-09-21T17:04:10.444Z'
-              scope:
-                folder: 'urn:adsk.wipprod:fs.folder:co.wT5lCWlXSKeo3razOfHJAw'
-              urn: 'urn:adsk.webhooks:events.hook:0f60f6a0-996c-11e7-abf3-51d68cff984c'
-              __self__: /systems/data/events/dm.version.added/hooks/0f60f6a0-996c-11e7-abf3-51d68cff984c
-            - hookId: 1f63f6a4-106c-11e7-qrf9-72d68cff984d
-              tenant: 'urn:adsk.wipprod:fs.folder:co.wT5lCWlXSKeo3razOfHJAw'
-              callbackUrl: 'http://bf067e05.ngrok.io/callback'
-              createdBy: '*********'
-              event: dm.version.copied
-              createdDate: '2017-09-14T17:04:10.564+0000'
-              lastUpdatedDate: '2020-09-14T17:04:10.444+0000'
-              system: data
-              creatorType: Application
-              status: active
-              autoReactivateHook: false
-              scope:
-                folder: 'urn:adsk.wipprod:fs.folder:co.wT5lCWlXSKeo3razOfHJAw'
-              urn: 'urn:adsk.webhooks:events.hook:1f63f6a4-106c-11e7-qrf9-72d68cff984d'
-              __self__: /systems/data/events/dm.version.copied/hooks/1f63f6a4-106c-11e7-qrf9-72d68cff984d
-      title: Hooks
+      title: HooksPage
       properties:
         links:
           type: object
@@ -873,14 +1091,7 @@ components:
             $ref: '#/components/schemas/HookDetails'
     Token:
       description: Add a new Webhook secret token.
-      x-stoplight:
-        id: c90cb2068ad4a
       type: object
-      x-examples:
-        example-1:
-          status: 200
-          detail:
-            - 'Token created successfully for client: *****'
       title: Token
       properties:
         status:
@@ -893,21 +1104,11 @@ components:
             type: string
     ModifyHookPayload:
       type: object
-      x-examples:
-        example-1:
-          status: active
-          autoReactivateHook: false
-          filter: '$[?(@.ext==''txt'')]'
-          hookAttribute:
-            myfoo: 34
-            projectId: someURN
-            myobject:
-              nested: true
       title: ModifyHookPayload
       description: 'Specifies the details of a webhook to be updated. '
       properties:
         status:
-          $ref: '#/components/schemas/StatusRequest'
+          $ref: '#/components/schemas/StatusUpdate'
         autoReactivateHook:
           type: boolean
           description: |-
@@ -918,50 +1119,40 @@ components:
             See [Event Delivery Guarantees](/en/docs/webhooks/v1/developers_guide/event-delivery-guarantees/) for more information on how the webhooks service handles reactivation.
         filter:
           type: string
-          minLength: 1
+          nullable: true
           description: |-
             A Jsonpath expression that you can use to filter the callbacks you receive.
 
             See [Callback Filtering](/en/docs/webhooks/v1/developers_guide/callback-filtering/) for more information.
         hookAttribute:
           type: object
-          description: 'Specifies the extent to which the event is monitored. For example, if the scope is folder, the webhooks service generates a notification for the specified event occurring in any sub folder or item within that folder.'
+          nullable: true
+          description: A JSON object for storing user-defined custom information. The maximum size of this object must be less than 1KB.
+          additionalProperties: true
         token:
           type: string
-          x-stoplight:
-            id: icxzgacs5blwe
           description: |-
             A secret token that is used to generate a hash signature, which is passed along with notification requests to the callback URL.
 
             See the [Secret Token](/en/docs/webhooks/v1/developers_guide/basics/#secret-token) section in API Basics for more information.
         hookExpiry:
           type: string
-          x-stoplight:
-            id: vem2t2o5bdt9r
+          nullable: true
           description: 'The date and time the webhook will expire, formatted as an ISO 8601 date/time string. If you set this to null, the webhook will never expire.'
     HookPayload:
       type: object
-      x-examples:
-        example-1:
-          callbackUrl: 'http://bf067e05.ngrok.io/callback'
-          autoReactivateHook: false
-          scope:
-            folder: 'urn:adsk.wipprod:fs.folder:co.wT5lCWlXSKeo3razOfHJAw'
-          hookAttribute:
-            myfoo: 33
-            projectId: someURN
-            myobject:
-              nested: true
-          hookExpiry: '2017-09-21T17:04:10.444Z'
       title: HookPayload
       description: 'Specifies the details of a webhook to be created. '
+      required:
+        - callbackUrl
+        - scope
       properties:
         callbackUrl:
           type: string
           minLength: 1
           description: |-
-            The URL to send notifications to when the 
-            event is triggered. 
+            The URL to send notifications to when the
+            event is triggered.
         autoReactivateHook:
           type: boolean
           description: |-
@@ -970,61 +1161,59 @@ components:
             ``false`` - (Default) Do not reactivate the webhook if it becomes ``inactive``.
 
             See [Event Delivery Guarantees](/en/docs/webhooks/v1/developers_guide/event-delivery-guarantees/) for more information on how the webhooks service handles reactivation.
-        scope:
-          type: object
-          description: 'Specifies the extent to which the event is monitored. For example, if the scope is folder, the webhooks service generates a notification for the specified event occurring in any sub folder or item within that folder.'
         hookAttribute:
           type: object
-          description: 'Specifies the extent to which the event is monitored. For example, if the scope is folder, the webhooks service generates a notification for the specified event occurring in any sub folder or item within that folder.'
+          description: A JSON object for storing user-defined custom information. The maximum size of this object must be less than 1KB.
+          additionalProperties: true
+        scope:
+          type: object
+          description: 'Specifies the extent to which the event is monitored. For example, if the scope is set to ``folder``, the webhooks service will generate notifications for the specified event occurring in that folder and any subfolders or contained items.'
+          properties:
+            folder:
+              type: string
+              description: |-
+                The URN of the folder to set the scope to. By setting the scope to this URN, you are limiting the webhook to generate notifications for events only for that specific folder and its subfolders. This option is valid only for webhooks for the Data Management service.
+
+                See [Creating a Webhook and Listening to Data Management Events](/en/docs/webhooks/v1/tutorials/create-a-hook-data-management/) for more information.
+            workflow:
+              type: string
+              description: |-
+                The ID of a Model Derivative workflow to set the scope to. By setting the scope to this workflow you are limiting the webhook to generate notification only for events with that workflow ID. This option is valid only for webhooks for the Model Derivative service.
+
+                See [Creating a Webhook and Listening to Model Derivative Events](/en/docs/webhooks/v1/tutorials/create-a-hook-model-derivative/) for more information.
+        token:
+          type: string
+          description: |-
+            A secret token that is used to generate a hash signature, which is passed along with notification requests to the callback URL.
+
+            See the [Secret Token](/en/docs/webhooks/v1/developers_guide/basics/#secret-token) section in API Basics for more information.
         hookExpiry:
           type: string
-          minLength: 1
+          nullable: true
           description: 'The date and time the webhook will expire, formatted as an ISO 8601 date/time string. If you do not specify this attribute or set it to null, the webhook will never expire.'
         filter:
           type: string
-          x-stoplight:
-            id: ovklq1q6l4fne
           description: |-
             A Jsonpath expression that you can use to filter the callbacks you receive.
 
             See [Callback Filtering](/en/docs/webhooks/v1/developers_guide/callback-filtering/) for more information.
         hubId:
           type: string
-          x-stoplight:
-            id: ofruyk46skf30
           description: |-
             The ID of the hub that contains the entity that you want to monitor. Specify this attribute if the user calling this operation is a member of a large number of projects.
 
-            For BIM 360 Docs and ACC Docs, a hub ID corresponds to an Account ID. To convert a BIM 360 or ACC Account ID to a hub ID, prefix the Account ID with ``b.``. For example, an Account ID of ```c8b0c73d-3ae9``` translates to a hub ID of ``b.c8b0c73d-3ae9``.
+            For BIM 360, a Data Management Hub ID corresponds to an Account ID. For Forma, a Data Management Hub ID corresponds to a Forma Hub ID. To convert either to a Data Management Hub ID, prefix the ID with ``b.`` For example, a BIM 360 Account ID or Forma Hub ID of ``c8b0c73d-3ae9`` translates to a Data Management Hub ID of ``b.c8b0c73d-3ae9``.
         projectId:
           type: string
-          x-stoplight:
-            id: xxxpsee8dhjma
           description: |-
-            The ID of the project that contains the entity that you want to monitor Specify this attribute if the user calling this operation is a member of a large number of projects.
+            The ID of the project that contains the entity that you want to monitor. Specify this attribute if the user calling this operation is a member of a large number of projects.
 
-            BIM 360 and ACC project IDs are different to Data Management project IDs. To convert a BIM 360 and ACC project IDs to  Data Management project IDs, prefix the BIM 360 or ACC Project ID with ``b.``. For example, a project ID of ``c8b0c73d-3ae9`` translates to a project ID of ``b.c8b0c73d-3ae9``.
+            BIM 360 and Forma project IDs are different from Data Management project IDs. To convert BIM 360 or Forma Project IDs to Data Management Project IDs, prefix them with ``b.`` For example, a Project ID of ``c8b0c73d-3ae9`` becomes ``b.c8b0c73d-3ae9``.
         tenant:
           type: string
-          x-stoplight:
-            id: aebt81azd05bz
-          description: 'The tenant associated with the event. If specified on the webhook, the event''s tenant must match the webhook''s tenant.'
-        callbackWithEventPayloadOnly:
-          type: boolean
-          x-stoplight:
-            id: tep138os1k7nl
-          description: |-
-            ``true`` - The callback request payload must only contain information about the event. It must not contain any information about the webhook.
-
-            ``false`` - (Default) The callback request payload must contain information about the event as well as the webhook.
-      required:
-        - callbackUrl
-        - scope
+          description: 'The tenant associated with the event. If a tenant is specified on the webhook, either the event''s tenant must match the webhook''s tenant, or the ``scopeValue`` of the event must match the webhook''s tenant.'
     TokenPayload:
       type: object
-      x-examples:
-        example-1:
-          token: awffbvdb3trf4fvdfbUyt39suHnbe5Mnrks3
       title: TokenPayload
       properties:
         token:
@@ -1036,8 +1225,6 @@ components:
       description: The request body for an Update Secret Token operation.
     Systems:
       type: string
-      x-stoplight:
-        id: 1f7ee6ad28914
       enum:
         - data
         - derivative
@@ -1051,8 +1238,6 @@ components:
       default: data
     Events:
       type: string
-      x-stoplight:
-        id: 89828e01ed3ff
       title: EventEnum
       enum:
         - extraction.finished
@@ -1146,15 +1331,13 @@ components:
         - dt.removeTemplate
     Scopes:
       type: string
-      x-stoplight:
-        id: 2b2b4ac6cc46d
       title: ScopeEnum
       enum:
         - workflow
         - folder
         - project
       description: ''
-    region:
+    Region:
       type: string
       enum:
         - US
@@ -1166,19 +1349,19 @@ components:
         - JPN
         - GBR
       description: |
-        Specifies the geographical location (region) of the server a request must be executed on. This also corresponds to the region where the Webhook data is stored. It is also the location of the server that will make requests to your callback URL. Possible values:
+        Specifies the geographical location (region) of the server the request must be executed on. This also corresponds to the region where Webhook data is stored. It is also the location of the server that will make requests to your callback URL. Possible values:
 
         - ``US`` - (Default) Data center dedicated to serve the United States region.
         - ``EMEA`` - Data center dedicated to serve the European Union, Middle East, and Africa regions.
-        - ``AUS`` - (Beta) Data center dedicated to serve the Australia region.
+        - ``AUS`` - Data center dedicated to serve the Australia region.
         - ``CAN`` - Data center dedicated to serve the Canada region.
         - ``DEU`` - Data center dedicated to serve the Germany region.
         - ``IND`` - Data center dedicated to serve the India region.
         - ``JPN`` - Data center dedicated to serve the Japan region.
         - ``GBR`` - Data center dedicated to serve the United Kingdom region.
 
-        **Note:** Beta features are subject to change. Please avoid using them in production environments.
-    x-ads-region:
+        **Note:** You can specify the region using three methods: the ``region`` header, the ``x-ads-region`` header, and the ``region`` query parameter. The ``region`` header takes precedence over the ``x-ads-region`` header, and the ``x-ads-region`` header takes precedence over the ``region`` query parameter.
+    XAdsRegion:
       type: string
       enum:
         - US
@@ -1190,62 +1373,58 @@ components:
         - JPN
         - GBR
       description: |
-        Specifies the geographical location (region) of the server a request must be executed on. This also corresponds to the region where the Webhook data is stored. It is also the location of the server that will make requests to your callback URL. Possible values:
+        Specifies the geographical location (region) of the server the request must be executed on. This also corresponds to the region where Webhook data is stored. It is also the location of the server that will make requests to your callback URL. Possible values:
 
         - ``US`` - (Default) Data center dedicated to serve the United States region.
         - ``EMEA`` - Data center dedicated to serve the European Union, Middle East, and Africa regions.
-        - ``AUS`` - (Beta) Data center dedicated to serve the Australia region.
+        - ``AUS`` - Data center dedicated to serve the Australia region.
         - ``CAN`` - Data center dedicated to serve the Canada region.
         - ``DEU`` - Data center dedicated to serve the Germany region.
         - ``IND`` - Data center dedicated to serve the India region.
         - ``JPN`` - Data center dedicated to serve the Japan region.
         - ``GBR`` - Data center dedicated to serve the United Kingdom region.
 
-        **Note:** Beta features are subject to change. Please avoid using them in production environments.
-    status:
+        **Note:** You can specify the region using three methods: the ``region`` header, the ``x-ads-region`` header, and the ``region`` query parameter. The ``region`` header takes precedence over the ``x-ads-region`` header, and the ``x-ads-region`` header takes precedence over the ``region`` query parameter.
+    Status:
       type: string
       enum:
         - active
         - inactive
         - reactivated
       description: |
-        Indicates the current state of the webhook. Possible values are 
+        Indicates the current state of the webhook. Possible values are
 
-        - ``active`` - Successfully delivered most recent event notifications. 
+        - ``active`` - Successfully delivered most recent event notifications.
         - ``inactive`` - Failed to deliver most recent event notification and has been deactivated.
         - ``reactivated`` - Previously inactive webhook that has been reactivated. No events have occurred since reactivation.
 
-        See [Event Delivery Guarantees](/en/docs/webhooks/v1/developers_guide/event-delivery-guarantees/) for more information on how the system deactivates webhooks and subsequently reactivates them.    
-    statusFilter:
+        See [Event Delivery Guarantees](/en/docs/webhooks/v1/developers_guide/event-delivery-guarantees/) for more information on how the system deactivates webhooks and subsequently reactivates them.
+    StatusFilter:
       type: string
-      x-stoplight:
-        id: b6sikyj6f62vu
       enum:
         - active
         - inactive
+        - reactivated
       description: |
-        Filters retrieved webhooks by their current state. Possible values are 
+        Filters retrieved webhooks by their current state. Possible values are
 
-        - ``active`` - Successfully delivered most recent event notifications. 
+        - ``active`` - Successfully delivered most recent event notifications.
         - ``inactive`` - Failed to deliver most recent event notification and has been deactivated.
+        - ``reactivated`` - Previously inactive but was reactivated. No events have occurred since reactivation.
 
         If this parameter is not specified, the filter is not applied. See [Event Delivery Guarantees](/en/docs/webhooks/v1/developers_guide/event-delivery-guarantees/) for more information on how the state of a webhook changes.
-    sort:
-      x-stoplight:
-        id: x0dbxqcegubv1
+    Sort:
+      type: string
       description: |
-        Specifies the sorting order of the list of webhooks by their ``lastUpdatedDate`` attribute. 
+        Specifies the sorting order of the list of webhooks by their ``lastUpdatedDate`` attribute.
 
         - ``asc`` - Ascending order.
         - ``desc`` - (Default) Descending order.
       enum:
         - asc
         - desc
-      title: ''
-    StatusRequest:
-      title: status
-      x-stoplight:
-        id: n1z3ccv2b1fub
+    StatusUpdate:
+      type: string
       description: |
         Sets the current state of the webhook. Possible values:
 
@@ -1260,18 +1439,18 @@ components:
       in: path
       schema:
         type: string
-      description: The ID of the webhook to retrieve.
+      description: The ID of the webhook.
       required: true
     status:
       name: status
       in: query
       required: false
       schema:
-        $ref: '#/components/schemas/statusFilter'
+        $ref: '#/components/schemas/StatusFilter'
       description: |
-        Filters retrieved webhooks by their current state. Possible values are 
+        Filters retrieved webhooks by their current state. Possible values are
 
-        - ``active`` - Successfully delivered most recent event notifications. 
+        - ``active`` - Successfully delivered most recent event notifications.
         - ``inactive`` - Failed to deliver most recent event notification and has been deactivated.
         - ``reactivated`` - Previously inactive but was reactivated. No events have occurred since reactivation.
 
@@ -1288,45 +1467,58 @@ components:
       in: query
       required: false
       schema:
-        $ref: '#/components/schemas/region'
+        $ref: '#/components/schemas/Region'
       description: |
-        Specifies the geographical location (region) of the server the request must be executed on. This also corresponds to the region where the Webhook data is stored. It is also the location of the server that will make request to your callback URL. Possible values:
+        Specifies the geographical location (region) of the server the request must be executed on. This also corresponds to the region where Webhook data is stored. It is also the location of the server that will make request to your callback URL. Possible values:
 
         - ``US`` - (Default) Data center dedicated to serve the United States region.
         - ``EMEA`` - Data center dedicated to serve the European Union, Middle East, and Africa regions.
-        - ``AUS`` - (Beta) Data center dedicated to serve the Australia region.
+        - ``AUS`` - Data center dedicated to serve the Australia region.
         - ``CAN`` - Data center dedicated to serve the Canada region.
         - ``DEU`` - Data center dedicated to serve the Germany region.
         - ``IND`` - Data center dedicated to serve the India region.
         - ``JPN`` - Data center dedicated to serve the Japan region.
         - ``GBR`` - Data center dedicated to serve the United Kingdom region.
 
-        **Note:** 
+        **Note:** You can specify the region using three methods: the ``region`` header, the ``x-ads-region`` header, and the ``region`` query parameter. The ``region`` header takes precedence over the ``x-ads-region`` header, and the ``x-ads-region`` header takes precedence over the ``region`` query parameter.
+    region-header:
+      name: region
+      in: header
+      required: false
+      schema:
+        $ref: '#/components/schemas/Region'
+      description: |
+        Specifies the geographical location (region) of the server the request must be executed on. This also corresponds to the region where Webhook data is stored. It is also the location of the server that will make requests to your callback URL. Possible values:
 
-        1. Beta features are subject to change. Please avoid using them in production environments.
-        2. You can also use the ``x-ads-region`` header to specify the region. If you specify the ``region`` query string parameter as well as the ``x-ads-region`` header, the ``x-ads-region`` header takes precedence.
+        - ``US`` - (Default) Data center dedicated to serve the United States region.
+        - ``EMEA`` - Data center dedicated to serve the European Union, Middle East, and Africa regions.
+        - ``AUS`` - Data center dedicated to serve the Australia region.
+        - ``CAN`` - Data center dedicated to serve the Canada region.
+        - ``DEU`` - Data center dedicated to serve the Germany region.
+        - ``IND`` - Data center dedicated to serve the India region.
+        - ``JPN`` - Data center dedicated to serve the Japan region.
+        - ``GBR`` - Data center dedicated to serve the United Kingdom region.
+
+        **Note:** You can specify the region using three methods: the ``region`` header, the ``x-ads-region`` header, and the ``region`` query parameter. The ``region`` header takes precedence over the ``x-ads-region`` header, and the ``x-ads-region`` header takes precedence over the ``region`` query parameter.
     x-ads-region:
       name: x-ads-region
       in: header
       required: false
       schema:
-        $ref: '#/components/schemas/x-ads-region'
+        $ref: '#/components/schemas/XAdsRegion'
       description: |
-        Specifies the geographical location (region) of the server the request must be executed on. This also corresponds to the region where the Webhook data is stored. It is also the location of the server that will make requests to your callback URL. Possible values:
+        Specifies the geographical location (region) of the server the request must be executed on. This also corresponds to the region where Webhook data is stored. It is also the location of the server that will make requests to your callback URL. Possible values:
 
         - ``US`` - (Default) Data center dedicated to serve the United States region.
         - ``EMEA`` - Data center dedicated to serve the European Union, Middle East, and Africa regions.
-        - ``AUS`` - (Beta) Data center dedicated to serve the Australia region.
+        - ``AUS`` - Data center dedicated to serve the Australia region.
         - ``CAN`` - Data center dedicated to serve the Canada region.
         - ``DEU`` - Data center dedicated to serve the Germany region.
         - ``IND`` - Data center dedicated to serve the India region.
         - ``JPN`` - Data center dedicated to serve the Japan region.
         - ``GBR`` - Data center dedicated to serve the United Kingdom region.
 
-        **Note:** 
-
-        1. Beta features are subject to change. Please avoid using them in production environments.
-        2. You can also use the ``region`` query string parameter to specify the region. If you specify the ``region`` query string parameter as well as the ``x-ads-region`` header, the ``x-ads-region`` header takes precedence.
+        **Note:** You can specify the region using three methods: the ``region`` header, the ``x-ads-region`` header, and the ``region`` query parameter. The ``region`` header takes precedence over the ``x-ads-region`` header, and the ``x-ads-region`` header takes precedence over the ``region`` query parameter.
     system:
       name: system
       in: path
@@ -1334,25 +1526,32 @@ components:
       schema:
         type: string
       description: |
-        The ID of the system the webhook applies to. For example data for Data Management. See [Supported Events](/en/docs/webhooks/v1/reference/events/) for a full list of supported systems and their IDs.
+        The ID of the system the webhook applies to. For example ``data`` for Data Management. See [Supported Events](/en/docs/webhooks/v1/reference/events/) for a full list of supported systems and their IDs.
     event:
       name: event
       in: path
       required: true
       schema:
         type: string
-      description: 'The ID of the event the webhook monitors.  See [Supported Events](/en/docs/webhooks/v1/reference/events/) for a full list of events.'
+      description: 'The event type the webhook subscribes to.  See [Supported Events](/en/docs/webhooks/v1/reference/events/) for a full list of events.'
     sort:
       name: sort
       in: query
       required: false
       schema:
-        $ref: '#/components/schemas/sort'
+        $ref: '#/components/schemas/Sort'
       description: |
-        Specifies the sorting order of the list of webhooks by their ``lastUpdatedDate`` attribute. 
+        Specifies the sorting order of the list of webhooks by their ``lastUpdatedDate`` attribute.
 
         - ``asc`` - Ascending order.
-        - ``desc`` - (Default) Descending order. 
+        - ``desc`` - (Default) Descending order.
+    Content-Type:
+      name: Content-Type
+      in: header
+      required: true
+      schema:
+        type: string
+      description: Must be ``application/json``
   securitySchemes:
     3-legged:
       type: oauth2
@@ -1380,7 +1579,7 @@ components:
       description: Application context required.
   responses:
     400-general:
-      description: The request is invalid.
+      description: The server could not process your request. It's likely due to incorrect formatting or missing information. The response body may provide more information. Please review and resubmit your request.
       content:
         application/json:
           schema:
@@ -1388,7 +1587,7 @@ components:
               id:
                 type: string
     401-general:
-      description: Invalid authorization header.
+      description: The supplied authorization header was invalid or the token scope was not acceptable. Verify your authentication credentials and try again.
       content:
         application/json:
           schema:
@@ -1396,7 +1595,7 @@ components:
               id:
                 type: string
     403-general:
-      description: Access denied regardless of authorization status.
+      description: The request was valid but lacked the necessary permissions. Verify your credentials and permissions before sending the request again.
       content:
         application/json:
           schema:
@@ -1404,7 +1603,7 @@ components:
               id:
                 type: string
     404-general:
-      description: The specified resource was not found.
+      description: The requested resource could not be found on the server. Review the request and try again.
       content:
         application/json:
           schema:
@@ -1412,7 +1611,7 @@ components:
               id:
                 type: string
     500-general:
-      description: Unexpected service interruption
+      description: An unexpected error occurred on the server. Please try again later.
       content:
         application/json:
           schema:
@@ -1421,5 +1620,5 @@ components:
                 type: string
   requestBodies: {}
 tags:
-  - name: Hooks
+  - name: Webhooks
   - name: Tokens
