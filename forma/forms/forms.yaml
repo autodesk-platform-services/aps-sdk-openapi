@@ -1,0 +1,2681 @@
+openapi: 3.0.0
+info:
+  title: Construction.Forms
+  version: '1.0'
+  contact:
+    name: Autodesk Plaform Services
+    url: 'https://aps.autodesk.com/'
+    email: aps.help@autodesk.com
+  termsOfService: 'https://www.autodesk.com/company/legal-notices-trademarks/terms-of-service-autodesk360-web-services/forge-platform-web-services-api-terms-of-service'
+  x-support: 'https://stackoverflow.com/questions/tagged/autodesk-platform-services'
+  description: |
+    The Autodesk Construction Cloud (ACC) Forms API (Forma) lets you retrieve form
+    templates and layouts, create and update forms, read and batch-update form field
+    values (including tabular values), and retrieve weather data captured on forms
+    for a project.
+servers:
+  - url: 'https://developer.api.autodesk.com'
+tags:
+  - name: Templates
+    description: Retrieve form templates and their layouts and sections.
+  - name: Forms
+    description: Create, retrieve, and update forms and their field values.
+  - name: Weather
+    description: Retrieve weather data associated with a form.
+paths:
+  '/construction/forms/v1/projects/{projectId}/form-templates':
+    parameters:
+      - $ref: '#/components/parameters/ProjectId'
+    get:
+      tags:
+        - Templates
+      summary: Get Form Templates
+      operationId: getFormTemplates
+      description: Returns all project's form templates the user has access to.
+      parameters:
+        - $ref: '#/components/parameters/Offset'
+        - $ref: '#/components/parameters/LimitMax50'
+        - name: updatedAfter
+          in: query
+          required: false
+          description: Return Templates updated after specified time.
+          schema:
+            type: string
+            format: date-time
+        - name: updatedBefore
+          in: query
+          required: false
+          description: Return Templates updated before specified time.
+          schema:
+            type: string
+            format: date-time
+        - name: sortOrder
+          in: query
+          required: false
+          description: 'Return Templates in specified sorted order. Possible values: desc, asc'
+          schema:
+            type: string
+            enum:
+              - desc
+              - asc
+      responses:
+        '200':
+          description: Form Templates.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FormTemplatesPage'
+              examples:
+                example-1:
+                  value:
+                    data:
+                      - projectId: 9ba6681e-1952-4d54-aac4-9de6d9858dd4
+                        id: 2f634a22-779d-4930-9f08-8391a41fea05
+                        name: Daily Report
+                        status: active
+                        templateType: pg.template_type.daily_report
+                        userPermissions:
+                          - permissions:
+                              - submit
+                            userId: USER123A
+                        groupPermissions:
+                          - permissions:
+                              - manage
+                            roleKey: hq_access_level:admin
+                            roleName: Admin
+                        createdBy: USER123A
+                        updatedAt: '2020-11-20T16:13:33.615127+00:00'
+                        isPdf: true
+                        pdfUrl: https://link.to/form.pdf
+                        forms:
+                          url: https://developer.api.autodesk.com/construction/forms/v1/projects/9ba6681e-1952-4d54-aac4-9de6d9858dd4/forms?templateId=2f634a22-779d-4930-9f08-8391a41fea05
+                        currentLayoutId: 123e4567-e89b-12d3-a456-426614174000
+                    pagination:
+                      offset: 0
+                      limit: 50
+                      totalResults: 1
+                      nextUrl: null
+        '400':
+          description: The request is invalid due to malformed syntax or a missing request header.
+        '401':
+          description: The request lacks valid authentication credentials.
+        '403':
+          description: The client is authenticated but does not have permission to access the resource.
+        '404':
+          description: The resource cannot be found.
+        '429':
+          description: The request exceeds the rate limit for this resource.
+        '500':
+          description: The request failed due to an internal server error.
+      x-codeSamples:
+        - lang: cURL
+          source: 'curl -v "https://developer.api.autodesk.com/construction/forms/v1/projects/{projectId}/form-templates" -H "Authorization: Bearer AuIPTf4KYLTYGVnOHQ0cuolwCW2a"'
+  '/construction/forms/v1/projects/{projectId}/layouts/{layoutId}':
+    parameters:
+      - $ref: '#/components/parameters/ProjectId'
+      - name: layoutId
+        in: path
+        required: true
+        description: The unique identifier of the layout.
+        schema:
+          type: string
+    get:
+      tags:
+        - Templates
+      summary: Get Layout
+      operationId: getLayout
+      description: |-
+        Returns layout information for a form template.
+
+        Layouts define the structure and configuration of form templates, including sections, fields, and their properties.
+      responses:
+        '200':
+          description: Layout information.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LayoutDetail'
+              examples:
+                example-1:
+                  value:
+                    layout:
+                      uid: 123e4567-e89b-12d3-a456-426614174000
+                      type: form
+                      description: Standard form layout for field reports
+                      hasSectionAssignees: false
+                    sections:
+                      - uid: 123e4567-e89b-12d3-a456-426614174001
+                        layoutUid: 123e4567-e89b-12d3-a456-426614174000
+                        sortIndex: 0
+                        displayIndex: 0
+                        type: section
+                        assigneeType: user
+                        assigneeId: ''
+                        label: General Information
+                        description: ''
+        '400':
+          description: The request is invalid due to malformed syntax or a missing request header.
+        '401':
+          description: The request lacks valid authentication credentials.
+        '403':
+          description: The client is authenticated but does not have permission to access the resource.
+        '404':
+          description: The resource cannot be found.
+        '429':
+          description: The request exceeds the rate limit for this resource.
+        '500':
+          description: The request failed due to an internal server error.
+      x-codeSamples:
+        - lang: cURL
+          source: 'curl -v "https://developer.api.autodesk.com/construction/forms/v1/projects/{projectId}/layouts/{layoutId}" -H "Authorization: Bearer AuIPTf4KYLTYGVnOHQ0cuolwCW2a"'
+  '/construction/forms/v2/projects/{projectId}/layouts/{layoutId}/sections/{sectionId}':
+    parameters:
+      - $ref: '#/components/parameters/ProjectId'
+      - name: layoutId
+        in: path
+        required: true
+        description: The unique identifier of the layout.
+        schema:
+          type: string
+      - name: sectionId
+        in: path
+        required: true
+        description: The unique identifier of the section.
+        schema:
+          type: string
+    get:
+      tags:
+        - Templates
+      summary: Get Layout Section
+      operationId: getLayoutSection
+      description: |-
+        Returns detailed information about a specific section within a form layout.
+
+        Sections contain form fields, tables, and other UI elements that make up the structure of a form.
+      responses:
+        '200':
+          description: Layout section information.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SectionDetail'
+              examples:
+                example-1:
+                  value:
+                    section:
+                      uid: 123e4567-e89b-12d3-a456-426614174001
+                      layoutUid: 123e4567-e89b-12d3-a456-426614174000
+                      sortIndex: 0
+                      displayIndex: 0
+                      type: section
+                      assigneeType: user
+                      assigneeId: ''
+                      label: General Information
+                      description: ''
+                    sectionItems:
+                      - uid: 223e4567-e89b-12d3-a456-426614174002
+                        layoutUid: 123e4567-e89b-12d3-a456-426614174000
+                        sectionUid: 123e4567-e89b-12d3-a456-426614174001
+                        sortIndex: 0
+                        displayIndex: 0
+                        type: field
+                        size: normal
+                        label: ''
+                        schema: ''
+                        valueName: arrayVal
+                        description: ''
+                        isRequired: false
+                        modifier: ''
+                        presets:
+                          - value: ''
+                    tableColumns: {}
+                    actions:
+                      - uid: 323e4567-e89b-12d3-a456-426614174003
+                        layoutUid: 123e4567-e89b-12d3-a456-426614174000
+                        condition:
+                          type: and
+                          operator: eq
+                          left: {}
+                          right: {}
+                          conditions:
+                            - {}
+                        effect:
+                          type: hide
+                          target: ''
+                          value: ''
+        '400':
+          description: The request is invalid due to malformed syntax or a missing request header.
+        '401':
+          description: The request lacks valid authentication credentials.
+        '403':
+          description: The client is authenticated but does not have permission to access the resource.
+        '404':
+          description: The resource cannot be found.
+        '429':
+          description: The request exceeds the rate limit for this resource.
+        '500':
+          description: The request failed due to an internal server error.
+      x-codeSamples:
+        - lang: cURL
+          source: 'curl -v "https://developer.api.autodesk.com/construction/forms/v2/projects/{projectId}/layouts/{layoutId}/sections/{sectionId}" -H "Authorization: Bearer AuIPTf4KYLTYGVnOHQ0cuolwCW2a"'
+  '/construction/forms/v2/projects/{projectId}/forms':
+    parameters:
+      - $ref: '#/components/parameters/ProjectId'
+    get:
+      tags:
+        - Forms
+      summary: Get Forms
+      operationId: getFormsV2
+      description: |-
+        Returns a paginated list of forms in a project.
+
+        Forms are sorted by updatedAt in ascending order by default (oldest first).
+
+        Note: For PDF forms, pdfFile references the PDF document; to retrieve the field values entered into the PDF, use the GET PDF values endpoint. For web forms, nativeForm includes general form data and layout information. To retrieve custom field values or table values for web forms, use the GET custom values and GET table values endpoints respectively.
+      parameters:
+        - $ref: '#/components/parameters/Offset'
+        - $ref: '#/components/parameters/LimitMax50'
+        - name: ids
+          in: query
+          required: false
+          description: An array of Form IDs to retrieve.
+          schema:
+            type: array
+            items:
+              type: string
+        - name: formDateMin
+          in: query
+          required: false
+          description: Return Forms with formDate at or after specified date.
+          schema:
+            type: string
+        - name: formDateMax
+          in: query
+          required: false
+          description: Return Forms with formDate at or before specified date.
+          schema:
+            type: string
+        - name: updatedAfter
+          in: query
+          required: false
+          description: Return Forms updated at or after a specified time.
+          schema:
+            type: string
+            format: date-time
+        - name: updatedBefore
+          in: query
+          required: false
+          description: Return Forms updated at or before a specified time.
+          schema:
+            type: string
+            format: date-time
+        - name: templateId
+          in: query
+          required: false
+          description: Return Forms on template with given ID.
+          schema:
+            type: string
+        - name: statuses
+          in: query
+          required: false
+          description: Return Forms with given statuses.
+          schema:
+            type: array
+            items:
+              type: string
+        - name: sort
+          in: query
+          required: false
+          description: |
+            A string that specifies how to sort returned objects. The string provides a valid name (formDate, updatedAt, status, formNum, description, dueDate, templateName, createdByName, updatedByName) with an optional direction, either asc (ascending) or desc (descending). The string may contain multiple comma-separated expressions (max of 3) for secondary sorts. The default sort order is asc if not provided. Example: updatedAt desc,formNum asc
+          schema:
+            type: string
+        - name: search
+          in: query
+          required: false
+          description: Search for forms containing the exact match of the specified text.
+          schema:
+            type: string
+        - name: locationIds
+          in: query
+          required: false
+          description: 'A sequence of location IDs. Each returned objects must/will be associated with one of the locations specified by the IDs.'
+          schema:
+            type: array
+            items:
+              type: string
+        - name: includeSubLocations
+          in: query
+          required: false
+          description: Include forms associated with sublocations of the specified locationIds.
+          schema:
+            type: boolean
+        - name: include
+          in: query
+          required: false
+          description: 'Include the specified extra fields. You can specify multiple values by repeating the parameter (e.g., include=sublocations&include=layoutInfo). Possible values: sublocations, inactiveFormTemplates, layoutInfo.'
+          schema:
+            type: array
+            items:
+              type: string
+              enum:
+                - sublocations
+                - inactiveFormTemplates
+                - layoutInfo
+      responses:
+        '200':
+          description: Forms in project at specified page.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FormsV2Page'
+              examples:
+                example-1:
+                  value:
+                    data:
+                      - formTemplateId: 2f634a22-779d-4930-9f08-8391a41fea05
+                        id: 932da979-e537-4530-b8aa-18607ac6db37
+                        status: draft
+                        formNum: 1
+                        formDate: '2020-11-20'
+                        assigneeId: fc830fd8-f1ef-4cd6-9163-fb115dc698d7
+                        assigneeType: company
+                        dueDate: '2020-11-25'
+                        locationId: d14ce3a6-e61b-4ab0-a9be-5acf7b5366df
+                        createdBy: USER123A
+                        createdAt: '2019-01-20T12:14:28.000000+00:00'
+                        userCreatedAt: '2019-01-20T12:14:27.615127+00:00'
+                        notes: Form notes
+                        description: Form description
+                        name: Form name
+                        updatedAt: '2020-11-20T16:14:27.615127+00:00'
+                        updatedBy: USER123A
+                        weatherId: 12345
+                        lastSubmitterSignature: PHN2ZyBoZWlnaHQ9IjIwMCI=
+                        lastSubmittedBy: USER123A
+                        lastSubmittedAt: '2020-11-20T18:14:27.615127+00:00'
+                        lastReopenedBy: USER123A
+                        lastStatusChanges:
+                          previousStatus: inProgress
+                          inProgress:
+                            by: USER123A
+                            at: '2020-11-20T16:14:27.615127+00:00'
+                          inReview:
+                            by: USER123A
+                            at: '2020-11-20T16:14:27.615127+00:00'
+                          closed:
+                            by: USER123A
+                            at: '2020-11-20T16:14:27.615127+00:00'
+                          archived:
+                            by: USER123A
+                            at: '2020-11-20T16:14:27.615127+00:00'
+                          discarded:
+                            by: USER123A
+                            at: '2020-11-20T16:14:27.615127+00:00'
+                        nativeForm:
+                          id: 932da979-e537-4530-b8aa-18607ac6db37
+                          layoutId: 123e4567-e89b-12d3-a456-426614174001
+                          version: '13.0'
+                          layoutInfo:
+                            description: ''
+                            hasSectionAssignees: false
+                        pdfFile:
+                          id: 123e4567-e89b-12d3-a456-426614174000
+                          fileName: form_report.pdf
+                          pdfUrl: https://example.com/form_report.pdf
+                        lastFetchedAt: '2020-11-20T16:14:27.615127+00:00'
+                    pagination:
+                      offset: 0
+                      limit: 50
+                      totalResults: 1
+                      nextUrl: null
+        '400':
+          description: The request is invalid due to malformed syntax or a missing request header.
+        '401':
+          description: The request lacks valid authentication credentials.
+        '403':
+          description: The client is authenticated but does not have permission to access the resource.
+        '404':
+          description: The resource cannot be found.
+        '429':
+          description: The request exceeds the rate limit for this resource.
+        '500':
+          description: The request failed due to an internal server error.
+      x-codeSamples:
+        - lang: cURL
+          source: 'curl -v "https://developer.api.autodesk.com/construction/forms/v2/projects/{projectId}/forms" -H "Authorization: Bearer AuIPTf4KYLTYGVnOHQ0cuolwCW2a"'
+  '/construction/forms/v1/projects/{projectId}/form-templates/{templateId}/forms':
+    parameters:
+      - $ref: '#/components/parameters/ProjectId'
+      - $ref: '#/components/parameters/TemplateId'
+    post:
+      tags:
+        - Forms
+      summary: Create Form
+      operationId: createForm
+      description: |-
+        Adds a new form to a project.
+
+        To verify if a user can create a form, call GET form-templates and check that the user has submit permissions.
+
+        See the Manage Forms tutorial for details about managing forms.
+
+        Newly created forms will start in the draft status.
+
+        Note: The JSON body parameters are all optional, but a JSON body is still required. To use all default values, pass an empty JSON object {}.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/FormPayload'
+            examples:
+              example-1:
+                value:
+                  assigneeId: USER123A
+                  assigneeType: user
+                  name: Daily Safety Inspection
+                  description: For Sam Subcontractor
+                  formDate: '2020-11-20'
+                  id: cf86ac0e-c7a9-466a-95c6-e468a3f7b6e1
+                  locationId: 795d20e0-0f1e-4d0f-9b5a-183cfd6a1d6e
+                  notes: Installed 25 units
+                  userCreatedAt: '2019-01-20T12:14:28.000000+00:00'
+      responses:
+        '200':
+          description: The created Form.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Form'
+              examples:
+                example-1:
+                  value:
+                    status: draft
+                    id: 932da979-e537-4530-b8aa-18607ac6db37
+                    projectId: 9ba6681e-1952-4d54-aac4-9de6d9858dd4
+                    formNum: 1
+                    formDate: '2020-11-20'
+                    assigneeId: fc830fd8-f1ef-4cd6-9163-fb115dc698d7
+                    assigneeType: company
+                    locationId: d14ce3a6-e61b-4ab0-a9be-5acf7b5366df
+                    updatedAt: '2020-11-20T16:14:27.615127+00:00'
+                    createdBy: USER123A
+                    notes: Form notes
+                    name: Daily Safety Inspection
+                    description: Form description
+                    formTemplate:
+                      status: active
+                      id: 2f634a22-779d-4930-9f08-8391a41fea05
+                      projectId: 9ba6681e-1952-4d54-aac4-9de6d9858dd4
+                      name: Daily Report
+                      templateType: pg.template_type.daily_report
+                    pdfValues:
+                      - name: CommentsRow1
+                        value: Observed Masks and Face Covering
+                    pdfUrl: https://link.to/form.pdf
+                    weather:
+                      summaryKey: Clear
+                      precipitationAccumulation: 2.3
+                      precipitationAccumulationUnit: in
+                      temperatureMin: 47.1
+                      temperatureMax: 65.1
+                      temperatureUnit: Fahrenheit
+                      humidity: 0.2
+                      windSpeed: 12.5
+                      windGust: 34.6
+                      speedUnit: km/h
+                      windBearing: 18
+                      hourlyWeather:
+                        - id: 1234
+                          hour: '07:00:00'
+                          temp: 54.12
+                          windSpeed: 14.2
+                          windBearing: 14
+                          humidity: 0.24
+                          fetchedAt: null
+                          createdAt: '2021-01-20T20:38:32+00:00'
+                          updatedAt: '2021-01-20T20:38:32+00:00'
+                      provider: weatherkit
+                    tabularValues:
+                      worklogEntries: null
+                      materialsEntries: null
+                      equipmentEntries: null
+                    customValues: []
+                    lastReopenedBy: USER123A
+                    lastSubmitterSignature: PHN2ZyBoZWlnaHQ9IjIwMCI=
+                    userCreatedAt: '2019-01-20T12:14:27.615127+00:00'
+                    createdAt: '2019-01-20T12:14:28.000000+00:00'
+        '400':
+          description: The request is invalid due to malformed syntax or a missing request header.
+        '401':
+          description: The request lacks valid authentication credentials.
+        '403':
+          description: The client is authenticated but does not have permission to access the resource.
+        '404':
+          description: The resource cannot be found.
+        '409':
+          description: The request could not be completed due to a conflict with the current state of the target resource
+        '429':
+          description: The request exceeds the rate limit for this resource.
+        '500':
+          description: The request failed due to an internal server error.
+      x-codeSamples:
+        - lang: cURL
+          source: 'curl -v "https://developer.api.autodesk.com/construction/forms/v1/projects/{projectId}/form-templates/{templateId}/forms" -X "POST" -H "Authorization: Bearer AuIPTf4KYLTYGVnOHQ0cuolwCW2a" -H "Content-Type: application/json" --data ''{"assigneeId":"USER123A","assigneeType":"user","name":"Daily Safety Inspection","description":"For Sam Subcontractor","formDate":"2020-11-20","id":"cf86ac0e-c7a9-466a-95c6-e468a3f7b6e1","locationId":"795d20e0-0f1e-4d0f-9b5a-183cfd6a1d6e","notes":"Installed 25 units","userCreatedAt":"2019-01-20T12:14:28.000000+00:00"}'''
+  '/construction/forms/v1/projects/{projectId}/form-templates/{templateId}/forms/{formId}':
+    parameters:
+      - $ref: '#/components/parameters/ProjectId'
+      - $ref: '#/components/parameters/TemplateId'
+      - $ref: '#/components/parameters/FormId'
+    patch:
+      tags:
+        - Forms
+      summary: Update Form
+      operationId: patchForm
+      description: |-
+        Updates a form's form details. Note that we do not currently support updating PDF forms.
+
+        To edit a form, it must be in draft or inReview status and the user must have permissions to edit the form. See the Forms help documentation for information about template configurations.
+
+        See the Manage Forms tutorial for details about updating form details.
+
+        To update the form's main form fields (tabular and non-tabular) use PUT values:batch-upsert API.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/FormPatchPayload'
+            examples:
+              example-1:
+                value:
+                  assigneeId: USER123A
+                  assigneeType: user
+                  name: Daily Safety Inspection
+                  description: For Sam Subcontractor
+                  formDate: '2020-11-20'
+                  locationId: cee45678-fcc4-43ae-80a2-8ca819dfa70d
+                  notes: Installed 25 units
+                  status: submitted
+                  submitterSignature: PHN2ZyBoZWlnaHQ9IjIwMCI=
+      responses:
+        '200':
+          description: The updated Form.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Form'
+              examples:
+                example-1:
+                  value:
+                    status: submitted
+                    id: 932da979-e537-4530-b8aa-18607ac6db37
+                    projectId: 9ba6681e-1952-4d54-aac4-9de6d9858dd4
+                    formNum: 1
+                    name: Daily Safety Inspection
+                    formDate: '2020-11-20'
+                    assigneeId: fc830fd8-f1ef-4cd6-9163-fb115dc698d7
+                    assigneeType: company
+                    locationId: d14ce3a6-e61b-4ab0-a9be-5acf7b5366df
+                    updatedAt: '2020-11-20T16:14:27.615127+00:00'
+                    createdBy: USER123A
+                    notes: Form notes
+                    description: Form description
+                    formTemplate:
+                      status: active
+                      id: 2f634a22-779d-4930-9f08-8391a41fea05
+                      projectId: 9ba6681e-1952-4d54-aac4-9de6d9858dd4
+                      name: Daily Report
+                      templateType: pg.template_type.daily_report
+                    pdfValues:
+                      - name: CommentsRow1
+                        value: Observed Masks and Face Covering
+                    pdfUrl: https://link.to/form.pdf
+                    weather:
+                      summaryKey: Clear
+                      precipitationAccumulation: 2.3
+                      precipitationAccumulationUnit: in
+                      temperatureMin: 47.1
+                      temperatureMax: 65.1
+                      temperatureUnit: Fahrenheit
+                      humidity: 0.2
+                      windSpeed: 12.5
+                      windGust: 34.6
+                      speedUnit: km/h
+                      windBearing: 18
+                      hourlyWeather:
+                        - id: 1234
+                          hour: '07:00:00'
+                          temp: 54.12
+                          windSpeed: 14.2
+                          windBearing: 14
+                          humidity: 0.24
+                          fetchedAt: null
+                          createdAt: '2021-01-20T20:38:32+00:00'
+                          updatedAt: '2021-01-20T20:38:32+00:00'
+                      provider: weatherkit
+                    tabularValues:
+                      worklogEntries: null
+                      materialsEntries: null
+                      equipmentEntries: null
+                    customValues: []
+                    lastReopenedBy: USER123A
+                    lastSubmitterSignature: PHN2ZyBoZWlnaHQ9IjIwMCI=
+                    userCreatedAt: '2019-01-20T12:14:27.615127+00:00'
+                    createdAt: '2019-01-20T12:14:28.000000+00:00'
+        '400':
+          description: The request is invalid due to malformed syntax or a missing request header.
+        '401':
+          description: The request lacks valid authentication credentials.
+        '403':
+          description: The client is authenticated but does not have permission to access the resource.
+        '404':
+          description: The resource cannot be found.
+        '409':
+          description: The request could not be completed due to a conflict with the current state of the target resource
+        '429':
+          description: The request exceeds the rate limit for this resource.
+        '500':
+          description: The request failed due to an internal server error.
+      x-codeSamples:
+        - lang: cURL
+          source: 'curl -v "https://developer.api.autodesk.com/construction/forms/v1/projects/{projectId}/form-templates/{templateId}/forms/{formId}" -X "PATCH" -H "Authorization: Bearer AuIPTf4KYLTYGVnOHQ0cuolwCW2a" -H "Content-Type: application/json" --data ''{"assigneeId":"USER123A","assigneeType":"user","name":"Daily Safety Inspection","description":"For Sam Subcontractor","formDate":"2020-11-20","locationId":"cee45678-fcc4-43ae-80a2-8ca819dfa70d","notes":"Installed 25 units","status":"submitted","submitterSignature":"PHN2ZyBoZWlnaHQ9IjIwMCIgd2lkdGg9IjUwMCI+PHBvbHlsaW5lIHBvaW50cz0iMjAsMjAgNDAsMjUgNjAsNDAgODAsMTIwIDEyMCwxNDAgMjAwLDE4MCIgc3R5bGU9ImZpbGw6bm9uZTtzdHJva2U6YmxhY2s7c3Ryb2tlLXdpZHRoOjMiIC8+PC9zdmc+"}'''
+  '/construction/forms/v2/projects/{projectId}/forms/{formId}/values:batch-update':
+    parameters:
+      - $ref: '#/components/parameters/ProjectId'
+      - $ref: '#/components/parameters/FormId'
+    put:
+      tags:
+        - Forms
+      summary: Batch Update Form Values
+      operationId: batchUpdateFormValuesV2
+      description: |-
+        Updates a form's main form fields, both tabular and non-tabular.
+
+        This is the v2 version of the batch update endpoint with enhanced schema validation and support for custom table schemas.
+
+        This endpoint performs upserts: if a value with the given UID already exists it is updated, otherwise a new value is created.
+
+        To edit form values, the form needs to be in draft status and the user must have permissions to edit the form.
+      parameters:
+        - $ref: '#/components/parameters/ExcludeFormResponse'
+        - $ref: '#/components/parameters/IncludeNativeFormValues'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BatchUpdateValuesPayload'
+            examples:
+              example-1:
+                value:
+                  customValues:
+                    - fieldId: 4f50355e-4e8b-4449-9539-a6beb100ebba
+                      notes: Rain prevented progress
+                      textVal: Everything looks good
+                      choiceVal: Answer 1
+                      arrayVal:
+                        - Answer 1
+                        - Answer 2
+                      dateVal: '2020-11-20'
+                      numberVal: 20
+                      toggleVal: 'True'
+                      svgVal: PHN2ZyBoZWlnaHQ9IjIwMCI=
+                      name: Jane Doe
+                  tabularValues:
+                    - id: 28a31f14-d963-42a3-bf98-d38b73e7aba3
+                      schema: worklogEntries
+                      columns:
+                        - columnId: 123e4567-e89b-12d3-a456-426614174000
+                          columnName: quantity
+                          numberVal: 5
+                          integerVal: 10
+                          textVal: Bricks
+                          svgVal: PHN2ZyBoZWlnaHQ9IjIwMCI=
+                          arrayVal:
+                            - Option 1
+                            - Option 2
+                          timespanVal: 21600000
+                          uidVal: 550e8400-e29b-41d4-a716-446655440000
+                          dateVal: '2023-06-15'
+                          timeVal: '14:30:00'
+                          datetimeLocalVal: '2023-06-15T14:30:00'
+                          datetimeUtcVal: '2023-06-15T21:30:00Z'
+                          timezoneVal: America/Los_Angeles
+                          timezoneRulesVal: 2025b
+                          latVal: 37.7749
+                          lngVal: -122.4194
+      responses:
+        '200':
+          description: The updated Form.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FormV2'
+              examples:
+                updated-form:
+                  summary: The updated Form
+                  value:
+                    formTemplateId: 2f634a22-779d-4930-9f08-8391a41fea05
+                    id: 932da979-e537-4530-b8aa-18607ac6db37
+                    status: inProgress
+                    formNum: 1
+                    formDate: '2020-11-20'
+                    assigneeId: fc830fd8-f1ef-4cd6-9163-fb115dc698d7
+                    assigneeType: company
+                    dueDate: '2020-11-25'
+                    locationId: d14ce3a6-e61b-4ab0-a9be-5acf7b5366df
+                    createdBy: USER123A
+                    createdAt: '2019-01-20T12:14:28.000000+00:00'
+                    userCreatedAt: '2019-01-20T12:14:27.615127+00:00'
+                    notes: Form notes
+                    description: Form description
+                    name: Form name
+                    updatedAt: '2020-11-20T16:14:27.615127+00:00'
+                    updatedBy: USER123A
+                    weatherId: 12345
+                    lastSubmitterSignature: PHN2ZyBoZWlnaHQ9IjIwMCI=
+                    lastSubmittedBy: USER123A
+                    lastSubmittedAt: '2020-11-20T18:14:27.615127+00:00'
+                    lastReopenedBy: USER123A
+                    lastStatusChanges:
+                      previousStatus: inProgress
+                      inProgress:
+                        by: USER123A
+                        at: '2020-11-20T16:14:27.615127+00:00'
+                      inReview:
+                        by: USER123A
+                        at: '2020-11-20T16:14:27.615127+00:00'
+                      closed:
+                        by: USER123A
+                        at: '2020-11-20T16:14:27.615127+00:00'
+                      archived:
+                        by: USER123A
+                        at: '2020-11-20T16:14:27.615127+00:00'
+                      discarded:
+                        by: USER123A
+                        at: '2020-11-20T16:14:27.615127+00:00'
+                    nativeForm:
+                      id: 932da979-e537-4530-b8aa-18607ac6db37
+                      layoutId: 123e4567-e89b-12d3-a456-426614174001
+                      version: '13.0'
+                      layoutInfo:
+                        description: ''
+                        hasSectionAssignees: false
+                    pdfFile:
+                      id: 123e4567-e89b-12d3-a456-426614174000
+                      fileName: form_report.pdf
+                      pdfUrl: https://example.com/form_report.pdf
+                    lastFetchedAt: '2020-11-20T16:14:27.615127+00:00'
+        '204':
+          description: No content (when excludeFormResponse is true).
+        '400':
+          description: The request is invalid due to malformed syntax or a missing request header.
+        '401':
+          description: The request lacks valid authentication credentials.
+        '403':
+          description: The client is authenticated but does not have permission to access the resource.
+        '404':
+          description: The resource cannot be found.
+        '409':
+          description: The request could not be completed due to a conflict with the current state of the target resource
+        '429':
+          description: The request exceeds the rate limit for this resource.
+        '500':
+          description: The request failed due to an internal server error.
+      x-codeSamples:
+        - lang: cURL
+          source: 'curl -v "https://developer.api.autodesk.com/construction/forms/v2/projects/{projectId}/forms/{formId}/values:batch-update" -X "PUT" -H "Authorization: Bearer AuIPTf4KYLTYGVnOHQ0cuolwCW2a" -H "Content-Type: application/json" --data ''{"customValues":[{"fieldId":"4f50355e-4e8b-4449-9539-a6beb100ebba","notes":"Rain prevented progress","textVal":"Everything looks good","choiceVal":"Answer 1","arrayVal":["Answer 1","Answer 2"],"dateVal":"2020-11-20","numberVal":20,"toggleVal":"True","svgVal":"PHN2ZyBoZWlnaHQ9IjIwMCI+PHBvbHlsaW5lIHBvaW50cz0iMjAsMjAgNDAsMjUgNjAsNDAgODAsMTIwIDEyMCwxNDAgMjAwLDE4MCIgc3R5bGU9ImZpbGw6bm9uZTtzdHJva2U6YmxhY2s7c3Ryb2tlLXdpZHRoOjMiIC8+PC9zdmc+","name":"Jane Doe"}],"tabularValues":[{"id":"28a31f14-d963-42a3-bf98-d38b73e7aba3","schema":"worklogEntries","columns":[{"columnId":"123e4567-e89b-12d3-a456-426614174000","columnName":"quantity","numberVal":5,"integerVal":10,"textVal":"Bricks","arrayVal":["Option 1","Option 2"],"timespanVal":21600000,"uidVal":"550e8400-e29b-41d4-a716-446655440000","dateVal":"2023-06-15","timeVal":"14:30:00","datetimeLocalVal":"2023-06-15T14:30:00","datetimeUtcVal":"2023-06-15T21:30:00Z","timezoneVal":"America/Los_Angeles","timezoneRulesVal":"2025b","latVal":37.7749,"lngVal":-122.4194}]}]}'''
+  '/construction/forms/v2/projects/{projectId}/forms/{formId}/values:batch-delete':
+    parameters:
+      - $ref: '#/components/parameters/ProjectId'
+      - $ref: '#/components/parameters/FormId'
+    post:
+      tags:
+        - Forms
+      summary: Batch Delete Form Values
+      operationId: batchDeleteFormValues
+      description: 'This API currently only deletes form values from tabular fields. The form needs to be in draft status and the user must have permissions to edit the form.'
+      parameters:
+        - $ref: '#/components/parameters/ExcludeFormResponse'
+        - $ref: '#/components/parameters/IncludeNativeFormValues'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BatchDeleteValuesPayload'
+            examples:
+              example-1:
+                value:
+                  tabularValues:
+                    - id: 28a31f14-d963-42a3-bf98-d38b73e7aba3
+                      schema: worklogEntries
+      responses:
+        '200':
+          description: The updated Form.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FormV2'
+              examples:
+                updated-form:
+                  summary: The updated Form
+                  value:
+                    formTemplateId: 2f634a22-779d-4930-9f08-8391a41fea05
+                    id: 932da979-e537-4530-b8aa-18607ac6db37
+                    status: inProgress
+                    formNum: 1
+                    formDate: '2020-11-20'
+                    assigneeId: fc830fd8-f1ef-4cd6-9163-fb115dc698d7
+                    assigneeType: company
+                    dueDate: '2020-11-25'
+                    locationId: d14ce3a6-e61b-4ab0-a9be-5acf7b5366df
+                    createdBy: USER123A
+                    createdAt: '2019-01-20T12:14:28.000000+00:00'
+                    userCreatedAt: '2019-01-20T12:14:27.615127+00:00'
+                    notes: Form notes
+                    description: Form description
+                    name: Form name
+                    updatedAt: '2020-11-20T16:14:27.615127+00:00'
+                    updatedBy: USER123A
+                    weatherId: 12345
+                    lastSubmitterSignature: PHN2ZyBoZWlnaHQ9IjIwMCI=
+                    lastSubmittedBy: USER123A
+                    lastSubmittedAt: '2020-11-20T18:14:27.615127+00:00'
+                    lastReopenedBy: USER123A
+                    lastStatusChanges:
+                      previousStatus: inProgress
+                      inProgress:
+                        by: USER123A
+                        at: '2020-11-20T16:14:27.615127+00:00'
+                      inReview:
+                        by: USER123A
+                        at: '2020-11-20T16:14:27.615127+00:00'
+                      closed:
+                        by: USER123A
+                        at: '2020-11-20T16:14:27.615127+00:00'
+                      archived:
+                        by: USER123A
+                        at: '2020-11-20T16:14:27.615127+00:00'
+                      discarded:
+                        by: USER123A
+                        at: '2020-11-20T16:14:27.615127+00:00'
+                    nativeForm:
+                      id: 932da979-e537-4530-b8aa-18607ac6db37
+                      layoutId: 123e4567-e89b-12d3-a456-426614174001
+                      version: '13.0'
+                      layoutInfo:
+                        description: ''
+                        hasSectionAssignees: false
+                    pdfFile:
+                      id: 123e4567-e89b-12d3-a456-426614174000
+                      fileName: form_report.pdf
+                      pdfUrl: https://example.com/form_report.pdf
+                    lastFetchedAt: '2020-11-20T16:14:27.615127+00:00'
+        '204':
+          description: No content (when excludeFormResponse is true).
+        '400':
+          description: The request is invalid due to malformed syntax or a missing request header.
+        '401':
+          description: The request lacks valid authentication credentials.
+        '403':
+          description: The client is authenticated but does not have permission to access the resource.
+        '404':
+          description: The resource cannot be found.
+        '409':
+          description: The request could not be completed due to a conflict with the current state of the target resource
+        '429':
+          description: The request exceeds the rate limit for this resource.
+        '500':
+          description: The request failed due to an internal server error.
+      x-codeSamples:
+        - lang: cURL
+          source: 'curl -v "https://developer.api.autodesk.com/construction/forms/v2/projects/{projectId}/forms/{formId}/values:batch-delete" -X "POST" -H "Authorization: Bearer AuIPTf4KYLTYGVnOHQ0cuolwCW2a" -H "Content-Type: application/json" --data ''{"tabularValues":[{"id":"28a31f14-d963-42a3-bf98-d38b73e7aba3","schema":"worklogEntries"}]}'''
+  '/construction/forms/v2/projects/{projectId}/forms/{formId}/values':
+    parameters:
+      - $ref: '#/components/parameters/ProjectId'
+      - $ref: '#/components/parameters/FormId'
+    get:
+      tags:
+        - Forms
+      summary: Get Form Values
+      operationId: getFormValues
+      description: |-
+        Returns all non-tabular form values on the form.
+
+        This endpoint retrieves persisted values from standard web-form fields such as text inputs, numbers, dates, toggles, single/multi select choices, and signatures. This excludes tabular values (table row values like work log, materials, equipment, and custom tables).
+
+        Note: Only questions that have been answered (have a value set) are returned. Unanswered questions will not appear in the response.
+
+        Results are sorted by updatedAt in ascending order (oldest first).
+
+        To retrieve tabular values, use the GET table values endpoint instead.
+      parameters:
+        - $ref: '#/components/parameters/Offset'
+        - name: limit
+          in: query
+          required: false
+          description: 'The number of records to return in a single request. Can be a number between 1 and 100. Defaults to 100.'
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 100
+            default: 100
+        - name: fieldIds
+          in: query
+          required: false
+          description: Repeat this parameter to filter the response to specific field IDs (schema UIDs). You can provide up to 100 field identifiers.
+          schema:
+            type: array
+            items:
+              type: string
+              format: uuid
+        - name: sectionUid
+          in: query
+          required: false
+          description: Filter by section UID to retrieve values for a specific section only. Use GET layout to retrieve section UIDs from the form's layout.
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Form field values.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FormValuesPage'
+              examples:
+                example-1:
+                  value:
+                    data:
+                      - id: 550e8400-e29b-41d4-a716-446655440001
+                        fieldId: 123e4567-e89b-12d3-a456-426614174000
+                        deleted: false
+                        toggleVal: 'True'
+                        textVal: Site inspection completed successfully.
+                        numberVal: 42.5
+                        choiceVal: Option A
+                        arrayVal:
+                          - Option 1
+                          - Option 2
+                          - Option 3
+                        dateVal: '2026-01-29'
+                        svgVal: PHN2ZyBoZWlnaHQ9IjIwMCI=
+                        name: John Smith
+                        notes: Verified by site supervisor.
+                        updatedAt: '2026-01-29T14:30:00.000000+00:00'
+                        updatedBy: USER123ABC
+                    pagination:
+                      offset: 0
+                      limit: 50
+                      totalResults: 1
+                      nextUrl: null
+        '400':
+          description: The request is invalid due to malformed syntax or a missing request header.
+        '401':
+          description: The request lacks valid authentication credentials.
+        '403':
+          description: The client is authenticated but does not have permission to access the resource.
+        '404':
+          description: The resource cannot be found.
+        '429':
+          description: The request exceeds the rate limit for this resource.
+        '500':
+          description: The request failed due to an internal server error.
+      x-codeSamples:
+        - lang: cURL
+          source: 'curl -v "https://developer.api.autodesk.com/construction/forms/v2/projects/{projectId}/forms/{formId}/values" -H "Authorization: Bearer AuIPTf4KYLTYGVnOHQ0cuolwCW2a"'
+  '/construction/forms/v2/projects/{projectId}/forms/{formId}/pdf-values':
+    parameters:
+      - $ref: '#/components/parameters/ProjectId'
+      - $ref: '#/components/parameters/FormId'
+    get:
+      tags:
+        - Forms
+      summary: Get PDF Values
+      operationId: getFormPdfValues
+      description: |-
+        Returns the field values extracted from a PDF-based form as a paginated list of name/value pairs, where name is the PDF field name and value is the entered value.
+
+        These values were previously returned as part of the form response by the deprecated GET forms endpoint. If you are migrating from v1 to v2, see the Forms API Migration Guide.
+
+        This endpoint supports only PDF forms with an associated PDF. For web forms, use the GET custom values and GET table values endpoints to retrieve non-tabular field values and table values.
+      parameters:
+        - $ref: '#/components/parameters/Offset'
+        - $ref: '#/components/parameters/Limit'
+      responses:
+        '200':
+          description: PDF field values retrieved successfully.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PdfValuesPage'
+              examples:
+                success:
+                  summary: PDF field values retrieved successfully.
+                  value:
+                    data:
+                      - name: CommentsRow1
+                        value: Observed Masks and Face Covering
+                    pagination:
+                      offset: 0
+                      limit: 50
+                      totalResults: 1
+                      nextUrl: null
+        '400':
+          description: The request is invalid due to malformed syntax or a missing request header.
+        '401':
+          description: The request lacks valid authentication credentials.
+        '403':
+          description: The client is authenticated but does not have permission to access the resource.
+        '404':
+          description: The resource cannot be found.
+        '429':
+          description: The request exceeds the rate limit for this resource.
+        '500':
+          description: The request failed due to an internal server error.
+      x-codeSamples:
+        - lang: cURL
+          source: 'curl -v "https://developer.api.autodesk.com/construction/forms/v2/projects/{projectId}/forms/{formId}/pdf-values" -H "Authorization: Bearer AuIPTf4KYLTYGVnOHQ0cuolwCW2a"'
+  '/construction/forms/v1/projects/{projectId}/forms/{formId}/table/{fieldId}/values':
+    parameters:
+      - $ref: '#/components/parameters/ProjectId'
+      - $ref: '#/components/parameters/FormId'
+      - name: fieldId
+        in: path
+        required: true
+        description: |-
+          The table's schema identifier (UUID). This corresponds to the schema and fieldId fields returned in each row of the response. For built-in tables, use the following UUIDs: - Work Log: 6c8055d5-1301-46f6-9d18-8a2a208a277e - Materials: 2adf5ad9-d9d3-ee42-6fd8-015c34ce474d - Equipment: 8af6c450-dd2a-32ae-0090-5493a9cc884e For custom tables, start with the form's layoutId and use GET layout to find the section that contains the table. Then use GET section and look for the item in sectionItems[] whose type is table; its schema value is the fieldId.
+        schema:
+          type: string
+    get:
+      tags:
+        - Forms
+      summary: Get Table Values
+      operationId: getTableValues
+      description: |-
+        Returns all row values from a specific table in a form.
+
+        This endpoint allows you to retrieve tabular data from forms, including work log entries, materials entries, equipment entries, and custom tables.
+
+        The fieldId path parameter is the table's schema identifier (UUID). Each row in the response will include both schema and fieldId fields that match this identifier.
+
+        Column Types
+
+        Custom tables support multiple column types. Each cell value uses a type-specific field: - textVal: Text values - numberVal: Decimal numbers - integerVal: Whole numbers - arrayVal: Dropdown/multi-select choices - uidVal: Reference IDs (companies, roles) - svgVal: Signatures (base64 SVG) - dateVal: Dates (YYYY-MM-DD) - timeVal: Times (HH:MM:SS) - timespanVal: Duration in milliseconds
+
+        Use GET section to see each column's columnType and determine which value field to read.
+      parameters:
+        - $ref: '#/components/parameters/Offset'
+        - $ref: '#/components/parameters/LimitTableValues'
+      responses:
+        '200':
+          description: Table values from the form.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TableValuesPage'
+              examples:
+                example-1:
+                  value:
+                    data:
+                      - id: 28a31f14-d963-42a3-bf98-d38b73e7aba3
+                        table: worklogEntries
+                        schema: 6c8055d5-1301-46f6-9d18-8a2a208a277e
+                        fieldId: 6c8055d5-1301-46f6-9d18-8a2a208a277e
+                        rank: 1
+                        deleted: false
+                        columns:
+                          - formValueId: 550e8400-e29b-41d4-a716-446655440001
+                            columnId: 123e4567-e89b-12d3-a456-426614174000
+                            columnName: trade
+                            textVal: Plumber
+                            numberVal: 42.5
+                            integerVal: 10
+                            arrayVal:
+                              - Option 1
+                              - Option 2
+                            timespanVal: 21600000
+                            svgVal: PHN2ZyBoZWlnaHQ9IjIwMCI=
+                            uidVal: 550e8400-e29b-41d4-a716-446655440000
+                            datetimeLocalVal: '2023-06-15T14:30:00'
+                            datetimeUtcVal: '2023-06-15T21:30:00Z'
+                            timezoneVal: America/Los_Angeles
+                            timezoneRulesVal: ''
+                            lngVal: -122.4194
+                            latVal: 37.7749
+                            dateVal: '2023-06-15'
+                            timeVal: '14:30:00'
+                        updatedAt: '2020-11-20T16:14:27.615127+00:00'
+                        updatedBy: USER123A
+                    pagination:
+                      offset: 0
+                      limit: 50
+                      totalResults: 1
+                      nextUrl: null
+        '400':
+          description: The request is invalid due to malformed syntax or a missing request header.
+        '401':
+          description: The request lacks valid authentication credentials.
+        '403':
+          description: The client is authenticated but does not have permission to access the resource.
+        '404':
+          description: 'The resource cannot be found. This is returned when the form does not exist, the fieldId does not correspond to a valid table in the form''s layout, or the user does not have access to the form.'
+        '429':
+          description: The request exceeds the rate limit for this resource.
+        '500':
+          description: The request failed due to an internal server error.
+      x-codeSamples:
+        - lang: cURL
+          source: 'curl -v "https://developer.api.autodesk.com/construction/forms/v1/projects/{projectId}/forms/{formId}/table/{fieldId}/values" -H "Authorization: Bearer AuIPTf4KYLTYGVnOHQ0cuolwCW2a"'
+  '/construction/forms/v3/projects/{projectId}/weather/{weatherId}':
+    parameters:
+      - $ref: '#/components/parameters/ProjectId'
+      - name: weatherId
+        in: path
+        required: true
+        description: The unique identifier of the weather record. Use GET forms to retrieve the weather ID from a form's weatherId field.
+        schema:
+          type: integer
+    get:
+      tags:
+        - Weather
+      summary: Get Weather
+      operationId: getWeather
+      description: |-
+        Returns weather data for a specific weather record associated with a project.
+
+        Weather data is returned in metric units: - Temperature values (temp, temperatureMin, temperatureMax) are in Celsius - Wind speed values (windSpeed, windGust) are in kilometers per hour (km/h) - Precipitation values (precipitationAccumulation) are in millimeters (mm)
+
+        Weather records are created when forms capture weather conditions. Use the weatherId from a form to retrieve the full weather details.
+      responses:
+        '200':
+          description: Weather data in metric units.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Weather'
+              examples:
+                example-1:
+                  value:
+                    id: 12345
+                    summaryKey: CLEAR
+                    precipitationType: RAIN
+                    precipitationAccumulation: 12.7
+                    hourlyWeather:
+                      - id: 67890
+                        summaryKey: PARTLY_CLOUDY
+                        hour: '12:00:00'
+                        temp: 22.5
+                        windSpeed: 16.9
+                        windBearing: 225
+                        windBearingKey: SW
+                        humidity: 0.65
+                    provider: WEATHER_KIT
+                    fetchedAt: '2024-01-20T14:30:00+00:00'
+        '400':
+          description: The request is invalid due to malformed syntax or a missing request header.
+        '401':
+          description: The request lacks valid authentication credentials.
+        '403':
+          description: The client is authenticated but does not have permission to access the resource.
+        '404':
+          description: The weather record cannot be found
+        '429':
+          description: The request exceeds the rate limit for this resource.
+        '500':
+          description: The request failed due to an internal server error.
+      x-codeSamples:
+        - lang: cURL
+          source: 'curl -v "https://developer.api.autodesk.com/construction/forms/v3/projects/{projectId}/weather/{weatherId}" -H "Authorization: Bearer AuIPTf4KYLTYGVnOHQ0cuolwCW2a"'
+components:
+  parameters:
+    ProjectId:
+      name: projectId
+      in: path
+      required: true
+      description: 'The ID of the project. Use the Data Management API to retrieve the project ID. For more information, see the Retrieve a Project ID tutorial. You need to convert the project ID into a project ID for the Forma API by removing the "b." prefix. For example, a project ID of b.a4be0c34a-4ab7 translates to a project ID of a4be0c34a-4ab7.'
+      schema:
+        type: string
+    TemplateId:
+      name: templateId
+      in: path
+      required: true
+      description: The unique identifier of the form template. Use GET form-templates to retrieve the template ID.
+      schema:
+        type: string
+    FormId:
+      name: formId
+      in: path
+      required: true
+      description: The unique identifier of the form. Use GET forms to retrieve the form ID.
+      schema:
+        type: string
+    Offset:
+      name: offset
+      in: query
+      required: false
+      description: 'The number of records to skip before returning results. Default value: 0. To retrieve subsequent pages, increase the offset by the number of records returned in the previous request.'
+      schema:
+        type: integer
+    Limit:
+      name: limit
+      in: query
+      required: false
+      description: 'The maximum number of results per page. Possible values: 1-200. Default value: 200.'
+      schema:
+        type: integer
+        minimum: 1
+        maximum: 200
+        default: 200
+    LimitMax50:
+      name: limit
+      in: query
+      required: false
+      description: 'The maximum number of results per page. Possible values: 1-50. Default value: 50.'
+      schema:
+        type: integer
+        minimum: 1
+        maximum: 50
+        default: 50
+    LimitTableValues:
+      name: limit
+      in: query
+      required: false
+      description: 'The maximum number of results per page. Possible values: 1-250. Default value: 125.'
+      schema:
+        type: integer
+        minimum: 1
+        maximum: 250
+        default: 125
+    ExcludeFormResponse:
+      name: excludeFormResponse
+      in: query
+      required: false
+      description: 'Exclude the updated form in the response. Default: false.'
+      schema:
+        type: boolean
+        default: false
+    IncludeNativeFormValues:
+      name: includeNativeFormValues
+      in: query
+      required: false
+      description: 'Include the form values in the response. Default: false.'
+      schema:
+        type: boolean
+        default: false
+  schemas:
+    Pagination:
+      type: object
+      description: Request pagination information.
+      properties:
+        offset:
+          type: integer
+          description: The number of results skipped.
+        limit:
+          type: integer
+          description: The maximum number of results per page.
+        totalResults:
+          type: integer
+          description: The total number of results.
+        nextUrl:
+          type: string
+          nullable: true
+          description: The URL for the next page of results. The value can be null if it is the last page.
+    AssigneeType:
+      type: string
+      description: 'Type of entity the form is assigned to. Possible values: company, role, user'
+      enum:
+        - company
+        - role
+        - user
+    ToggleVal:
+      type: string
+      description: 'A boolean like enum value. Possible values: Yes, No, False, True, Minus, Plus, Fail, Pass, NA'
+      enum:
+        - 'Yes'
+        - 'No'
+        - 'False'
+        - 'True'
+        - Minus
+        - Plus
+        - Fail
+        - Pass
+        - NA
+    ValueName:
+      type: string
+      description: 'Indicates the type of value used for this item. Possible values: textVal, toggleVal, arrayVal, numberVal, choiceVal, dateVal, svgVal'
+      enum:
+        - textVal
+        - toggleVal
+        - arrayVal
+        - numberVal
+        - choiceVal
+        - dateVal
+        - svgVal
+    BuiltInTable:
+      type: string
+      description: 'Built-in table identifier. If it is not provided, the table will be a custom table identified by the schema field.'
+      enum:
+        - worklogEntries
+        - materialsEntries
+        - equipmentEntries
+    TableColumnName:
+      type: string
+      description: |
+        The name of the column to update. For the Work Log table: trade (Crew) - use textVal, timespan (Total hours) - use timespanVal, headcount (workers) - use numberVal, description (work performed) - use textVal. For the Equipment table: item (equipment) - use textVal, timespan (Hours used) - use timespanVal, quantity (Quantity) - use numberVal, description (comment) - use textVal. For the Materials table: item (Material) - use textVal, quantity (Quantity) - use numberVal, unit (Unit) - use textVal, description (Comment) - use textVal.
+      enum:
+        - companyId
+        - description
+        - headcount
+        - item
+        - quantity
+        - roleId
+        - timespan
+        - trade
+        - unit
+    FormTemplatesPage:
+      type: object
+      description: A page of form templates.
+      properties:
+        data:
+          type: array
+          description: List of form templates in the project.
+          items:
+            $ref: '#/components/schemas/FormTemplate'
+        pagination:
+          $ref: '#/components/schemas/Pagination'
+    FormTemplate:
+      type: object
+      description: A form template.
+      properties:
+        projectId:
+          type: string
+          description: Unique indentifier of the project the template belongs to.
+        id:
+          type: string
+          description: The unique identifier of the template.
+        name:
+          type: string
+          description: Display name of template.
+        status:
+          type: string
+          description: 'Status of template: "active", "inactive" (archived), or "deleted" Possible values: active, inactive, deleted'
+          enum:
+            - active
+            - inactive
+            - deleted
+        templateType:
+          type: string
+          description: 'User supplied type of template. Can be a custom string or one of the standard template types: pg.template_type.daily_report, pg.template_type.quality, pg.template_type.safety, pg.template_type.punchlist, pg.template_type.commissioning, pg.template_type.time_sheet, pg.template_type.other.'
+        userPermissions:
+          type: array
+          description: Permissions on this template assigned to individual users.
+          items:
+            $ref: '#/components/schemas/TemplateUserPermission'
+        groupPermissions:
+          type: array
+          description: Permissions on this template assigned to companies and roles.
+          items:
+            $ref: '#/components/schemas/TemplateGroupPermission'
+        createdBy:
+          type: string
+          description: The unique identifier of the user who created the template.
+        updatedAt:
+          type: string
+          format: date-time
+          description: 'The date when the template was last updated, UTC date and time in ISO-8601 format.'
+        isPdf:
+          type: boolean
+          description: A flag that indicates whether the template has a PDF or not.
+        pdfUrl:
+          type: string
+          description: For PDF forms, the URL to download the form's PDF.
+        forms:
+          type: object
+          description: Reference to fetch forms created from this template.
+          properties:
+            url:
+              type: string
+              description: URL to retrieve resources.
+        currentLayoutId:
+          type: string
+          format: uuid
+          description: 'The unique identifier of the form template''s current layout, if it is not a PDF template. This can be used to retrieve detailed layout information via the GET layouts endpoint.'
+    TemplateUserPermission:
+      type: object
+      properties:
+        permissions:
+          type: array
+          items:
+            type: string
+        userId:
+          type: string
+    TemplateGroupPermission:
+      type: object
+      properties:
+        permissions:
+          type: array
+          items:
+            type: string
+        roleKey:
+          type: string
+        roleName:
+          type: string
+    LayoutDetail:
+      type: object
+      description: Detailed layout information.
+      properties:
+        layout:
+          $ref: '#/components/schemas/Layout'
+        sections:
+          type: array
+          description: The list of sections within the layout.
+          items:
+            $ref: '#/components/schemas/LayoutSection'
+    Layout:
+      type: object
+      properties:
+        uid:
+          type: string
+          format: uuid
+          description: The unique identifier of the layout.
+        type:
+          type: string
+          description: 'The type of the layout. Will always be: form.'
+          enum:
+            - form
+        description:
+          type: string
+          description: The description of the layout.
+        hasSectionAssignees:
+          type: boolean
+          description: Determines if section assignment is enabled.
+    LayoutSection:
+      type: object
+      description: Metadata about a layout section.
+      properties:
+        uid:
+          type: string
+          format: uuid
+          description: The unique identifier of the section.
+        layoutUid:
+          type: string
+          format: uuid
+          description: The unique identifier of the parent layout.
+        sortIndex:
+          type: integer
+          description: The sort order index of the section.
+        displayIndex:
+          type: integer
+          description: The display order index of the section.
+        type:
+          type: string
+          description: 'The type of the section. Will always be: section.'
+          enum:
+            - section
+        assigneeType:
+          type: string
+          description: 'The type of assignee for the section. Possible values: user, company, role'
+          enum:
+            - user
+            - company
+            - role
+        assigneeId:
+          type: string
+          description: The ID of the assignee for the section.
+        label:
+          type: string
+          description: The label of the section.
+        description:
+          type: string
+          description: The description of the section.
+    SectionDetail:
+      type: object
+      description: Detailed layout section information.
+      properties:
+        section:
+          $ref: '#/components/schemas/LayoutSection'
+        sectionItems:
+          type: array
+          description: The fields and tables within the section.
+          items:
+            $ref: '#/components/schemas/SectionItem'
+        tableColumns:
+          type: object
+          description: Map of table UIDs to their column definitions. Only present for sections containing tables.
+          additionalProperties:
+            type: array
+            items:
+              $ref: '#/components/schemas/TableColumn'
+        actions:
+          type: array
+          description: Conditional logic rules that apply to this section.
+          items:
+            $ref: '#/components/schemas/SectionAction'
+    SectionItem:
+      type: object
+      properties:
+        uid:
+          type: string
+          format: uuid
+          description: The unique identifier of the section item.
+        layoutUid:
+          type: string
+          format: uuid
+          description: The unique identifier of the parent layout.
+        sectionUid:
+          type: string
+          format: uuid
+          description: The unique identifier of the parent section.
+        sortIndex:
+          type: integer
+          description: The sort order index of the item within the section.
+        displayIndex:
+          type: integer
+          description: The display order index of the item.
+        type:
+          type: string
+          description: 'What type of UI component should be generated for this element. Possible values: field, table'
+          enum:
+            - field
+            - table
+        size:
+          type: string
+          description: 'On a table column/Free Text field, size:large indicates multi-line text. Possible values: normal, large'
+          enum:
+            - normal
+            - large
+        label:
+          type: string
+          description: The field label/question text.
+        schema:
+          type: string
+          description: Identifier for the field. For table section items, this is the table schema UUID used as the fieldId path parameter for GET table values.
+        valueName:
+          type: string
+          description: 'Determines the question type and value name for answering. Possible values: arrayVal, choiceVal, dateVal, numberVal, textVal, toggleVal, svgVal'
+          enum:
+            - arrayVal
+            - choiceVal
+            - dateVal
+            - numberVal
+            - textVal
+            - toggleVal
+            - svgVal
+        description:
+          type: string
+          description: Text displayed with the question for additional context.
+        isRequired:
+          type: boolean
+          description: Determines if the question must be filled before submission.
+        modifier:
+          type: string
+          description: Additional modifier for the field behavior.
+        presets:
+          type: array
+          description: Autocomplete or drop-down options.
+          items:
+            $ref: '#/components/schemas/Preset'
+    Preset:
+      type: object
+      properties:
+        value:
+          type: string
+    TableColumn:
+      type: object
+      properties:
+        uid:
+          type: string
+          format: uuid
+          description: The unique identifier of the table column.
+        layoutUid:
+          type: string
+          format: uuid
+          description: The unique identifier of the parent layout.
+        layoutSectionItemUid:
+          type: string
+          format: uuid
+          description: The unique identifier of the parent layout section item.
+        sortIndex:
+          type: integer
+          description: The sort order index of the column.
+        type:
+          type: string
+          description: 'The type of the column. Will always be: column.'
+          enum:
+            - column
+        presets:
+          type: array
+          description: Autocomplete or drop-down options.
+          items:
+            $ref: '#/components/schemas/Preset'
+        valuesProvider:
+          type: string
+          description: Provider for dropdown values.
+        calc:
+          type: string
+          description: Calculation configuration for the column.
+        columnKey:
+          type: string
+          description: Unique key identifier for the column. This is used in expressions.
+        columnType:
+          type: string
+          description: |
+            The data type of the column. Custom tables support multiple column types: text_val (Text input), number_val (Decimal numbers), integer_val (Whole numbers), array_val (Dropdown/multi-select - use with presets or valuesProvider), uid_val (Reference fields such as companies, roles - use with valuesProvider), svg_val (Signatures - coming soon for custom tables), date_val (Date picker), time_val (Time picker), timespan_val (Duration/time span).
+          enum:
+            - text_val
+            - number_val
+            - integer_val
+            - array_val
+            - uid_val
+            - svg_val
+            - date_val
+            - time_val
+            - timespan_val
+        expression:
+          type: string
+          description: The expression for the column.
+        label:
+          type: string
+          description: The label for the column.
+    SectionAction:
+      type: object
+      properties:
+        uid:
+          type: string
+          format: uuid
+          description: The unique identifier of the action.
+        layoutUid:
+          type: string
+          format: uuid
+          description: The unique identifier of the parent layout.
+        condition:
+          $ref: '#/components/schemas/ActionCondition'
+        effect:
+          $ref: '#/components/schemas/ActionEffect'
+    ActionCondition:
+      type: object
+      description: The condition which if met will cause the effect (the 'if').
+      properties:
+        type:
+          type: string
+          description: 'Possible values: and, or, comparison'
+          enum:
+            - and
+            - or
+            - comparison
+        operator:
+          type: string
+          description: 'Possible values: eq, ne, gt, gte, lt, lte, in, not_in, contains, not_contains'
+          enum:
+            - eq
+            - ne
+            - gt
+            - gte
+            - lt
+            - lte
+            - in
+            - not_in
+            - contains
+            - not_contains
+        left:
+          type: object
+        right:
+          type: object
+        conditions:
+          type: array
+          items:
+            type: object
+    ActionEffect:
+      type: object
+      description: The effect which applies if the condition is met (the 'then').
+      properties:
+        type:
+          type: string
+          description: 'Possible values: hide, show, require, not_require, set_value'
+          enum:
+            - hide
+            - show
+            - require
+            - not_require
+            - set_value
+        target:
+          type: string
+        value:
+          type: string
+    Form:
+      type: object
+      description: A form instance.
+      properties:
+        status:
+          type: string
+          description: 'The current status of the form. Note that forms are created in draft status. Possible values: draft: you can edit forms. inReview: you cannot edit forms, however, they can be approved by form reviewers. submitted: forms are closed and no longer editable. archived forms are not edtiable and hidden in the UI.'
+          enum:
+            - draft
+            - inReview
+            - submitted
+            - archived
+        id:
+          type: string
+          description: The unique identifier of the form.
+        projectId:
+          type: string
+          description: The unique identifier of the project the form belongs to.
+        formNum:
+          type: integer
+          description: A chronological user-fiendly identifier of the form within the project e.g. form #5.
+        formDate:
+          type: string
+          description: Date the form pertains to.
+        assigneeId:
+          type: string
+          description: 'The unique identifier of the user, role, or company the form is assigned to.'
+        assigneeType:
+          $ref: '#/components/schemas/AssigneeType'
+        locationId:
+          type: string
+          description: 'Location identifier associated with the form. For more information about the location, see GET nodes.'
+        updatedAt:
+          type: string
+          format: date-time
+          description: 'The date when the form was last updated, UTC date and time in ISO-8601 format.'
+        createdBy:
+          type: string
+          description: The unique identifier of the user who created the form.
+        notes:
+          type: string
+          description: Text for the form's notes section.
+        description:
+          type: string
+          description: Text for the form's description section.
+        name:
+          type: string
+          description: 'The name of the form instance. Max length: 100.'
+        formTemplate:
+          $ref: '#/components/schemas/FormTemplateInfo'
+        pdfValues:
+          type: array
+          description: 'For PDF forms, values extracted from fields in the PDF.'
+          items:
+            $ref: '#/components/schemas/PdfValue'
+        pdfUrl:
+          type: string
+          description: For PDF forms, the URL to download the form's PDF.
+        weather:
+          $ref: '#/components/schemas/FormWeather'
+        tabularValues:
+          type: object
+          nullable: true
+          description: 'Tabular field values for the form''s built-in tables, keyed by table name. Not documented in the API reference; observed in example responses. Each table''s value may be null if it has no rows.'
+          properties:
+            worklogEntries:
+              type: array
+              nullable: true
+              items: {}
+              description: Work log table rows for the form, or null if none exist.
+            materialsEntries:
+              type: array
+              nullable: true
+              items: {}
+              description: Materials table rows for the form, or null if none exist.
+            equipmentEntries:
+              type: array
+              nullable: true
+              items: {}
+              description: Equipment table rows for the form, or null if none exist.
+        customValues:
+          type: array
+          description: 'For non-PDF forms, data stored in the form fields.'
+          items:
+            $ref: '#/components/schemas/CustomValue'
+        lastReopenedBy:
+          type: string
+          description: Unique identifier for the user that last re-opened the Form (if applicable).
+        lastSubmitterSignature:
+          type: string
+          description: Signature of the reviewer who last submitted the Form (if applicable). Signature value (base64 encoded SVG).
+        userCreatedAt:
+          type: string
+          format: date-time
+          description: 'Timestamp when the form was created on the client device or external system. This may differ from createdAt if the form was created offline and synced later. UTC date and time in ISO-8601 format.'
+        createdAt:
+          type: string
+          format: date-time
+          description: 'Timestamp when the form was received and stored on the server. UTC date and time in ISO-8601 format.'
+    FormTemplateInfo:
+      type: object
+      description: Information about the form's template.
+      properties:
+        status:
+          type: string
+          description: 'Possible values: active, inactive, deleted'
+          enum:
+            - active
+            - inactive
+            - deleted
+        id:
+          type: string
+          description: The unique identifier of the template.
+        projectId:
+          type: string
+          description: Unique indentifier of the project the template belongs to.
+        name:
+          type: string
+          description: Name of the form template.
+        templateType:
+          type: string
+          description: User defined type of the form template.
+    PdfValue:
+      type: object
+      properties:
+        name:
+          type: string
+          description: The name of the PDF field.
+        value:
+          type: string
+          nullable: true
+          description: The value of the PDF field. The value can be null if the field is empty or does not have an extracted value.
+    FormWeather:
+      type: object
+      description: Weather forecast captured on the form.
+      properties:
+        summaryKey:
+          type: string
+          description: |
+            A code describing the weather conditions. For weather data from DarkSky (legacy), possible values are: clear, rain, snow, sleet, wind, fog, cloudy, partlyCloudy. For weather data from WeatherKit, values come from Apple's WeatherCondition codes and include: Clear, MostlyClear, PartlyCloudy, MostlyCloudy, Cloudy, Rain, HeavyRain, Drizzle, Snow, HeavySnow, Flurries, Sleet, FreezingRain, FreezingDrizzle, Hail, Thunderstorms, IsolatedThunderstorms, ScatteredThunderstorms, StrongStorms, Windy, Breezy, Foggy, Haze, Smoky, Blizzard, BlowingDust, BlowingSnow, TropicalStorm, Hurricane, SunShowers, Hot, Frigid, WintryMix. Check the provider field to determine which value set to expect. Additional values may appear as Apple's WeatherKit condition codes evolve.
+        precipitationAccumulation:
+          type: number
+          description: Amount of precipitation accumulated throughout the day.
+        precipitationAccumulationUnit:
+          type: string
+          description: Indicates the measurement unit of the precipitationAccumulation.
+        temperatureMin:
+          type: number
+          description: Minimum temperature during the day.
+        temperatureMax:
+          type: number
+          description: Maximum temperature during the day.
+        temperatureUnit:
+          type: string
+          description: 'Indicates the measurement unit of the temperature values e.g. temperatureMin, temperatureMax, temp.'
+        humidity:
+          type: number
+          description: A percentage value indicating the humidity over the course of the day.
+        windSpeed:
+          type: number
+          description: Average wind speed observed throughout the day.
+        windGust:
+          type: number
+          description: Maximum wind speed observed throughout the day.
+        speedUnit:
+          type: string
+          description: Indicates the measurement unit of the windSpeed and windGust.
+        windBearing:
+          type: number
+          description: 'Direction of the wind, in degrees.'
+        hourlyWeather:
+          type: array
+          description: 'Weather information for specific hours (07:00:00, 12:00:00, 16:00:00).'
+          items:
+            $ref: '#/components/schemas/FormHourlyWeather'
+        provider:
+          type: string
+          description: 'Indicates the source of the weather data. Possible values: darksky, weatherkit'
+          enum:
+            - darksky
+            - weatherkit
+    FormHourlyWeather:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: Unique identifier.
+        hour:
+          type: string
+          description: Hour of the day for this forecast.
+        temp:
+          type: number
+          description: Temperature during specified hour.
+        windSpeed:
+          type: number
+          description: Average wind speed.
+        windBearing:
+          type: integer
+          description: 'Direction of the wind, in degrees.'
+        humidity:
+          type: number
+          description: A percentage value indicating the humidity.
+        fetchedAt:
+          type: string
+          format: date-time
+          nullable: true
+          description: The date when weather was fetched from weather API.
+        createdAt:
+          type: string
+          format: date-time
+          description: The date when weather was first fetched.
+        updatedAt:
+          type: string
+          format: date-time
+          description: The date when the weather was last updated.
+    CustomValue:
+      type: object
+      description: 'For non-PDF forms, data stored in a form field.'
+      properties:
+        fieldId:
+          type: string
+          description: The unique identifier of the field.
+        sectionLabel:
+          type: string
+          description: Name of the section containing this field.
+        itemLabel:
+          type: string
+          description: The field's label or question text.
+        valueName:
+          $ref: '#/components/schemas/ValueName'
+        toggleVal:
+          $ref: '#/components/schemas/ToggleVal'
+        textVal:
+          type: string
+          description: A text value.
+        arrayVal:
+          type: string
+          description: Multi select values.
+        numberVal:
+          type: number
+          description: A numeric value.
+        choiceVal:
+          type: string
+          description: A single select value.
+        dateVal:
+          type: string
+          description: A date value.
+        svgVal:
+          type: string
+          description: A signature value (base64 encoded SVG).
+        notes:
+          type: string
+          description: 'Text for the field''s notes section. Max length: 8000.'
+    FormsV2Page:
+      type: object
+      description: A page of forms.
+      properties:
+        data:
+          type: array
+          description: List of forms in the project.
+          items:
+            $ref: '#/components/schemas/FormV2'
+        pagination:
+          $ref: '#/components/schemas/Pagination'
+    FormV2:
+      type: object
+      description: A form instance.
+      properties:
+        formTemplateId:
+          type: string
+          format: uuid
+          description: Unique identifier of template the form belongs to.
+        id:
+          type: string
+          format: uuid
+          description: Unique identifier of the form.
+        status:
+          type: string
+          description: 'Current state of the form e.g. inProgress. Note: the GET Forms (v2) page documents this field with possible values draft, inReview, submitted, archived, while the batch-update and batch-delete (v2) pages document the same field with possible values inProgress, discarded, closed, inReview, archived. Both sets are included here; see the report for details.'
+          enum:
+            - draft
+            - inReview
+            - submitted
+            - archived
+            - inProgress
+            - discarded
+            - closed
+        formNum:
+          type: integer
+          description: 'Unique identifier of form, autoincremental, unique per project.'
+        formDate:
+          type: string
+          description: Date the Form is created for.
+        assigneeId:
+          type: string
+          description: ID of the entity form is assigned to.
+        assigneeType:
+          $ref: '#/components/schemas/AssigneeType'
+        dueDate:
+          type: string
+          description: Date the Form is due.
+        locationId:
+          type: string
+          format: uuid
+          description: The unique identifier of the Form's location.
+        createdBy:
+          type: string
+          description: User ID that created the Form.
+        createdAt:
+          type: string
+          format: date-time
+          description: 'Timestamp when the form was received and stored on the server. UTC date and time in ISO-8601 format.'
+        userCreatedAt:
+          type: string
+          format: date-time
+          description: 'Timestamp when the form was created on the client device or external system. This may differ from createdAt if the form was created offline and synced later. UTC date and time in ISO-8601 format.'
+        notes:
+          type: string
+          description: Form notes.
+        description:
+          type: string
+          description: Form description.
+        name:
+          type: string
+          description: Form name.
+        updatedAt:
+          type: string
+          format: date-time
+          description: 'When form was last updated, UTC date and time in ISO-8601 format.'
+        updatedBy:
+          type: string
+          description: User ID that last updated the Form.
+        weatherId:
+          type: integer
+          description: Unique identifier of weather associated with this form.
+        lastSubmitterSignature:
+          type: string
+          description: Signature of the reviewer who last submitted the Form (if applicable). Signature value (base64 encoded SVG).
+        lastSubmittedBy:
+          type: string
+          description: User ID that last submitted the Form.
+        lastSubmittedAt:
+          type: string
+          format: date-time
+          description: 'When form was last submitted (if applicable), UTC date and time in ISO-8601 format.'
+        lastReopenedBy:
+          type: string
+          description: User ID that re-opened the Form (if applicable).
+        lastStatusChanges:
+          $ref: '#/components/schemas/LastStatusChanges'
+        nativeForm:
+          $ref: '#/components/schemas/NativeForm'
+        pdfFile:
+          $ref: '#/components/schemas/PdfFile'
+        lastFetchedAt:
+          type: string
+          format: date-time
+          description: 'When form was retrieved from the API, UTC date and time in ISO-8601 format.'
+    LastStatusChanges:
+      type: object
+      description: 'Contains the last transition into each status. Since a form can transition between statuses multiple times (e.g., reopened from closed back to inProgress), this shows the most recent transition for each status the form has been in.'
+      properties:
+        previousStatus:
+          type: string
+          description: The status the form was in before the current status.
+        inProgress:
+          allOf:
+            - $ref: '#/components/schemas/StatusChange'
+          description: The last time the form transitioned into inProgress status.
+        inReview:
+          allOf:
+            - $ref: '#/components/schemas/StatusChange'
+          description: The last time the form transitioned into inReview status.
+        closed:
+          allOf:
+            - $ref: '#/components/schemas/StatusChange'
+          description: The last time the form transitioned into closed status.
+        archived:
+          allOf:
+            - $ref: '#/components/schemas/StatusChange'
+          description: The last time the form transitioned into archived status.
+        discarded:
+          allOf:
+            - $ref: '#/components/schemas/StatusChange'
+          description: The last time the form transitioned into discarded status.
+    StatusChange:
+      type: object
+      properties:
+        by:
+          type: string
+          description: User ID who made the status change.
+        at:
+          type: string
+          description: 'When the status change occurred, UTC date and time in ISO-8601 format.'
+    NativeForm:
+      type: object
+      description: 'Native form data including layout and values. Note: the GET Forms (v2) page documents this as "Native form data including layout information. To retrieve form field values, use the GET custom values endpoint." while the batch-update and batch-delete (v2) pages, whose responses can include nested customValues, document it as "Native form data including layout and values." See the report for details.'
+      properties:
+        id:
+          type: string
+          format: uuid
+          description: The form's unique identifier. This is the same value as the top-level form id.
+        layoutId:
+          type: string
+          format: uuid
+          description: Unique identifier of the layout.
+        version:
+          type: string
+          description: 'Semantic version indicating the feature set available for this form''s template. Clients can use this to determine which features are supported. For example, version 13.0 or higher is required for custom tables support. The Forms App typically uses the highest available version.'
+        layoutInfo:
+          $ref: '#/components/schemas/LayoutInfo'
+        customValues:
+          type: array
+          description: Custom form values for Form.
+          items:
+            $ref: '#/components/schemas/CustomValue'
+    LayoutInfo:
+      type: object
+      description: Information about the layout of this form.
+      properties:
+        description:
+          type: string
+          description: The description of the layout.
+        hasSectionAssignees:
+          type: boolean
+          description: Determines if section assignment is enabled.
+    PdfFile:
+      type: object
+      description: PDF file information for the form.
+      properties:
+        id:
+          type: string
+          description: Unique identifier of the PDF file.
+        fileName:
+          type: string
+          description: Name of the PDF file.
+        pdfUrl:
+          type: string
+          description: URL to download the PDF file.
+    FormPayload:
+      type: object
+      description: The details of the form to create.
+      properties:
+        assigneeId:
+          type: string
+          description: 'Identifier of the company, role, or user assigned to the form. Note: the assignee must be a contributor of the template.'
+        assigneeType:
+          $ref: '#/components/schemas/AssigneeType'
+        description:
+          type: string
+          description: 'Text for the form description field. Max length: 8000.'
+        name:
+          type: string
+          description: 'The name of the form instance. If the specified value is null or empty, it defaults to the form''s template name. Max length: 100.'
+        formDate:
+          type: string
+          description: 'Date the form pertains to, must be after 1950-01-01.'
+        id:
+          type: string
+          format: uuid
+          description: 'The unique identifier of the form. If you do not specify an ID, one will be assigned.'
+        locationId:
+          type: string
+          format: uuid
+          description: 'Location associated with the Form. For more information about the location, see GET nodes.'
+        notes:
+          type: string
+          description: 'Text for the form''s notes section. Max length: 8000.'
+        userCreatedAt:
+          type: string
+          format: date-time
+          description: 'Timestamp when the form was created on the client device or external system (optional). Use this to preserve the original creation time when syncing forms that were created offline.'
+    FormPatchPayload:
+      type: object
+      description: The details of the form to update.
+      properties:
+        assigneeId:
+          type: string
+          description: 'The unique identifier of the company, role, or user the form is assigned to. Note that the assignee must be a contributor of the template.'
+        assigneeType:
+          $ref: '#/components/schemas/AssigneeType'
+        description:
+          type: string
+          description: 'Text for the form''s description field. Max length: 8000.'
+        name:
+          type: string
+          description: 'The name of the form instance. If the specified value is null or empty, it defaults to the form''s template name. Max length: 100.'
+        formDate:
+          type: string
+          description: 'Date the form pertains to, must be after 1950-01-01.'
+        locationId:
+          type: string
+          format: uuid
+          description: 'Location identifier associated with the form. For more information about the location, see GET nodes.'
+        notes:
+          type: string
+          description: 'Text for the form''s notes section. Max length: 8000.'
+        status:
+          type: string
+          description: 'New status for the form. "draft" (in progress) forms may be edited. "inReview" forms may not be edited but may be approved by the form reviewers. "submitted" forms are closed and no longer editable. "archived" forms are not editable and hidden in the ui.'
+          enum:
+            - draft
+            - discarded
+            - submitted
+            - archived
+            - in_review
+        submitterSignature:
+          type: string
+          description: 'Signature of the reviewer who is submitting the form (should be included when submitting an inReview form) as a base64 encoded SVG. Note: the SVG will be sanitized: tags and attributes are limited to the basics (<path>, <g>, <polyline>, etc) needed to represent a signature.'
+    BatchUpdateCustomValue:
+      type: object
+      description: A non-tabular field value to update.
+      required:
+        - fieldId
+      properties:
+        fieldId:
+          type: string
+          format: uuid
+          description: The unique identifier of the field.
+        notes:
+          type: string
+          description: 'Text for the field''s notes section. This is relevant for all fields. Max length: 8000.'
+        textVal:
+          type: string
+          description: 'The attribute used for updating text value fields, For example, textVal: This is my response!. Each non-tabular field is assigned a specific value type, which you need to specify when updating the field. textVal is only relevant for updating text value fields. To verify whether the field you want to update is a text value field, call GET forms and check the field''s valueName. Max length: 8000.'
+        choiceVal:
+          type: string
+          description: "The attribute used for updating single-select and dropdown fields. For example, choiceVal: Answer 3. Each non-tabular field is assigned a specific value type, which you need to specify when updating the field. choiceVal is only relevant for updating single-select and dropdown fields. To verify whether the field you want to update is a single-select or dropdown field, call GET forms and check the field's valueName."
+        arrayVal:
+          type: array
+          description: "The attribute used for updating multi-select fields. For example, arrayVal: [\"Answer 1\", \"Answer 2\"]. Each non-tabular field is assigned a specific value type, which you need to specify when updating the field. arrayVal is only relevant for updating multi-select fields. To verify whether the field you want to update is a multi-select field, call GET forms and check the field's valueName."
+          items:
+            type: string
+        dateVal:
+          type: string
+          description: "The attribute used for updating date fields, in the following format (YYYY-MM-DD). For example, \"dateVal\": \"1999-12-31\". Each non-tabular field is assigned a specific value type, which you need to specify when updating the field. dateVal is only relevant for updating date fields. To verify whether the field you want to update is a date field, call GET forms and check the field's valueName."
+        numberVal:
+          type: number
+          description: "The attribute used for updating number fields. For example, \"numberVal\": \"42\". Each non-tabular field is assigned a specific value type, which you need to specify when updating the field. numberVal is only relevant for updating number fields. To verify whether the field you want to update is a number field, call GET forms and check the field's valueName."
+        toggleVal:
+          allOf:
+            - $ref: '#/components/schemas/ToggleVal'
+          description: "The attribute used for updating preconfigured fields. For example, \"toggleVal\": \"Yes\". Each non-tabular field is assigned a specific value type, which you need to specify when updating the field. toggleVal is only relevant for updating preconfigured fields. To verify whether the field you want to update is a preconfigured field, call GET forms and check the field's valueName."
+        svgVal:
+          type: string
+          description: 'The attribute used for updating signature fields. Each non-tabular field is assigned a specific value type, which you need to specify when updating the field. svgVal is only relevant for updating signature fields. To verify whether the field you want to update is a signature field, call GET forms and check the field''s valueName. The signature needs to be in SVG format and it needs to be base64 encoded.'
+        name:
+          type: string
+          description: 'The name of the person who signed the form. By default, it is the name of the logged in user. It is only relevant for signature fields. To update the name you need to use the signature field ID.'
+    BatchTabularColumn:
+      type: object
+      description: The value for a column in a table row.
+      properties:
+        columnId:
+          type: string
+          format: uuid
+          description: 'Unique identifier for the column. Either columnId or columnName must be provided, but not both.'
+        columnName:
+          $ref: '#/components/schemas/TableColumnName'
+        numberVal:
+          type: number
+          description: 'The attribute used for updating number columns. For example, "numberVal": "42". Each tabular field is assigned a specific value type, which you need to specify when updating the field. numberVal is relevant for updating the following columns: headcount (Workers) and quantity (Quantity).'
+        integerVal:
+          type: integer
+          description: The attribute used for updating integer columns.
+        textVal:
+          type: string
+          description: 'The attribute used for updating text value columns. Each tabular field is assigned a specific value type, which you need to specify when updating the field. textVal is relevant for updating the following columns: description (Work performed), description (comment), item (Equipment), item (Material), trade (Crew), and unit (Unit). The universal maximum length is 8,000 characters. For columns configured as Text in custom tables, the maximum length is 200 characters. Note: When using svgVal for signatures, textVal should contain the name of the person who signed. Max length: 8000.'
+        svgVal:
+          type: string
+          description: Base64 encoded SVG string used for signature fields. When providing a signature, you must also include the signer's name in textVal.
+        arrayVal:
+          type: array
+          description: Array of strings for dropdown or multi-select answers.
+          items:
+            type: string
+        timespanVal:
+          type: number
+          description: 'The attribute used for updating time-related columns. Value represents amount of time in milliseconds. Each tabular field is assigned a specific value type, which you need to specify when updating the field. timespanVal is relevant for updating the following columns: timespan (Total hours), timespan (Hours used).'
+        uidVal:
+          type: string
+          description: UUID value for fields that store unique identifiers.
+        dateVal:
+          type: string
+          description: Date value without timezone.
+        timeVal:
+          type: string
+          description: Time value without timezone.
+        datetimeLocalVal:
+          type: string
+          description: 'Datetime value in local time. When providing this field, you must also include datetimeUtcVal, timezoneVal, and timezoneRulesVal. Optionally include latVal and lngVal for more accurate timezone handling.'
+        datetimeUtcVal:
+          type: string
+          description: Datetime value in UTC. Required when datetimeLocalVal is provided.
+        timezoneVal:
+          type: string
+          description: Timezone identifier. Required when datetimeLocalVal is provided.
+        timezoneRulesVal:
+          type: string
+          description: Timezone rules data. Required when datetimeLocalVal is provided.
+        latVal:
+          type: number
+          description: Latitude value. Optional but recommended when using datetime fields for accurate timezone handling during daylight saving transitions.
+        lngVal:
+          type: number
+          description: Longitude value. Optional but recommended when using datetime fields for accurate timezone handling during daylight saving transitions.
+    BatchTabularValue:
+      type: object
+      description: A tabular field row to update.
+      required:
+        - id
+        - schema
+      properties:
+        id:
+          type: string
+          format: uuid
+          description: Unique identifier for the table row. You need to generate the ID (UUID) for the row.
+        schema:
+          type: string
+          description: 'Table identifier or built-in table alias. For built-in tables, use worklogEntries, materialsEntries, or equipmentEntries. For custom tables, use the table''s schema identifier or fieldId.'
+        columns:
+          type: array
+          description: The set of values for the columns in the row.
+          items:
+            $ref: '#/components/schemas/BatchTabularColumn'
+    BatchUpdateValuesPayload:
+      type: object
+      description: The lists of non-tabular and tabular field values to update.
+      properties:
+        customValues:
+          type: array
+          description: 'The list of non-tabular fields. Maximum 10 items per request.'
+          items:
+            $ref: '#/components/schemas/BatchUpdateCustomValue'
+        tabularValues:
+          type: array
+          description: 'The list of tabular fields. Maximum 10 items per request.'
+          items:
+            $ref: '#/components/schemas/BatchTabularValue'
+    BatchDeleteValuesPayload:
+      type: object
+      description: The list of tabular field rows to delete values from.
+      properties:
+        tabularValues:
+          type: array
+          description: 'The list of tabular fields to delete values from. Maximum 10 items per request.'
+          items:
+            $ref: '#/components/schemas/BatchDeleteTabularValue'
+    BatchDeleteTabularValue:
+      type: object
+      required:
+        - id
+        - schema
+      properties:
+        id:
+          type: string
+          format: uuid
+          description: Unique identifier for the table row to delete.
+        schema:
+          type: string
+          description: 'Table identifier or built-in table alias. For built-in tables, use worklogEntries, materialsEntries, or equipmentEntries. For custom tables, use the table''s schema identifier.'
+    FormValuesPage:
+      type: object
+      description: A page of form field values.
+      properties:
+        data:
+          type: array
+          description: List of non-tabular form values.
+          items:
+            $ref: '#/components/schemas/FormValue'
+        pagination:
+          $ref: '#/components/schemas/Pagination'
+    FormValue:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          description: Unique identifier for the form value.
+        fieldId:
+          type: string
+          format: uuid
+          description: Unique identifier for the field (schema_uid). Use this to correlate the value with its field definition in the form layout.
+        deleted:
+          type: boolean
+          description: 'Indicates whether this value has been deleted. If true, the value was removed from the form.'
+        toggleVal:
+          allOf:
+            - $ref: '#/components/schemas/ToggleVal'
+          description: 'Value for toggle/checkbox fields. This endpoint always returns normalized values: True (affirmative), False (negative), or NA (not applicable), regardless of the question''s modifier type (yes/no, pass/fail, plus/minus). To determine the original display format (e.g., Yes/No vs Pass/Fail), check the question''s modifier from the GET section endpoint.'
+        textVal:
+          type: string
+          description: Value for text input fields.
+        numberVal:
+          type: number
+          description: Value for number input fields.
+        choiceVal:
+          type: string
+          description: Value for single-select dropdown or radio button fields. Contains the selected option value.
+        arrayVal:
+          type: array
+          description: Value for multi-select fields. Contains an array of selected option values.
+          items:
+            type: string
+        dateVal:
+          type: string
+          description: Value for date fields. Date in ISO-8601 format (YYYY-MM-DD).
+        svgVal:
+          type: string
+          description: Value for signature fields. Contains the signature as a base64-encoded SVG string.
+        name:
+          type: string
+          description: Name of the person who provided the signature. Only populated for signature fields.
+        notes:
+          type: string
+          description: Additional notes or comments associated with the field value.
+        updatedAt:
+          type: string
+          format: date-time
+          description: 'The date and time when the value was last updated, in UTC ISO-8601 format.'
+        updatedBy:
+          type: string
+          description: The user ID (Oxygen ID) of the user who last updated this value.
+    PdfValuesPage:
+      type: object
+      description: A page of PDF field values.
+      properties:
+        data:
+          type: array
+          description: A list of PDF field value objects for the form.
+          items:
+            $ref: '#/components/schemas/PdfValue'
+        pagination:
+          $ref: '#/components/schemas/Pagination'
+    TableValuesPage:
+      type: object
+      description: A page of table rows.
+      properties:
+        data:
+          type: array
+          description: List of table rows.
+          items:
+            $ref: '#/components/schemas/TableRow'
+        pagination:
+          $ref: '#/components/schemas/Pagination'
+    TableRow:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          description: Unique identifier for this table row. Each column value in the columns array references this ID via its formValueId field.
+        table:
+          $ref: '#/components/schemas/BuiltInTable'
+        schema:
+          type: string
+          format: uuid
+          description: 'The table''s schema identifier (UUID). This is the legacy field name, retained for backwards compatibility. Use fieldId for new integrations. This value corresponds to the fieldId path parameter used to query this table.'
+        fieldId:
+          type: string
+          format: uuid
+          description: 'The table''s schema identifier (UUID). This is the preferred field name that matches the fieldId path parameter. Historically, tables were identified by a field called schema, which caused confusion with database schema concepts. The fieldId field provides a clearer name while schema is retained for backwards compatibility. Both fields contain the same UUID value.'
+        rank:
+          type: integer
+          description: The sort order in the table.
+        deleted:
+          type: boolean
+          description: Whether the table row has been deleted or not.
+        columns:
+          type: array
+          description: 'The list of cell values in this row. Each item represents the value at the intersection of this row and a specific column (i.e., a table cell). Each cell contains formValueId (matching this row''s id) and columnId (identifying which column).'
+          items:
+            $ref: '#/components/schemas/TableCell'
+        updatedAt:
+          type: string
+          format: date-time
+          description: 'The date when the table row was last updated, UTC date and time in ISO-8601 format.'
+        updatedBy:
+          type: string
+          description: User ID that last updated the table row.
+    TableCell:
+      type: object
+      properties:
+        formValueId:
+          type: string
+          format: uuid
+          description: 'The row identifier (matches the parent TabularValueRow.id). This is repeated in each cell to enable independent cell storage and sparse table support. Think of it as the ''rowId'' portion of a cell''s coordinate.'
+        columnId:
+          type: string
+          format: uuid
+          description: 'The column identifier from the form''s layout. Think of it as the ''columnId'' portion of a cell''s coordinate. This corresponds to the uid of a column in the table''s columns array in the section detail. Use GET section to retrieve the section and find column definitions with their uid, columnKey, label, and columnType.'
+        columnName:
+          type: string
+          description: 'The name (columnKey) of the column. For built-in tables, this is one of the predefined column keys (e.g., trade, headcount, description). For custom tables, this is the user-defined column key.'
+        textVal:
+          type: string
+          description: Text value.
+        numberVal:
+          type: number
+          description: Number value.
+        integerVal:
+          type: integer
+          description: Integer value.
+        arrayVal:
+          type: array
+          description: Array value.
+          items:
+            type: string
+        timespanVal:
+          type: integer
+          description: Amount of time in milliseconds.
+        svgVal:
+          type: string
+          description: SVG value.
+        uidVal:
+          type: string
+          description: UUID value.
+        datetimeLocalVal:
+          type: string
+          description: Datetime value in local time.
+        datetimeUtcVal:
+          type: string
+          description: Datetime value in UTC.
+        timezoneVal:
+          type: string
+          description: Timezone identifier.
+        timezoneRulesVal:
+          type: string
+          description: Timezone rules data.
+        lngVal:
+          type: number
+          description: Longitude value.
+        latVal:
+          type: number
+          description: Latitude value.
+        dateVal:
+          type: string
+          description: Date without timezone.
+        timeVal:
+          type: string
+          description: Time without timezone.
+    Weather:
+      type: object
+      description: Weather data in metric units.
+      properties:
+        id:
+          type: integer
+          description: Unique identifier for the weather record.
+        summaryKey:
+          type: string
+          description: 'A code describing the weather conditions in SCREAMING_SNAKE_CASE. Common values include: CLEAR, RAIN, SNOW, SLEET, WIND, FOG, CLOUDY, PARTLY_CLOUDY, MOSTLY_CLEAR, MOSTLY_CLOUDY, HEAVY_RAIN, DRIZZLE, HEAVY_SNOW, FLURRIES, FREEZING_RAIN, THUNDERSTORMS, WINDY, BREEZY, FOGGY, HAZE, BLIZZARD, HOT, FRIGID, WINTRY_MIX. Additional values may appear as weather condition codes evolve.'
+        precipitationType:
+          type: string
+          nullable: true
+          description: 'Type of precipitation. Possible values: RAIN, SNOW, SLEET, or null if no precipitation.'
+        precipitationAccumulation:
+          type: number
+          description: 'Amount of precipitation accumulated throughout the day, in millimeters (mm).'
+        hourlyWeather:
+          type: array
+          description: 'Weather observations for specific hours of the day (typically 07:00, 12:00, and 16:00 local time).'
+          items:
+            $ref: '#/components/schemas/WeatherHourly'
+        provider:
+          type: string
+          description: 'Indicates the source of the weather data. Possible values: DARK_SKY, WEATHER_KIT'
+          enum:
+            - DARK_SKY
+            - WEATHER_KIT
+        fetchedAt:
+          type: string
+          format: date-time
+          description: The date and time when the weather data was fetched from the weather API.
+    WeatherHourly:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: Unique identifier for the hourly weather record.
+        summaryKey:
+          type: string
+          description: 'A code describing the weather conditions for this hour in SCREAMING_SNAKE_CASE. Common values include: CLEAR, RAIN, SNOW, SLEET, WIND, FOG, CLOUDY, PARTLY_CLOUDY, MOSTLY_CLEAR, MOSTLY_CLOUDY, HEAVY_RAIN, DRIZZLE, HEAVY_SNOW, FLURRIES, FREEZING_RAIN, THUNDERSTORMS, WINDY, BREEZY, FOGGY, HAZE, BLIZZARD, HOT, FRIGID, WINTRY_MIX. Additional values may appear as weather condition codes evolve.'
+        hour:
+          type: string
+          description: 'The hour of day for this observation, in HH:MM:SS format (24-hour clock).'
+        temp:
+          type: number
+          description: 'Temperature during the specified hour, in degrees Celsius (°C).'
+        windSpeed:
+          type: number
+          description: 'Average wind speed during the specified hour, in kilometers per hour (km/h).'
+        windBearing:
+          type: integer
+          description: 'Direction the wind is coming from, in degrees (0-360). North is 0°, East is 90°, South is 180°, West is 270°.'
+        windBearingKey:
+          type: string
+          description: 'Cardinal direction the wind is coming from. Possible values: N, NE, E, SE, S, SW, W, NW.'
+          enum:
+            - N
+            - NE
+            - E
+            - SE
+            - S
+            - SW
+            - W
+            - NW
+        humidity:
+          type: number
+          description: 'Relative humidity as a decimal value between 0 and 1 (e.g., 0.65 represents 65% humidity).'
+  securitySchemes:
+    2-legged:
+      type: oauth2
+      flows:
+        clientCredentials:
+          tokenUrl: ''
+          refreshUrl: ''
+          scopes: {}
+    3-legged-implicit:
+      type: oauth2
+      flows:
+        implicit:
+          authorizationUrl: ''
+          refreshUrl: ''
+          scopes: {}
+    3-legged:
+      type: oauth2
+      flows:
+        authorizationCode:
+          authorizationUrl: ''
+          tokenUrl: ''
+          refreshUrl: ''
+          scopes: {}
+security:
+  - 3-legged: []
